@@ -1,0 +1,21 @@
+<form action="" method="POST" autocomplete="off">
+	{% csrf_token %}
+  <div class="modal fade" data-bs-backdrop="static" id="disable_donation" tabindex="-1" aria-labelledby="disable_donation" aria-hidden="true">
+	<div class="modal-dialog">
+      <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title">Remove Donation</h5>
+		  <a href="{% url 'dashboard' %}" class="btn-sm btn-secondary" style="text-decoration: none;">&#x2715;</a>
+		</div>
+	  	<div class="modal-body">
+		  <p>Are you sure you want to remove this donation? This will move the donation to a disabled status.</p>
+	    </div>
+	  	<div class="modal-footer">
+		  <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+		  <input type="hidden" name="id" value="{{ form_values.i }}">
+		  <button type="submit" name="Submit" class="btn btn-danger" value="delete">Remove</button>
+	    </div>
+	  </div>
+	</div>
+  </div>
+</form>

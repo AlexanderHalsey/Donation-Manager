@@ -1,0 +1,109 @@
+<form method="GET" autocomplete="off">
+  <div class="row justify-content-between">
+    <div class="col-2">
+      <h3 class="card-title">Filter</h3>
+    </div>
+    <div class="col-1">
+      <a id="c" for="collapse_id" class="btn btn-secondary" data-bs-toggle="collapse" href="#collapse_id" role="button" aria-expanded="false" aria-controls="collapse_id">&#9660;</a>
+    </div>
+  </div>
+  <div class="{{ collapse }}" id="collapse_id">
+    <div class="card p-1">
+      <div class="row" style="margin-top: 15px">
+        <div class="col-4">
+          <div class="input-group mb-3">
+            <span class="p-2"><strong>Contact:</strong></span>
+            <input name="contact" class="float-left form-control" list="datalistO" value="{{ initial_filter_values.contact }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'Type to search...'}" autocomplete="off">
+            <datalist id="datalistO">
+              {% for id, contact in form.fields.contact.choices %}
+              <option value="{{ contact }}"></option>
+              {% endfor %}
+            </datalist>
+          </div>
+        </div>
+        <div class="col-7">
+          <div class="input-daterange input-group mb-3" id="datepicker">
+            <span class="p-2"><strong>Date Donated:</strong></span>
+            <span class="input-group-text">from</span>
+            <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+            <span class="input-group-text">to</span>
+            <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+            <script>
+              $('#date_gte').datepicker({
+              language: "fr",
+              format: "dd/mm/yyyy",
+              todayHighlight: true,
+              autoclose: true,
+              });
+              $('#date_lte').datepicker({
+              language: "fr",
+              format: "dd/mm/yyyy",
+              todayHighlight: true,
+              autoclose: true,
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-4">
+          <div class="input-group mb-3">
+            <span class="p-2"><strong>Payment Mode:</strong></span>
+            <select name="payment_mode" class="form-select" aria-label="Default select example">
+              {% for id, mode in form.fields.payment_mode.choices %}
+              {% if initial_filter_values.payment_mode == mode %}
+              <option value="{{ id }}" selected>{{ mode }}</option>
+              {% else %}
+              <option value="{{ id }}">{{ mode }}</option>
+              {% endif %}
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="input-group mb-3">
+            <span class="p-2"><strong>Donation Type:</strong></span>
+            <select name="donation_type" class="form-select" aria-label="Default select example">
+              {% for id, type in form.fields.donation_type.choices %}
+              {% if initial_filter_values.donation_type == type %}
+              <option value="{{ id }}" selected>{{ type }}</option>
+              {% else %}
+              <option value="{{ id }}">{{ type }}</option>
+              {% endif %}
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="input-group mb-3">
+            <span class="p-2"><strong>Organisation:</strong></span>
+            <select name="organisation" class="form-select" aria-label="Default select example">
+              {% for id, organisation in form.fields.organisation.choices %}
+              {% if initial_filter_values.organisation == organisation %}
+              <option value="{{ id }}" selected>{{ organisation }}</option>
+              {% else %}
+              <option value="{{ id }}">{{ organisation }}</option>
+              {% endif %}
+            {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-7">
+          <div class="input-group mb-3">
+            <span class="p-2"><strong>Amount:</strong></span>
+            <span class="input-group-text">€</span>
+            <input name="amount_gte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
+            <span class="input-group-text"><=</span>
+            <span class="input-group-text">€</span>
+            <input name="amount_lte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
+          </div>
+        </div>
+        <div class="col-1">
+          <button name="scroll_value" class="btn btn-primary" type="submit" value="" onclick="if (window.scrollY != 0) this.value = window.scrollY; this.value = this.value.concat('collapse_show');">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

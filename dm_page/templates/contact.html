@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block page_content %}
+<hr>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+	      <h4 class="card-title">{{ contact.name }}</h4>
+	      <p class="card-text">All the tags underneath as follows.</p>
+        {% for colour, text, tag in tags %}
+        <span class="badge rounded-pill text-{{ text }}" style="background-color: {{ colour }};">{{ tag }}</span>
+        {% endfor %}
+	    </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-text"><strong>Email Address: </strong>{{ contact.email }}</h6>
+        <br>
+        <h6 class="card-text"><strong>Phone Number: </strong>{{ contact.phone }}</h6>
+        <br>
+        <h6 class="card-text"><strong>Postal Adress: </strong>{{ contact.postal_address }}</h6>
+        <br>
+        <h6 class="card-text"><strong>Additional information: </strong>{{ contact.details }}</h6>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center">
+      <div class="card-body">
+        <h4 class="card-title">Total Number of Donations</h4>
+        <h1 class="card-text">{{ donations_count }}</h1>
+        <h4 class="card-title">Total Donated</h4>
+        <h1 class="card-text">{{ total_donated }}</h1>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

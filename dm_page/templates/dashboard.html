@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block page_content %}
+{% load static %}
+
+<script type="text/javascript">
+  var scroll = "{{ scroll }}";
+  window.addEventListener('load', 
+    function(){
+      window.scrollTo(0,scroll);
+    }
+  );
+
+  {% if form_values.update %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("update").click();
+    }
+  );
+  {% endif %}
+
+  {% if form_values.delete %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("delete").click();
+    }
+  );
+  {% endif %}
+</script>
+<hr>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="card" style="background-color: FloralWhite;">
+      <div class="card-body">
+	      <h4 class="card-title">Tags</h4>
+        {% for colour, text, tag in tags %}
+        <span class="badge rounded-pill text-{{ text }}" style="background-color: {{ colour }};">{{ tag }}</span>
+        {% endfor %}
+        <hr>
+        <a href="#" class="btn btn-primary">Add Tag</a>
+        <a href="#" class="btn btn-success">Update Tags</a>
+        <a href="#" class="btn btn-danger">Delete Tags</a>
+	    </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center" style="background-color: AliceBlue;">
+      <div class="card-body">
+        <h4 class="card-title">Total Number of Donations</h4>
+        <h1 class="card-text">{{ donations_count }}</h1>
+        <br>
+        <h3 class="card-text" style="color: Green;">With Filter: &nbsp; {{ donation_count_filter }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center" style="background-color: HoneyDew;">
+      <div class="card-body">
+        <h4 class="card-title">Total Amount Donated</h4>
+        <h1 class="card-text">{{ total_donated }}</h1>
+        <br>
+        <h3 class="card-text" style="color: Green;">With Filter: &nbsp; {{ total_donated_filter }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="card">
+  <div class="row">
+    <div class="col-3">
+      <div class="container">
+        <div class="card-body" style="margin-top: 20px;">
+          <h2 class="card-title">Donation Log</h2>
+        </div>
+        <div style="padding-left: 20px;">
+          <button id="{{ form_values.type }}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add A Donation</button>
+          {% include 'donation_form.html' %}
+        </div>
+      </div>
+    </div>
+    <div class="col-9 p-3">
+      <div class="card p-2" style="background-color: WhiteSmoke;">
+        {% include 'filter_form.html' %}
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-left: 20px;">
+    <div class="col-sm-12">
+      <div class="card-body">
+        <table class="table table-sm table-striped table-bordered">
+          <tr class="table-primary">
+            <th>Id</th>
+            <th>Contact</th>
+            <th>Tags</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Payment Mode</th>
+            <th>Type of Donation</th>
+            <th>Organisation</th>
+            <th>PDF Receipt</th>
+            <th>Update/Remove</th>
+          {% for donation in mod_don %}
+          {% if not donation.disabled %}
+          </tr>
+            <td>{{ donation.id }}</td>
+            <td><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.name }}</a></td>
+            <td>
+              {% for colour, text, tag in donation.tags %}
+              <span class="badge rounded-pill text-{{ text }}" style="background-color: {{ colour }};">{{ tag }}</span>
+              {% endfor %}
+            </td>
+            <td>{{ donation.date_donated }}</td>
+            <td>{{ donation.amount }}</td>
+            <td>{{ donation.payment_mode }}</td>
+            <td>{{ donation.donation_type }}</td>
+            <td>{{ donation.organisation }}</td>
+            <td>None</td>
+            <td>
+              <form method="GET">
+                {% csrf_token %}
+                <button name="update/{{ donation.id }}" class="btn btn-warning btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="" onclick="if (window.scrollY != 0) this.value=window.scrollY; if (document.getElementById('c').getAttribute('aria-expanded') == 'true') this.value = this.value.concat('collapse_show'); else this.value = this.value.concat('collapse');"><img src="{% static 'icons/write.png' %}" class="img-fluid" width="21" height="21" alt=""></button>
+                <button name="delete/{{ donation.id }}" class="btn btn-secondary btn-sm btn-outline-secondary py-0 px-0" style="font-size: 0.8em; margin-left:25px;" value="" onclick="if (window.scrollY != 0) this.value=window.scrollY; if (document.getElementById('c').getAttribute('aria-expanded') == 'true') this.value = this.value.concat('collapse_show'); else this.value = this.value.concat('collapse');"><img src="{% static 'icons/delete.png' %}" class="img-fluid" width="21" height="21" alt=""></button>
+              </form>
+              <button hidden="hidden" id="delete" data-bs-toggle="modal" data-bs-target="#disable_donation"></button>
+              {% include 'disable_donation.html' %}
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
