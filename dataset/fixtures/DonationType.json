@@ -1,1 +1,0 @@
-[{"model": "dm_page.donationtype", "pk": 1, "fields": {"donation_type": "DonationType1"}}, {"model": "dm_page.donationtype", "pk": 2, "fields": {"donation_type": "DonationType2"}}, {"model": "dm_page.donationtype", "pk": 3, "fields": {"donation_type": "DonationType3"}}, {"model": "dm_page.donationtype", "pk": 4, "fields": {"donation_type": "DonationType4"}}]
