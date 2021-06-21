@@ -3,6 +3,7 @@ from .models import *
 from .forms import DonationForm
 from django.http import HttpRequest
 from .colours import colours
+import re
 
 # Create your views here.
 def dashboard(request):
@@ -56,8 +57,8 @@ def dashboard(request):
 	total_donated = sum([d.amount for d in donations.filter(disabled=False)])
 	
 	# front-end functionality
-	scroll = 0
-	collapse = 'collapse'
+	scroll = 0 # to load with page scroll number so the page appears static 
+	collapse = 'collapse' # for filter collapse button
 	form_values = {
 		"title": "New", 
 		"colour": "primary",
@@ -68,44 +69,38 @@ def dashboard(request):
 		"i": None,
 	}
 
-	# GET request for update
-	for i in range(1, len(donations)+1):
-		if request.GET.get("delete/{i}".format(i=i)) not in (None, ""):
+	# GET request for update / delete
+	for k in request.GET.keys():
+		if "update" in k or "delete" in k:
+			i = re.search(r'\d+', k).group()
 			donation = Donation.objects.get(id=i)
-			if 'collapse_show' in request.GET.get("delete/{i}".format(i=i)):
-				scroll = int("".join(request.GET.get("delete/{i}".format(i=i)).split('collapse_show')) or 0)
-				collapse = 'collapse show'
-			elif 'collapse' in request.GET.get("delete/{i}".format(i=i)):
-				scroll = int("".join(request.GET.get("delete/{i}".format(i=i)).split('collapse')) or 0)
-			form_values["i"] = i
-			form_values["delete"] = True
-			break
-		if request.GET.get("update/{i}".format(i=i)) not in (None, ""):
-			donation = Donation.objects.get(id=i)
-			if 'collapse_show' in request.GET.get("update/{i}".format(i=i)):
-				scroll = int("".join(request.GET.get("update/{i}".format(i=i)).split('collapse_show')) or 0)
-				collapse = 'collapse show'
-			elif 'collapse' in request.GET.get("update/{i}".format(i=i)):
-				scroll = int("".join(request.GET.get("update/{i}".format(i=i)).split('collapse')) or 0)
-			# pre-populated donation_form for update
-			form.fields["contact"].initial = donation.contact.name
-			form.fields["date_donated"].initial = "" if donation.date_donated == None else "/".join(str(donation.date_donated).split("-")[::-1])
-			form.fields["amount_euros"].initial = "" if str(donation.amount).split(".")[0] == "0" else str(donation.amount).split(".")[0]
-			form.fields["amount_cents"].initial = "."+str("{:.2f}".format(donation.amount)).split(".")[1]
-			form.fields["payment_mode"].initial = "" if donation.payment_mode == None else donation.payment_mode.payment_mode
-			form.fields["donation_type"].initial = "" if donation.donation_type == None else donation.donation_type.donation_type
-			form.fields["organisation"].initial = "" if donation.organisation == None else donation.organisation.organisation
-			# donation_form - update 
-			form_values = {
-				"title": "Update",
-				"colour": "success",
-				"button": "Update",
-				"update": True,
-				"delete": False,
-				"type": "update",
-				"i": i,
-			}
-			break
+			function = re.search(r'\w+', k).group()
+			if function == "delete":
+				form_values["i"] = i
+				form_values["delete"] = True
+			elif function == "update":
+				# pre-populated donation_form for update
+				form.fields["contact"].initial = donation.contact.name
+				form.fields["date_donated"].initial = "" if donation.date_donated == None else "/".join(str(donation.date_donated).split("-")[::-1])
+				form.fields["amount_euros"].initial = "" if str(donation.amount).split(".")[0] == "0" else str(donation.amount).split(".")[0]
+				form.fields["amount_cents"].initial = "."+str("{:.2f}".format(donation.amount)).split(".")[1]
+				form.fields["payment_mode"].initial = "" if donation.payment_mode == None else donation.payment_mode.payment_mode
+				form.fields["donation_type"].initial = "" if donation.donation_type == None else donation.donation_type.donation_type
+				form.fields["organisation"].initial = "" if donation.organisation == None else donation.organisation.organisation
+				# donation_form - update 
+				form_values = {
+					"title": "Update",
+					"colour": "success",
+					"button": "Update",
+					"update": True,
+					"delete": False,
+					"type": "update",
+					"i": i,
+				}
+			scroll = int(re.search(r'\d*',request.GET.get(k)).group() or 0)
+			collapse = re.search(r'\D+', request.GET.get(k)).group()
+			if collapse == "collapse_show":
+			    collapse = "collapse show" 
 
 	# initial filter values
 	initial_filter_values = {
@@ -127,11 +122,11 @@ def dashboard(request):
 		date__gte = "-".join(request.GET.get("date_donated_gte").split("/")[::-1])
 		initial_filter_values["date_donated_gte"] = request.GET.get("date_donated_gte")
 		donations = donations.filter(date_donated__gte=date__gte)
-	if request.GET.get("date_donated_lte") not in ("", "DD/MM/YYYY",None):
+	if request.GET.get("date_donated_lte") not in ("", "DD/MM/YYYY", None):
 		date__lte = "-".join(request.GET.get("date_donated_lte").split("/")[::-1])
 		initial_filter_values["date_donated_lte"] = request.GET.get("date_donated_lte")
 		donations = donations.filter(date_donated__lte=date__lte)
-	if request.GET.get("amount_gte") not in ("",None):
+	if request.GET.get("amount_gte") not in ("", None):
 		amount_gte = float(request.GET.get("amount_gte"))
 		initial_filter_values["amount_gte"] = request.GET.get("amount_gte")
 		donations = donations.filter(amount__gte=amount_gte)
