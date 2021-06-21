@@ -32,8 +32,8 @@
     <div class="card" style="background-color: FloralWhite;">
       <div class="card-body">
 	      <h4 class="card-title">Tags</h4>
-        {% for colour, text, tag in tags %}
-        <span class="badge rounded-pill text-{{ text }}" style="background-color: {{ colour }};">{{ tag }}</span>
+        {% for tag in tags %}
+        <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
         {% endfor %}
         <hr>
         <a href="#" class="btn btn-primary">Add Tag</a>
@@ -98,14 +98,14 @@
             <th>Organisation</th>
             <th>PDF Receipt</th>
             <th>Update/Remove</th>
-          {% for donation in mod_don %}
+          {% for donation in donations %}
           {% if not donation.disabled %}
           </tr>
             <td>{{ donation.id }}</td>
             <td><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.name }}</a></td>
             <td>
-              {% for colour, text, tag in donation.tags %}
-              <span class="badge rounded-pill text-{{ text }}" style="background-color: {{ colour }};">{{ tag }}</span>
+              {% for tag in donation.contact.tags.all %}
+              <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
               {% endfor %}
             </td>
             <td>{{ donation.date_donated }}</td>
