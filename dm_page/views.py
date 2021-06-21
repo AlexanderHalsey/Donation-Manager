@@ -67,13 +67,27 @@ def dashboard(request):
 		"type": "create",
 		"i": None,
 	}
+	# initial filter values
+	initial_filter_values = {
+		"contact": "Type to search...",
+		"date_donated_gte": "DD/MM/YYYY",
+		"date_donated_lte": "DD/MM/YYYY",
+		"payment_mode": "-----",
+		"donation_type": "-----",
+		"organisation": "-----",
+		"amount_gte": "",
+		"amount_lte": "",
+	}
 
-	# GET request for update / delete
-	for k in request.GET.keys():
-		if "update" in k or "delete" in k:
-			i = re.search(r'\d+', k).group()
+	# GET requests
+	for key,value in request.GET.items():
+		# update / delete requests
+		if key == "csrfmiddlewaretoken":
+			continue
+		if "update" in key or "delete" in key:
+			i = re.search(r'\d+', key).group()
 			donation = Donation.objects.get(id=i)
-			function = re.search(r'\w+', k).group()
+			function = re.search(r'\w+', key).group()
 			if function == "delete":
 				form_values["i"] = i
 				form_values["delete"] = True
@@ -96,53 +110,38 @@ def dashboard(request):
 					"type": "update",
 					"i": i,
 				}
-			scroll = int(re.search(r'\d*',request.GET.get(k)).group() or 0)
-			collapse = re.search(r'\D+', request.GET.get(k)).group()
-			if collapse == "collapse_show":
-			    collapse = "collapse show" 
-
-	# initial filter values
-	initial_filter_values = {
-		"contact": "Type to search...",
-		"date_donated_gte": "DD/MM/YYYY",
-		"date_donated_lte": "DD/MM/YYYY",
-		"payment_mode": "-----",
-		"donation_type": "-----",
-		"organisation": "-----",
-		"amount_gte": "",
-		"amount_lte": "",
-	}
-
-
-	# GET request for filter
-	for key,value in request.GET.items():
-		if key == "scroll_value":
-			scroll = int(re.search(r'\d*', value).group() or 0)
+			scroll = int(re.search(r'\d*',value).group() or 0)
 			collapse = re.search(r'\D+', value).group()
 			if collapse == "collapse_show":
 				collapse = "collapse show" 
-			continue
-		if value not in ("", None, initial_filter_values[key]):
-			initial_filter_values[key] = value
-			if key == "contact":
-				donations = donations.filter(contact__name=value)
-			if key == "date_donated_gte":
-				date__gte = "-".join(value.split("/")[::-1])
-				donations = donations.filter(date_donated__gte=date__gte)
-			if key == "date_donated_lte":
-				date__lte = "-".join(value.split("/")[::-1])
-				donations = donations.filter(date_donated__lte=date__lte)
-			if key == "amount_gte":
-				donations = donations.filter(amount__gte=float(value))
-			if key == "amount_lte":
-				donations = donations.filter(amount__lte=float(value))
-			if key == "payment_mode":
-				donations = donations.filter(payment_mode__payment_mode=value)
-			if key == "donation_type":
-				donations = donations.filter(donation_type__donation_type=value)
-			if key == "organisation":
-				donations = donations.filter(organisation__organisation=value)
-	print([(k,v) for k,v in request.GET.items()])
+		# filter requests
+		else:
+			if key == "scroll_value":
+				scroll = int(re.search(r'\d*', value).group() or 0)
+				collapse = re.search(r'\D+', value).group()
+				if collapse == "collapse_show":
+					collapse = "collapse show" 
+				continue
+			if value not in ("", None, initial_filter_values[key]):
+				initial_filter_values[key] = value
+				if key == "contact":
+					donations = donations.filter(contact__name=value)
+				if key == "date_donated_gte":
+					date__gte = "-".join(value.split("/")[::-1])
+					donations = donations.filter(date_donated__gte=date__gte)
+				if key == "date_donated_lte":
+					date__lte = "-".join(value.split("/")[::-1])
+					donations = donations.filter(date_donated__lte=date__lte)
+				if key == "amount_gte":
+					donations = donations.filter(amount__gte=float(value))
+				if key == "amount_lte":
+					donations = donations.filter(amount__lte=float(value))
+				if key == "payment_mode":
+					donations = donations.filter(payment_mode__payment_mode=value)
+				if key == "donation_type":
+					donations = donations.filter(donation_type__donation_type=value)
+				if key == "organisation":
+					donations = donations.filter(organisation__organisation=value)
 
 	# context after filter 	
 	donation_count_filter = donations.filter(disabled=False).count()
