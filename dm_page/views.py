@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import DonationForm
-from .colours import colours
 import re
 
 # Create your views here.
@@ -50,7 +49,7 @@ def dashboard(request):
 		return redirect("/")
 
 	# context 
-	tags = [(colours[str(tag.id%20)][0],colours[str(tag.id%20)][1],tag.tag) for tag in Tag.objects.all()]
+	tags = Tag.objects.all()
 	donations = Donation.objects.all().order_by('-date_donated')
 	donations_count = donations.filter(disabled=False).count()
 	total_donated = sum([d.amount for d in donations.filter(disabled=False)])
@@ -151,24 +150,6 @@ def dashboard(request):
 	if list(filter(lambda x: x, [request.GET.get(item) for item in request.GET])) in ([], ["Type to search..."]) and request.get_full_path_info() != "/":
 		return redirect("/")
 
-	# donations for table - sync tag colours 
-	mod_don = [{
-		"id": donation.id,
-		"contact": {
-			"id": donation.contact.id, 
-			"name": donation.contact.name,
-		},
-		"tags": [(colours[str(tag.id%20)][0],colours[str(tag.id%20)][1], tag.tag) for tag in donation.contact.tags.all()],
-		"date_donated": donation.date_donated,
-		"amount": donation.amount,
-		"payment_mode": donation.payment_mode,
-		"donation_type": donation.donation_type,
-		"organisation": donation.organisation,
-		"disabled": donation.disabled,
-		} for donation in donations]
-
-
-
 	context = {
 		'initial_filter_values': initial_filter_values,
 		'collapse': collapse,
@@ -180,7 +161,6 @@ def dashboard(request):
 		'donation_count_filter': donation_count_filter,
 		'total_donated_filter': total_donated_filter,
 		'form': form,
-		"mod_don": mod_don,
 		'form_values': form_values,
 	}
 	return render(request, 'dashboard.html', context)
