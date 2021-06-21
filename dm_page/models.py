@@ -1,4 +1,5 @@
 from django.db import models
+from .colours import colours
 
 
 # Create your models here.
@@ -6,6 +7,10 @@ from django.db import models
 class Tag(models.Model):
 	tag = models.CharField(max_length=200)
 
+	def bg_colour(self):
+		return colours[str(self.id%20)][0]
+	def text_colour(self):
+		return colours[str(self.id%20)][1]
 	def __str__(self):
 		return self.tag
 
