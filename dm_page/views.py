@@ -1,10 +1,48 @@
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import DonationForm
-import re
 
 # Create your views here.
 def dashboard(request):
+
+	# context 
+	tags = Tag.objects.all()
+	if request.GET.get("disabled") == 'false':
+		donations = Donation.objects.all().order_by("-date_donated")
+	else:
+		donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
+	donations_count = donations.count()
+	total_donated = sum([d.amount for d in donations])
+
+	# intial form_values
+	form_values = {
+		"title": "New", 
+		"colour": "primary",
+		"button": "Submit",
+		"update": False,
+		"delete": False,
+		"type": "create",
+		"i": None,
+		"errors": False,
+		"errorlist": {},
+	}
+
+	# initial filter values
+	initial_filter_values = {
+		"contact": "Type to search...",
+		"date_donated_gte": "DD/MM/YYYY",
+		"date_donated_lte": "DD/MM/YYYY",
+		"payment_mode": "-----",
+		"donation_type": "-----",
+		"organisation": "-----",
+		"amount_gte": "",
+		"amount_lte": "",
+	}
+
+	# front-end functionality
+	scroll = 0 # to load with page scroll number so the page appears static on request
+	collapse = 'collapse show' # to register collapse status of filter collapse button
+
 	# form
 	form = DonationForm()
 	if request.method == 'POST':
@@ -13,11 +51,10 @@ def dashboard(request):
 			disable_donation = Donation.objects.get(id=int(request.POST["id"]))
 			disable_donation.disabled = True
 			disable_donation.save()
-			redirect("/")
+
+			return redirect("/")
 
 		form = DonationForm(request.POST)
-
-		print(form.errors)
 
 		if form.is_valid():
 			donation = Donation(
@@ -46,51 +83,50 @@ def dashboard(request):
 				disable_donation.disabled = True
 				disable_donation.save()
 
-		return redirect("/")
+			return redirect("/")
 
-	# context 
-	tags = Tag.objects.all()
-	donations = Donation.objects.all().order_by('-date_donated')
-	donations_count = donations.filter(disabled=False).count()
-	total_donated = sum([d.amount for d in donations.filter(disabled=False)])
-	
-	# front-end functionality
-	scroll = 0 # to load with page scroll number so the page appears static on request
-	collapse = 'collapse' # to register collapse status of filter collapse button
-	form_values = {
-		"title": "New", 
-		"colour": "primary",
-		"button": "Submit",
-		"update": False,
-		"delete": False,
-		"type": "create",
-		"i": None,
-	}
-	# initial filter values
-	initial_filter_values = {
-		"contact": "Type to search...",
-		"date_donated_gte": "DD/MM/YYYY",
-		"date_donated_lte": "DD/MM/YYYY",
-		"payment_mode": "-----",
-		"donation_type": "-----",
-		"organisation": "-----",
-		"amount_gte": "",
-		"amount_lte": "",
-	}
+		else:
+			print(request.POST)
+			form_values["errors"] = True
+			for error in form.errors:
+				form_values["errorlist"][error] = "is-invalid"
+				form.fields["contact"].initial = request.POST["contact"]
+				form.fields["date_donated"].initial = request.POST["date_donated"]
+				form.fields["amount_euros"].initial = request.POST["amount_euros"]
+				form.fields["amount_cents"].initial = request.POST["amount_cents"]
+				form.fields["payment_mode"].initial = request.POST["payment_mode"]
+				form.fields["donation_type"].initial = request.POST["donation_type"]
+				form.fields["organisation"].initial = request.POST["organisation"]
+
+				scroll = int(request.POST["scroll"] or 0)
+				collapse = request.POST["collapse"]
+				if collapse == "collapse_show":
+					collapse = "collapse show"
+				if request.POST["Submit"] == "update":
+					form_values["title"] = "Update"
+					form_values["colour"] = "success"
+					form_values["button"] = "Update"
+					form_values["update"] = True
+					form_values["type"] = "update"
+					form_values["i"] = request.POST["id"]
 
 	# GET requests
-	for key,value in request.GET.items():
-		# update / delete requests
-		if key == "csrfmiddlewaretoken":
-			continue
-		if "update" in key or "delete" in key:
-			i = re.search(r'\d+', key).group()
-			donation = Donation.objects.get(id=i)
-			function = re.search(r'\w+', key).group()
-			if function == "delete":
-				form_values["i"] = i
+	else:
+		# update delete
+		if request.GET.get("delete") != None or request.GET.get("update") != None:
+			if request.GET.get("delete") != None:
+				key = "delete"
+				value = request.GET["delete"]
+			else:
+				key = "update"
+				value = request.GET["update"]
+
+			donation = donations.get(id=value)
+
+			if key == "delete":
+				form_values["i"] = value
 				form_values["delete"] = True
-			elif function == "update":
+			elif key == "update":
 				# pre-populated donation_form for update
 				form.fields["contact"].initial = donation.contact.name
 				form.fields["date_donated"].initial = "" if donation.date_donated == None else "/".join(str(donation.date_donated).split("-")[::-1])
@@ -107,44 +143,54 @@ def dashboard(request):
 					"update": True,
 					"delete": False,
 					"type": "update",
-					"i": i,
+					"i": value,
 				}
-			scroll = int(re.search(r'\d*',value).group() or 0)
-			collapse = re.search(r'\D+', value).group()
+
+			scroll = int(request.GET["scroll"] or 0)
+			collapse = request.GET["collapse"]
 			if collapse == "collapse_show":
-				collapse = "collapse show" 
+				collapse = "collapse show"
+
 		# filter requests
-		else:
-			if key == "scroll_value":
-				scroll = int(re.search(r'\d*', value).group() or 0)
-				collapse = re.search(r'\D+', value).group()
-				if collapse == "collapse_show":
-					collapse = "collapse show" 
-				continue
-			if value not in ("", None, initial_filter_values[key]):
-				initial_filter_values[key] = value
-				if key == "contact":
-					donations = donations.filter(contact__name=value)
-				if key == "date_donated_gte":
-					date__gte = "-".join(value.split("/")[::-1])
-					donations = donations.filter(date_donated__gte=date__gte)
-				if key == "date_donated_lte":
-					date__lte = "-".join(value.split("/")[::-1])
-					donations = donations.filter(date_donated__lte=date__lte)
-				if key == "amount_gte":
-					donations = donations.filter(amount__gte=float(value))
-				if key == "amount_lte":
-					donations = donations.filter(amount__lte=float(value))
-				if key == "payment_mode":
-					donations = donations.filter(payment_mode__payment_mode=value)
-				if key == "donation_type":
-					donations = donations.filter(donation_type__donation_type=value)
-				if key == "organisation":
-					donations = donations.filter(organisation__organisation=value)
+		if request.GET.get("Submit") != None:
+			if request.GET["Submit"] == "filter":
+				for key, value in request.GET.items():
+					if key == "Submit":
+						continue
+					if key == "scroll":
+						scroll = int(value or 0)
+						continue
+					if key == "collapse":
+						collapse = value
+						if collapse == "collapse_show":
+							collapse = "collapse show" 
+						continue
+					if key == "disabled":
+						continue
+					if value not in ("", None, initial_filter_values[key]):
+						initial_filter_values[key] = value
+						if key == "contact":
+							donations = donations.filter(contact__name=value)
+						if key == "date_donated_gte":
+							date__gte = "-".join(value.split("/")[::-1])
+							donations = donations.filter(date_donated__gte=date__gte)
+						if key == "date_donated_lte":
+							date__lte = "-".join(value.split("/")[::-1])
+							donations = donations.filter(date_donated__lte=date__lte)
+						if key == "amount_gte":
+							donations = donations.filter(amount__gte=float(value))
+						if key == "amount_lte":
+							donations = donations.filter(amount__lte=float(value))
+						if key == "payment_mode":
+							donations = donations.filter(payment_mode__payment_mode=value)
+						if key == "donation_type":
+							donations = donations.filter(donation_type__donation_type=value)
+						if key == "organisation":
+							donations = donations.filter(organisation__organisation=value)
 
 	# context after filter 	
-	donation_count_filter = donations.filter(disabled=False).count()
-	total_donated_filter = sum([d.amount for d in donations.filter(disabled=False)])
+	donation_count_filter = donations.count()
+	total_donated_filter = sum([d.amount for d in donations])
 
 	# redirect when filter is empty
 	if list(filter(lambda x: x, [request.GET.get(item) for item in request.GET])) in ([], ["Type to search..."]) and request.get_full_path_info() != "/":
@@ -169,7 +215,7 @@ def contact(request, pk):
 
 	# context
 	contact = Contact.objects.get(id=pk)
-	tags = [(colours[str(tag.id%20)][0],colours[str(tag.id%20)][1],tag.tag) for tag in contact.tags.all()]
+	tags = contact.tags.all()
 	donations = Donation.objects.filter(contact__name=contact.name)
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])

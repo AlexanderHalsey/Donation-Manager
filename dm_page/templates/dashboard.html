@@ -9,6 +9,13 @@
       window.scrollTo(0,scroll);
     }
   );
+  {% if form_values.errors %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("create").click();
+    }
+  );
+  {% endif %}
 
   {% if form_values.update %}
   window.addEventListener('load',
@@ -25,6 +32,26 @@
     }
   );
   {% endif %}
+
+  window.addEventListener('submit',
+    function(){
+      let scroll = document.getElementsByName('scroll');
+      for (let i = 0; i < scroll.length; i++) {
+        scroll[i].setAttribute('value', window.scrollY.toString());
+      }
+    }
+  );
+  window.addEventListener('submit',
+    function(){
+      let collapse = document.getElementsByName('collapse');
+      if (document.getElementById('c').getAttribute('aria-expanded') == 'true') {
+        for (let i = 0; i < collapse.length; i++) {
+          collapse[i].setAttribute('value', 'collapse show');
+        }
+      }
+    }
+  );
+
 </script>
 <hr>
 <div class="row">
@@ -83,52 +110,55 @@
       </div>
     </div>
   </div>
-  <div class="row" style="margin-left: 20px;">
-    <div class="col-sm-12">
-      <div class="card-body">
-        <table class="table table-sm table-striped table-bordered">
-          <tr class="table-primary">
-            <th>Id</th>
-            <th>Contact</th>
-            <th>Tags</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Payment Mode</th>
-            <th>Type of Donation</th>
-            <th>Organisation</th>
-            <th>PDF Receipt</th>
-            <th>Update/Remove</th>
-          {% for donation in donations %}
-          {% if not donation.disabled %}
-          </tr>
-            <td>{{ donation.id }}</td>
-            <td><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.name }}</a></td>
-            <td>
-              {% for tag in donation.contact.tags.all %}
-              <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
-              {% endfor %}
-            </td>
-            <td>{{ donation.date_donated }}</td>
-            <td>{{ donation.amount }}</td>
-            <td>{{ donation.payment_mode }}</td>
-            <td>{{ donation.donation_type }}</td>
-            <td>{{ donation.organisation }}</td>
-            <td>None</td>
-            <td>
-              <form method="GET">
-                {% csrf_token %}
-                <button name="update/{{ donation.id }}" class="btn btn-warning btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="" onclick="if (window.scrollY != 0) this.value=window.scrollY; if (document.getElementById('c').getAttribute('aria-expanded') == 'true') this.value = this.value.concat('collapse_show'); else this.value = this.value.concat('collapse');"><img src="{% static 'icons/write.png' %}" class="img-fluid" width="21" height="21" alt=""></button>
-                <button name="delete/{{ donation.id }}" class="btn btn-secondary btn-sm btn-outline-secondary py-0 px-0" style="font-size: 0.8em; margin-left:25px;" value="" onclick="if (window.scrollY != 0) this.value=window.scrollY; if (document.getElementById('c').getAttribute('aria-expanded') == 'true') this.value = this.value.concat('collapse_show'); else this.value = this.value.concat('collapse');"><img src="{% static 'icons/delete.png' %}" class="img-fluid" width="21" height="21" alt=""></button>
-              </form>
-              <button hidden="hidden" id="delete" data-bs-toggle="modal" data-bs-target="#disable_donation"></button>
-              {% include 'disable_donation.html' %}
-            </td>
-          </tr>
-          {% endif %}
-          {% endfor %}
-        </table>
-      </div>
-    </div>
+  <div class="card-body">
+    <table class="table table-sm table-striped table-bordered">
+      <thead>
+        <tr class="table-primary">
+          <th style="width: 5%;">Id</th>
+          <th style="width: 13%;">Contact</th>
+          <th style="width: 14%;">Tags</th>
+          <th style="width: 9%;">Date</th>
+          <th style="width: 8%;">Amount</th>
+          <th style="width: 10%;">Payment Mode</th>
+          <th style="width: 11%;">Type of Donation</th>
+          <th style="width: 10%;">Organisation</th>
+          <th style="width: 9%;">PDF Receipt</th>
+          <th style="width: 9%;">Update/Remove</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for donation in donations %}
+        {% if not donation.disabled %}
+        <tr>
+          <td style="width: 80px;">{{ donation.id }}</td>
+          <td style="width: 223px;"><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.name }}</a></td>
+          <td style="width: 300px;">
+            {% for tag in donation.contact.tags.all %}
+            <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
+            {% endfor %}
+          </td>
+          <td style="width: 167px;">{{ donation.date_donated }}</td>
+          <td style="width: 123px;">{{ donation.amount }}</td>
+          <td style="width: 137px;">{{ donation.payment_mode }}</td>
+          <td style="width: 161px;">{{ donation.donation_type }}</td>
+          <td style="width: 183px;">{{ donation.organisation }}</td>
+          <td style="width: 167px;">None</td>
+          <td style="width: 198px;">
+            <form method="GET">
+              {% csrf_token %}
+              <button name="update" class="btn btn-warning btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="{{ donation.id }}"><img src="{% static 'icons/write.png' %}" class="img-fluid" width="21" height="21" alt=""></button>
+              <button name="delete" class="btn btn-secondary btn-sm btn-outline-secondary py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="{{ donation.id }}"><img src="{% static 'icons/delete.png' %}" class="img-fluid" width="21" height="21" alt=""></button>
+              <input type="hidden" name="scroll" value="">
+              <input type="hidden"name="collapse" value="collapse">
+            </form>
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    <button hidden="hidden" id="delete" data-bs-toggle="modal" data-bs-target="#disable_donation"></button>
+    {% include 'disable_donation.html' %}
   </div>
 </div>
 {% endblock %}

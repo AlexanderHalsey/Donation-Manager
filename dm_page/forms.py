@@ -11,15 +11,12 @@ class DonationForm(forms.Form):
 		initial = "",
 		choices = CONTACTS,
 		coerce = str,
-		required = False,
 	)
 	date_donated = forms.DateField(
 		initial = "",
-		required = False,
 		)
 	amount_euros = forms.IntegerField(
 		initial = "",
-		required = False,
 	)
 	amount_cents = forms.DecimalField(
 		initial = ".00",
@@ -28,15 +25,12 @@ class DonationForm(forms.Form):
 	payment_mode = forms.ChoiceField(
 		initial = "-----",
 		choices = MODES,
-		required = False,
 	)
 	donation_type = forms.ChoiceField(
 		initial = "-----",
 		choices = TYPES,
-		required = False,
 	)
 	organisation = forms.ChoiceField(
 		initial = "-----",
 		choices = ORGANISATIONS,
-		required = False,
 	)

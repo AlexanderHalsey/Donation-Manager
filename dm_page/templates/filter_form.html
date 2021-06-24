@@ -89,7 +89,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row justify-content-evenly">
         <div class="col-7">
           <div class="input-group mb-3">
             <span class="p-2"><strong>Amount:</strong></span>
@@ -100,10 +100,14 @@
             <input name="amount_lte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
           </div>
         </div>
-        <div class="col-1">
-          <button name="scroll_value" class="btn btn-primary" type="submit" value="" onclick="if (window.scrollY != 0) this.value = window.scrollY; this.value = this.value.concat('collapse_show');">Search</button>
+        <div class="col-5 form-check">
+          <input class="form-check-input mt-2 ms-1" type="checkbox" name="disabled" value="">
+          <span class="ms-2"><strong>Include Disabled</strong></span>
+          <button name="Submit" class="btn btn-primary ms-5" type="submit" value="filter">Search</button>
         </div>
       </div>
     </div>
   </div>
+  <input type="hidden" name="scroll" value="">
+  <input type="hidden" name="collapse" value="collapse">
 </form>
