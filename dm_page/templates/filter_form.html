@@ -101,7 +101,11 @@
           </div>
         </div>
         <div class="col-5 form-check">
+          {% if initial_filter_values.disabled %}
+          <input class="form-check-input mt-2 ms-1" id="disabled" type="checkbox" name="disabled" value="" checked>
+          {% else %}
           <input class="form-check-input mt-2 ms-1" id="disabled" type="checkbox" name="disabled" value="">
+          {% endif %}
           <span class="ms-2"><strong>Include Disabled</strong></span>
           <button name="Submit" class="btn btn-primary ms-5" type="submit" value="filter">Search</button>
         </div>

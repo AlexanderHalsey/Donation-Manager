@@ -5,15 +5,6 @@ from .forms import DonationForm
 # Create your views here.
 def dashboard(request):
 
-	# context 
-	tags = Tag.objects.all()
-	if request.GET.get("disabled") == 'true':
-		donations = Donation.objects.all().order_by("-date_donated")
-	else:
-		donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
-	donations_count = donations.count()
-	total_donated = sum([d.amount for d in donations])
-
 	# intial form_values
 	form_values = {
 		"title": "New", 
@@ -37,7 +28,18 @@ def dashboard(request):
 		"organisation": "-----",
 		"amount_gte": "",
 		"amount_lte": "",
+		"disabled": False,
 	}
+
+	# context 
+	tags = Tag.objects.all()
+	if request.GET.get("disabled") == 'true':
+		donations = Donation.objects.all().order_by("-date_donated")
+		initial_filter_values["disabled"] = True
+	else:
+		donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
+	donations_count = donations.count()
+	total_donated = sum([d.amount for d in donations])
 
 	# front-end functionality
 	scroll = 0 # to load with page scroll number so the page appears static on request
