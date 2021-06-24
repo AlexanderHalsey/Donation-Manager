@@ -51,7 +51,13 @@
       }
     }
   );
-
+  window.addEventListener('submit',
+    function(){
+      if (document.getElementById('disabled').checked) {
+        document.getElementById('disabled').setAttribute('value', 'true');
+      }
+    }
+  );
 </script>
 <hr>
 <div class="row">
@@ -128,8 +134,11 @@
       </thead>
       <tbody>
         {% for donation in donations %}
-        {% if not donation.disabled %}
+        {% if donation.disabled %}
+        <tr class="table-danger">
+        {% else %}
         <tr>
+        {% endif %}
           <td style="width: 80px;">{{ donation.id }}</td>
           <td style="width: 223px;"><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.name }}</a></td>
           <td style="width: 300px;">
@@ -153,7 +162,6 @@
             </form>
           </td>
         </tr>
-        {% endif %}
         {% endfor %}
       </tbody>
     </table>

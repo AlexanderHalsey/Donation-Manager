@@ -7,7 +7,7 @@ def dashboard(request):
 
 	# context 
 	tags = Tag.objects.all()
-	if request.GET.get("disabled") == 'false':
+	if request.GET.get("disabled") == 'true':
 		donations = Donation.objects.all().order_by("-date_donated")
 	else:
 		donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
