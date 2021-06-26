@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import DonationForm
+import smtplib
 
 # Create your views here.
 def dashboard(request):
@@ -59,6 +60,22 @@ def dashboard(request):
 		form = DonationForm(request.POST)
 
 		if form.is_valid():
+			# if certain conditions are met, an email confirmation is forwarded my way
+			if form.cleaned_data["donation_type"] == "DonationType2" and form.cleaned_data["organisation"] == "CBM":
+				smtp_object = smtplib.SMTP('smtp.gmail.com',587)
+				smtp_object.ehlo()
+				smtp_object.starttls()
+				smtp_object.login('alex.halsey5@gmail.com','ovwiymnjotfiacvu')
+				message = f'''
+				Contact: {form.cleaned_data["contact"]}\n
+				Date Donated: {form.cleaned_data["date_donated"]}\n
+				Amount: {int(form.cleaned_data["amount_euros"])+float(form.cleaned_data["amount_cents"])}\n
+				Payment Mode: {form.cleaned_data["payment_mode"]}\n
+				Donation Type: {form.cleaned_data["donation_type"]}\n
+				Organisation: {form.cleaned_data["organisation"]}\n
+				'''
+				smtp_object.sendmail('alex.halsey5@gmail.com','alex.halsey@icloud.com',message)
+
 			donation = Donation(
 				contact = Contact.objects.get(
 					name = form.cleaned_data["contact"]
@@ -230,3 +247,78 @@ def contact(request, pk):
 		'total_donated': total_donated,
 	}
 	return render(request, 'contact.html', context)
+
+def donators(request):
+
+	# initial filter values
+	initial_filter_values = {
+		"date_donated_gte": "DD/MM/YYYY",
+		"date_donated_lte": "DD/MM/YYYY",
+		"amount_gte": "",
+		"amount_lte": "",
+	}
+
+	# context 
+	tags = Tag.objects.all()
+	donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
+	donations_count = donations.count()
+	total_donated = sum([d.amount for d in donations])
+
+	# front-end functionality
+	scroll = 0 # to load with page scroll number so the page appears static on request
+	collapse = 'collapse show' # to register collapse status of filter collapse button
+
+	# filter requests
+	if request.GET.get("Submit") != None:
+		if request.GET["Submit"] == "filter":
+			for key, value in request.GET.items():
+				if key == "Submit":
+					continue
+				if key == "scroll":
+					scroll = int(value or 0)
+					continue
+				if key == "collapse":
+					collapse = value
+					if collapse == "collapse_show":
+						collapse = "collapse show" 
+					continue
+				if value not in ("", None, initial_filter_values[key]):
+					if key == "date_donated_gte":
+						date__gte = "-".join(value.split("/")[::-1])
+						donations = donations.filter(date_donated__gte=date__gte)
+					if key == "date_donated_lte":
+						date__lte = "-".join(value.split("/")[::-1])
+						donations = donations.filter(date_donated__lte=date__lte)
+					if key == "amount_gte":
+						donations = donations.filter(amount__gte=float(value))
+					if key == "amount_lte":
+						donations = donations.filter(amount__lte=float(value))
+
+	# contacts
+	contacts = Contact.objects.all()
+	contacts = [{
+		"id": contact.id,
+		"tags": contact.tags,
+		"name": contact.name,
+		"total_donated": sum([donation.amount for donation in donations.filter(contact=contact)]),
+
+	} for contact in contacts]
+	contacts = list(filter(lambda x: x["total_donated"]>0, contacts))
+
+	# context after filter 	
+	donation_count_filter = donations.count()
+	total_donated_filter = sum([d.amount for d in donations])
+
+	context = {
+		'collapse': collapse,
+		'contacts': contacts,
+		'scroll': scroll,
+		'tags': tags,
+		'donations': donations,
+		'donations_count': donations_count,
+		'total_donated': total_donated,
+		'donation_count_filter': donation_count_filter,
+		'total_donated_filter': total_donated_filter,
+	}
+	return render(request, 'donators.html', context)
+

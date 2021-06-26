@@ -98,6 +98,14 @@
 </div>
 <hr>
 <div class="card">
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a class="nav-link active" id="donations-tab" href="{% url 'dashboard' %}">Donations</a>
+    </li>
+    <li class="nav-item" role="presentation">
+      <a class="nav-link " id="donators-tab" href="{% url 'donators' %}">Donators</a>
+    </li>
+  </ul>
   <div class="row">
     <div class="col-3">
       <div class="container">
