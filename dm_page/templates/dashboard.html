@@ -115,6 +115,14 @@
         <div style="padding-left: 20px;">
           <button id="{{ form_values.type }}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add A Donation</button>
           {% include 'donation_form.html' %}
+          <div style="margin-top: 10px;">
+            <form action="" method="GET">
+              {% for donation in donations %}
+                <input type="hidden" name="{{donation.id}}" value="{{donation.id}}">
+              {% endfor %}
+              <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to Excel</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

@@ -79,7 +79,15 @@
     <div class="col-3">
       <div class="container">
         <div class="card-body" style="margin-top: 20px;">
-          <h2 class="card-title">Donation Log</h2>
+          <h2 class="card-title">Contact Log</h2>
+        </div>
+        <div style="padding-left: 20px;">
+          <form action="" method="GET">
+            {% for donation in donations %}
+              <input type="hidden" name="{{donation.id}}" value="{{donation.id}}">
+            {% endfor %}
+            <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to Excel</button>
+          </form>
         </div>
       </div>
     </div>

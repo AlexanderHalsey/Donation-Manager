@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from .models import *
 from .forms import DonationForm
-import smtplib
+import xlwt
+import datetime
+import re
+
+
 
 # Create your views here.
 def dashboard(request):
@@ -105,7 +110,6 @@ def dashboard(request):
 			return redirect("/")
 
 		else:
-			print(request.POST)
 			form_values["errors"] = True
 			for error in form.errors:
 				form_values["errorlist"][error] = "is-invalid"
@@ -170,8 +174,8 @@ def dashboard(request):
 			if collapse == "collapse_show":
 				collapse = "collapse show"
 
-		# filter requests
 		if request.GET.get("Submit") != None:
+			# filter requests
 			if request.GET["Submit"] == "filter":
 				for key, value in request.GET.items():
 					if key == "Submit":
@@ -206,7 +210,35 @@ def dashboard(request):
 							donations = donations.filter(donation_type__donation_type=value)
 						if key == "organisation":
 							donations = donations.filter(organisation__organisation=value)
+			# export_xls:
+			if request.GET.get("Submit") == "export_xls":
+				data = []
+				columns = ["ID", "Name", "Date Donated", "Amount", "Payment Mode", "Donation Type", "Organisation"]
+				for i in request.GET.values():
+					if i != "export_xls":
+						donation = donations.get(id=i)
+						data.append([donation.id, donation.contact.name, str(donation.date_donated), 
+							float(donation.amount), donation.payment_mode.payment_mode, 
+							donation.donation_type.donation_type, donation.organisation.organisation])
+				response = HttpResponse(content_type='application/ms-excel')
+				response['Content-Disposition'] = f'attachment; filename="Donations_{datetime.date.today()}.xls"'
+				wb = xlwt.Workbook(encoding='utf-8')
+				ws = wb.add_sheet('Donations')
+				row_num = 0
+				font_style = xlwt.XFStyle()
+				font_style.font.bold = True
 
+				for col_num in range(len(columns)):
+					ws.write(row_num, col_num, columns[col_num], font_style)
+				font_style.font.bold = False 
+				for row in data:
+					row_num += 1
+					for col_num in range(len(row)):
+						ws.write(row_num, col_num, row[col_num], font_style)
+				wb.save(response)
+				return response
+
+				
 	# context after filter 	
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
@@ -268,8 +300,8 @@ def donators(request):
 	scroll = 0 # to load with page scroll number so the page appears static on request
 	collapse = 'collapse show' # to register collapse status of filter collapse button
 
-	# filter requests
 	if request.GET.get("Submit") != None:
+		# filter requests
 		if request.GET["Submit"] == "filter":
 			for key, value in request.GET.items():
 				if key == "Submit":
@@ -293,6 +325,33 @@ def donators(request):
 						donations = donations.filter(amount__gte=float(value))
 					if key == "amount_lte":
 						donations = donations.filter(amount__lte=float(value))
+		# export_xls:
+		if request.GET.get("Submit") == "export_xls":
+			columns = ["Id", "Name", "Email Address", "Total_donated"]
+			data = []
+			response = HttpResponse(content_type='application/ms-excel')
+			response['Content-Disposition'] = f'attachment; filename="Contacts_{datetime.date.today()}.xls"'
+			for i in request.GET.values():
+				print(i)
+				if i != "export_xls":
+					contact = Contact.objects.get(id=i)
+					data.append([contact.id, contact.name, contact.email, 
+						sum([d.amount for d in Donation.objects.filter(contact=contact)])])
+			wb = xlwt.Workbook(encoding='utf-8')
+			ws = wb.add_sheet('Contacts')
+			row_num = 0
+			font_style = xlwt.XFStyle()
+			font_style.font.bold = True
+
+			for col_num in range(len(columns)):
+				ws.write(row_num, col_num, columns[col_num], font_style)
+			font_style.font.bold = False 
+			for row in data:
+				row_num += 1
+				for col_num in range(len(row)):
+					ws.write(row_num, col_num, row[col_num], font_style)
+			wb.save(response)
+			return response
 
 	# contacts
 	contacts = Contact.objects.all()
@@ -321,4 +380,3 @@ def donators(request):
 		'total_donated_filter': total_donated_filter,
 	}
 	return render(request, 'donators.html', context)
-
