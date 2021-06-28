@@ -1,12 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from .models import *
 from .utils import *
 from .forms import DonationForm
 import datetime
-import re
-import smtplib
-import os
+
 
 
 # Create your views here.
@@ -67,13 +64,14 @@ def dashboard(request):
 
 		if form.is_valid():
 			data = {
-				"Contact": form.cleaned_data["contact"], 
-				"Amount": str(int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])),
-				"Date donated": str(form.cleaned_data["date_donated"]),
-				"Payment Mode": form.cleaned_data["payment_mode"],
-				"Donation Type": form.cleaned_data["donation_type"],
-				"Organisation": form.cleaned_data["organisation"],
+				"id": str(len(donations)+1),
+				"contact": form.cleaned_data["contact"], 
+				"address": eval(Contact.objects.get(name=form.cleaned_data["contact"]).postal_address),
+				"date_donated": form.cleaned_data["date_donated"],
+				"amount": str(int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])),
+				"date_today": str(datetime.date.today()),
 			}
+			receipt(data)
 			# if certain conditions are met, an email confirmation is forwarded my way
 			if form.cleaned_data["donation_type"] == "DonationType2" and form.cleaned_data["organisation"] == "CBM":
 				send_email(data)
@@ -343,6 +341,3 @@ def donators(request):
 		'total_donated_filter': total_donated_filter,
 	}
 	return render(request, 'donators.html', context)
-
-def word_to_html(request):
-	return render(request, "receipt_template.html", {})
