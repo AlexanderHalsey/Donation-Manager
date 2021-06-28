@@ -70,7 +70,7 @@ def dashboard(request):
 				smtp_object = smtplib.SMTP('smtp.gmail.com',587)
 				smtp_object.ehlo()
 				smtp_object.starttls()
-				smtp_object.login('alex.halsey5@gmail.com','ovwiymnjotfiacvu')
+				smtp_object.login('email','password')
 				message = f'''
 				Contact: {form.cleaned_data["contact"]}\n
 				Date Donated: {form.cleaned_data["date_donated"]}\n
@@ -79,7 +79,7 @@ def dashboard(request):
 				Donation Type: {form.cleaned_data["donation_type"]}\n
 				Organisation: {form.cleaned_data["organisation"]}\n
 				'''
-				smtp_object.sendmail('alex.halsey5@gmail.com','alex.halsey@icloud.com',message)
+				smtp_object.sendmail('from','to',message)
 
 			donation = Donation(
 				contact = Contact.objects.get(
