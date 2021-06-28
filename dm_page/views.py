@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import *
+from .utils import *
 from .forms import DonationForm
-import xlwt
 import datetime
 import re
-
+import smtplib
+import os
 
 
 # Create your views here.
@@ -65,22 +66,17 @@ def dashboard(request):
 		form = DonationForm(request.POST)
 
 		if form.is_valid():
+			data = {
+				"Contact": form.cleaned_data["contact"], 
+				"Amount": str(int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])),
+				"Date donated": str(form.cleaned_data["date_donated"]),
+				"Payment Mode": form.cleaned_data["payment_mode"],
+				"Donation Type": form.cleaned_data["donation_type"],
+				"Organisation": form.cleaned_data["organisation"],
+			}
 			# if certain conditions are met, an email confirmation is forwarded my way
 			if form.cleaned_data["donation_type"] == "DonationType2" and form.cleaned_data["organisation"] == "CBM":
-				smtp_object = smtplib.SMTP('smtp.gmail.com',587)
-				smtp_object.ehlo()
-				smtp_object.starttls()
-				smtp_object.login('email','password')
-				message = f'''
-				Contact: {form.cleaned_data["contact"]}\n
-				Date Donated: {form.cleaned_data["date_donated"]}\n
-				Amount: {int(form.cleaned_data["amount_euros"])+float(form.cleaned_data["amount_cents"])}\n
-				Payment Mode: {form.cleaned_data["payment_mode"]}\n
-				Donation Type: {form.cleaned_data["donation_type"]}\n
-				Organisation: {form.cleaned_data["organisation"]}\n
-				'''
-				smtp_object.sendmail('from','to',message)
-
+				send_email(data)
 			donation = Donation(
 				contact = Contact.objects.get(
 					name = form.cleaned_data["contact"]
@@ -220,23 +216,7 @@ def dashboard(request):
 						data.append([donation.id, donation.contact.name, str(donation.date_donated), 
 							float(donation.amount), donation.payment_mode.payment_mode, 
 							donation.donation_type.donation_type, donation.organisation.organisation])
-				response = HttpResponse(content_type='application/ms-excel')
-				response['Content-Disposition'] = f'attachment; filename="Donations_{datetime.date.today()}.xls"'
-				wb = xlwt.Workbook(encoding='utf-8')
-				ws = wb.add_sheet('Donations')
-				row_num = 0
-				font_style = xlwt.XFStyle()
-				font_style.font.bold = True
-
-				for col_num in range(len(columns)):
-					ws.write(row_num, col_num, columns[col_num], font_style)
-				font_style.font.bold = False 
-				for row in data:
-					row_num += 1
-					for col_num in range(len(row)):
-						ws.write(row_num, col_num, row[col_num], font_style)
-				wb.save(response)
-				return response
+				export_xls("Donations", data, columns)
 
 				
 	# context after filter 	
@@ -329,29 +309,12 @@ def donators(request):
 		if request.GET.get("Submit") == "export_xls":
 			columns = ["Id", "Name", "Email Address", "Total_donated"]
 			data = []
-			response = HttpResponse(content_type='application/ms-excel')
-			response['Content-Disposition'] = f'attachment; filename="Contacts_{datetime.date.today()}.xls"'
 			for i in request.GET.values():
-				print(i)
 				if i != "export_xls":
 					contact = Contact.objects.get(id=i)
 					data.append([contact.id, contact.name, contact.email, 
 						sum([d.amount for d in Donation.objects.filter(contact=contact)])])
-			wb = xlwt.Workbook(encoding='utf-8')
-			ws = wb.add_sheet('Contacts')
-			row_num = 0
-			font_style = xlwt.XFStyle()
-			font_style.font.bold = True
-
-			for col_num in range(len(columns)):
-				ws.write(row_num, col_num, columns[col_num], font_style)
-			font_style.font.bold = False 
-			for row in data:
-				row_num += 1
-				for col_num in range(len(row)):
-					ws.write(row_num, col_num, row[col_num], font_style)
-			wb.save(response)
-			return response
+			export_xls("Contacts", data, columns)
 
 	# contacts
 	contacts = Contact.objects.all()
@@ -380,3 +343,6 @@ def donators(request):
 		'total_donated_filter': total_donated_filter,
 	}
 	return render(request, 'donators.html', context)
+
+def word_to_html(request):
+	return render(request, "receipt_template.html", {})
