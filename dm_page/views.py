@@ -64,7 +64,7 @@ def dashboard(request):
 
 		if form.is_valid():
 			data = {
-				"id": str(len(donations)+1),
+				"id": str(len(Donation.objects.all())+1),
 				"contact": form.cleaned_data["contact"], 
 				"address": eval(Contact.objects.get(name=form.cleaned_data["contact"]).postal_address),
 				"date_donated": form.cleaned_data["date_donated"],

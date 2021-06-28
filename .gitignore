@@ -3,4 +3,5 @@ __pycache__
 db.sqlite3
 /venv/
 .DS_Store
-/dm_page/templates/receipt_word.docx
+/dm_page/static/word/
+/dm_page/static/pdf/
