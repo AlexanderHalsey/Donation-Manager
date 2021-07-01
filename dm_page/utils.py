@@ -1,15 +1,19 @@
 from django.http import HttpResponse
 import datetime
 
+# pdf receipt
+from donations.settings import BASE_DIR
+from PyPDF2 import PdfFileWriter, PdfFileReader
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.lib.utils import simpleSplit, ImageReader
+from reportlab.pdfbase.ttfonts import TTFont
+from textwrap import wrap
+
 # export to excel
 import xlwt
-
-# html to pdf
-from django.template.loader import get_template
-from xhtml2pdf import pisa
-
-# word to html
-import mammoth
 
 # emails
 from donations.settings import EMAIL_ADDRESS, PASSWORD, SEND_TO
@@ -39,15 +43,71 @@ def export_xls(view, data, columns):
 	wb.save(response)
 	return response
 
-def receipt(context):
-	result_file = open(f"dm_page/static/pdf/PDF_Receipt_{datetime.date.today()}_{context['id']}.pdf", "w+b")
-	template = get_template("receipt.html")
-	html = template.render(context)
-	pisa_status = pisa.CreatePDF(html, dest=result_file)
-	result_file.close()           
-	return  pisa_status.err, f"dm_page/static/pdf/PDF_Receipt_{datetime.date.today()}_{context['id']}.pdf"
 
-def send_email(data):
+def pdf_receipt(text, images):
+
+	packet = io.BytesIO()
+	can = canvas.Canvas(packet, pagesize=A4)
+
+	pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
+	pdfmetrics.registerFont(TTFont('Arial Bold', 'Arial Bold.ttf'))
+	pdfmetrics.registerFont(TTFont('Arial Italic', 'Arial Italic.ttf'))
+	fonts = ["Arial Bold", "Arial", "Arial Italic"]
+	sizes = [12, 16, 18]
+
+	text_matrix = {
+		"institut_address": [(0, 0, 143, 700), (1, 0, 143, 680), (1, 0, 143, 665)], 
+		"donation_id": [(0, 2, 470, 782)], 
+		"organisation_object": [(0, 0, 38, 615), (1, 0, 88, 615), (1, 0, 32, 590)], 
+		"contact": [(0, 0, 200, 500)], 
+		"contact_address": [(1, 0, 200, 480), (1, 0, 200, 465), (1, 0, 200, 450), (1, 0, 200, 435)], 
+		"date_donated": [(1, 0, 363, 400)], 
+		"amount": [(0, 1, 252, 370)], 
+		"other_donation_variables": [(2, 0, 206, 337), (2, 0, 182, 322), (2, 0, 151, 307), (2, 0, 152, 293)], 
+		"institut_village": [(1, 0, 43, 193)], 
+		"date_today": [(1, 0, 124, 193)], 
+		"president": [(0, 0, 302, 158)],
+	}
+
+	image_matrix = {
+		"institution": (45, 565, 80),
+		"signature": (310, -55, 100),
+	}
+
+	for key,value in text.items():
+		for index in range(len(value)):
+			t = text_matrix[key][index]
+			print(t)
+			can.setFont(fonts[t[0]], sizes[t[1]])
+			if key=="organisation_object" and index==2:
+				textobject = can.beginText(t[2], t[3])
+				wrapped_text = "\n".join(wrap(value[index], 100))
+				textobject.textLines(wrapped_text)
+				can.drawText(textobject)
+				continue
+			can.drawString(t[2],t[3], value[index])
+
+	for key,value in images.items():
+		img = ImageReader(str(BASE_DIR)+value)
+		can.drawImage(img, image_matrix[key][0], image_matrix[key][1], width=image_matrix[key][2], preserveAspectRatio=True)
+
+	can.showPage()
+	can.save()
+	packet.seek(0)
+	new_pdf = PdfFileReader(packet)
+	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/dm_page/static/pdf/receipt.pdf", "rb"))
+	output = PdfFileWriter()
+	page = existing_pdf.getPage(0)
+	page.mergePage(new_pdf.getPage(0))
+	output.addPage(page)
+	pdf_path = f"{BASE_DIR}/dm_page/static/pdf/receipts/PDF_Receipt_{datetime.date.today()}_{text['donation_id'][0]}.pdf"
+	outputStream = open(pdf_path, "wb")
+	output.write(outputStream)
+	outputStream.close()
+	return pdf_path
+
+
+def send_email(pdf_path, donation_id):
 	smtp_object = smtplib.SMTP('smtp.gmail.com',587)
 	smtp_object.ehlo()
 	smtp_object.starttls()
@@ -57,29 +117,18 @@ def send_email(data):
 	message["From"] = EMAIL_ADDRESS
 	message["To"] = SEND_TO
 	message["Subject"] = "Receipt"
-	body = ""
-	for key,value in data.items():
-		body += f"{key}: {value}"+"\n"
+	body = f"Dear Sir Madam,\n\nThis is an email confirmation of your donation with order n° {donation_id}.\n\nPlease find attached your receipt.\n\n\n\nKind Regards,\n\nInstitut Vajra Yogini\n\n\n"
 	message.attach(MIMEText(body, "plain"))
-	filename = receipt(data)[1]
-	with open(filename, "rb") as attachment:
+	with open(pdf_path, "rb") as attachment:
 		part = MIMEBase("application", "octet-stream")
 		part.set_payload(attachment.read())
 		encoders.encode_base64(part)
 		part.add_header(
 			"Content-Disposition",
-			f"attachment; filename= {filename.split('/pdf/')[1]}",
+			f"attachment; filename={pdf_path.split('/receipts/')[1]}",
 		)
 		message.attach(part)
 	text = message.as_string()
 	smtp_object.sendmail(EMAIL_ADDRESS, SEND_TO, text)
 	smtp_object.quit()
 
-def word_to_html(path_to_word_file, path_to_html_file):
-	with open(path_to_word_file, "rb") as docx_file:
-		result = mammoth.convert_to_html(docx_file)
-	with open(path_to_html_file, "w") as html_file:
-		html_file.write(result.value)
-	docx_file.closed
-	html_file.closed
-	return

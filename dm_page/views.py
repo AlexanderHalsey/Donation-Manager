@@ -3,12 +3,12 @@ from .models import *
 from .utils import *
 from .forms import DonationForm
 import datetime
+import num2words
 
 
 
 # Create your views here.
 def dashboard(request):
-
 	# intial form_values
 	form_values = {
 		"title": "New", 
@@ -63,18 +63,31 @@ def dashboard(request):
 		form = DonationForm(request.POST)
 
 		if form.is_valid():
-			data = {
-				"id": str(len(Donation.objects.all())+1),
-				"contact": form.cleaned_data["contact"], 
-				"address": eval(Contact.objects.get(name=form.cleaned_data["contact"]).postal_address),
-				"date_donated": form.cleaned_data["date_donated"],
-				"amount": str(int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])),
-				"date_today": str(datetime.date.today()),
-			}
-			receipt(data)
 			# if certain conditions are met, an email confirmation is forwarded my way
 			if form.cleaned_data["donation_type"] == "DonationType2" and form.cleaned_data["organisation"] == "CBM":
-				send_email(data)
+				address = eval(Contact.objects.get(name=form.cleaned_data["contact"]).postal_address)
+				if len(address) == 5:
+					address = address[:2]+[address[2]+", "+address[3]]+[address[4]]
+				amount = ",".join(("%.2f" % (int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"]))).split("."))
+				text_variables = {
+					"institut_address": ["Institut Vajra Yogini pour l'Epanouissement de la Sagesse", "LIEU DIT CLAUZADE", "81500 MARZENS"],
+					"donation_id": [str(len(Donation.objects.all())+1)],
+					"organisation_object": ["Object:", "Exercise du culte bouddhiste", "Association Culturelle régie par la loi du 9 décembre 1905 du 16 mars 1906. Ce reçu donne droit à une déduction fiscale conformément à l'arrête préfectoral du Tarn du 30 décemebre 2003."],
+					"contact": [form.cleaned_data["contact"]], 
+					"contact_address": address,
+					"date_donated": ["/".join(str(form.cleaned_data["date_donated"]).split("-")[::-1])],
+					"amount": ["€ "+amount],
+					"other_donation_variables": [num2words.num2words(int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"]), lang="fr").capitalize() + " euros", "Espèces", "Déclaration de don manuel", "Numéraire"], 
+					"institut_village": ["MARZENS"],
+					"date_today": ["/".join(str(datetime.date.today()).split("-")[::-1])],
+					"president": ["Charles Trébaol"],
+				}
+				images = {
+					"institution": "/dm_page/static/png/IVY_Logo_carré.png",
+					"signature": "/dm_page/static/png/signature_Charles_Trebaol.png",
+				}
+				pdf_path = pdf_receipt(text_variables, images)
+				send_email(pdf_path, text_variables["donation_id"][0])
 			donation = Donation(
 				contact = Contact.objects.get(
 					name = form.cleaned_data["contact"]
@@ -341,3 +354,14 @@ def donators(request):
 		'total_donated_filter': total_donated_filter,
 	}
 	return render(request, 'donators.html', context)
+
+def receipt(request):
+	context = {
+		"id": "37465",
+		"contact": "Bob Halsey", 
+		"address": ["123 street", "Random Square", "Random City, 1180", "United States"],
+		"date_donated": "2021-06-26",
+		"amount": "45.0",
+		"date_today": "2021-06-30",
+	}
+	return render(request, 'receipt.html', context)
