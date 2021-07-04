@@ -25,9 +25,10 @@ from email.mime.text import MIMEText
 
 
 
-def export_xls(view, data, columns):
-	response = HttpResponse(content_type='application/ms-excel')
-	response['Content-Disposition'] = f'attachment; filename="{view}_{datetime.date.today()}.xls"'
+def export_xls(view, data, columns, file_name_extension):
+	response = HttpResponse()
+	response['Content-Type'] = 'application/ms-excel'
+	response['Content-Disposition'] = f'attachment; filename="{view}_{datetime.date.today()}{file_name_extension}.xls"'
 	wb = xlwt.Workbook(encoding='utf-8')
 	ws = wb.add_sheet(view)
 	row_num = 0
@@ -41,6 +42,7 @@ def export_xls(view, data, columns):
 		for col_num in range(len(row)):
 			ws.write(row_num, col_num, row[col_num], font_style)
 	wb.save(response)
+	print(response)
 	return response
 
 

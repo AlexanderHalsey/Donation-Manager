@@ -107,29 +107,33 @@
     </li>
   </ul>
   <div class="row">
-    <div class="col-3">
+    <div class="col-3" style="margin-top: 20px;">
       <div class="container">
-        <div class="card-body" style="margin-top: 20px;">
-          <h2 class="card-title">Donation Log</h2>
-        </div>
-        <div style="padding-left: 20px;">
-          <button id="{{ form_values.type }}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add A Donation</button>
-          {% include 'donation_form.html' %}
-          <div style="margin-top: 10px;">
-            <form action="" method="GET">
-              {% for donation in donations %}
-                <input type="hidden" name="{{donation.id}}" value="{{donation.id}}">
-              {% endfor %}
-              <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to Excel</button>
-            </form>
+        <div class="row p-1">
+          <div class="col">
+            <button id="{{ form_values.type }}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add A Donation</button>
+            {% include 'donation_form.html' %}
           </div>
         </div>
+        <form method="GET" action="">
+          {% for name,value in initial_filter_values.items %}
+            <input type="hidden" name="{{name}}" value="{{value}}">
+          {% endfor %}
+          <div class="row p-1">
+            <div class="col">
+              <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to .xls</button>
+            </div>
+          </div>
+          <div class="row p-1">
+            <div class="col">
+              <button class="btn btn-info" type="submit" name="Submit" value="export_csv">Export to .csv</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
     <div class="col-9 p-3">
-      <div class="card p-2" style="background-color: WhiteSmoke;">
-        {% include 'filter_form.html' %}
-      </div>
+      {% include 'filter_form.html' %}
     </div>
   </div>
   <div class="card-body">

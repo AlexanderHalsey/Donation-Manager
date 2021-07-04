@@ -77,23 +77,27 @@
   </ul>
   <div class="row">
     <div class="col-3">
-      <div class="container">
-        <div class="card-body" style="margin-top: 20px;">
-          <h2 class="card-title">Contact Log</h2>
-        </div>
-        <div style="padding-left: 20px;">
-          <form action="" method="GET">
-            {% for donation in donations %}
-              <input type="hidden" name="{{donation.id}}" value="{{donation.id}}">
-            {% endfor %}
-            <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to Excel</button>
-          </form>
-        </div>
+      <div class="container" style="margin: 20px;">
+        <form method="GET" action="">
+          {% for name,value in initial_filter_values.items %}
+            <input type="hidden" name="{{name}}" value="{{value}}">
+          {% endfor %}
+          <div class="row p-1">
+            <div class="col">
+              <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to .xls</button>
+            </div>
+          </div>
+          <div class="row p-1">
+            <div class="col">
+              <button class="btn btn-info" type="submit" name="Submit" value="export_csv">Export to .csv</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
     <div class="col-9 p-3">
-      <div class="card p-2" style="background-color: WhiteSmoke;">
-        <form method="GET" autocomplete="off">
+      <form method="GET" autocomplete="off">
+        <div class="card p-2" style="background-color: WhiteSmoke;">
           <div class="row justify-content-between">
             <div class="col-2">
               <h3 class="card-title">Filter</h3>
@@ -144,10 +148,10 @@
               <button name="Submit" class="btn btn-primary ms-5" type="submit" value="filter">Search</button>
             </div>
           </div>
-          <input type="hidden" name="scroll" value="">
-          <input type="hidden" name="collapse" value="collapse">
-        </form>
-      </div>
+        </div>
+        <input type="hidden" name="scroll" value="">
+        <input type="hidden" name="collapse" value="collapse">
+      </form>
     </div>
   </div>
   <div class="card-body">

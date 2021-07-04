@@ -182,52 +182,49 @@ def dashboard(request):
 				collapse = "collapse show"
 
 		if request.GET.get("Submit") != None:
+			file_name_extension = ""
 			# filter requests
-			if request.GET["Submit"] == "filter":
-				for key, value in request.GET.items():
-					if key == "Submit":
-						continue
-					if key == "scroll":
-						scroll = int(value or 0)
-						continue
-					if key == "collapse":
-						collapse = value
-						if collapse == "collapse_show":
-							collapse = "collapse show" 
-						continue
-					if key == "disabled":
-						continue
-					if value not in ("", None, initial_filter_values[key]):
-						initial_filter_values[key] = value
-						if key == "contact":
-							donations = donations.filter(contact__name=value)
-						if key == "date_donated_gte":
-							date__gte = "-".join(value.split("/")[::-1])
-							donations = donations.filter(date_donated__gte=date__gte)
-						if key == "date_donated_lte":
-							date__lte = "-".join(value.split("/")[::-1])
-							donations = donations.filter(date_donated__lte=date__lte)
-						if key == "amount_gte":
-							donations = donations.filter(amount__gte=float(value))
-						if key == "amount_lte":
-							donations = donations.filter(amount__lte=float(value))
-						if key == "payment_mode":
-							donations = donations.filter(payment_mode__payment_mode=value)
-						if key == "donation_type":
-							donations = donations.filter(donation_type__donation_type=value)
-						if key == "organisation":
-							donations = donations.filter(organisation__organisation=value)
+			for key, value in request.GET.items():
+				if key == "Submit":
+					continue
+				if key == "scroll":
+					scroll = int(value or 0)
+					continue
+				if key == "collapse":
+					collapse = value
+					if collapse == "collapse_show":
+						collapse = "collapse show" 
+					continue
+				if key == "disabled":
+					continue
+				if value not in ("", None, initial_filter_values[key]):
+					initial_filter_values[key] = value
+					file_name_extension += f"_{value}"
+					if key == "contact":
+						donations = donations.filter(contact__name=value)
+					if key == "date_donated_gte":
+						date__gte = "-".join(value.split("/")[::-1])
+						donations = donations.filter(date_donated__gte=date__gte)
+					if key == "date_donated_lte":
+						date__lte = "-".join(value.split("/")[::-1])
+						donations = donations.filter(date_donated__lte=date__lte)
+					if key == "amount_gte":
+						donations = donations.filter(amount__gte=float(value))
+					if key == "amount_lte":
+						donations = donations.filter(amount__lte=float(value))
+					if key == "payment_mode":
+						donations = donations.filter(payment_mode__payment_mode=value)
+					if key == "donation_type":
+						donations = donations.filter(donation_type__donation_type=value)
+					if key == "organisation":
+						donations = donations.filter(organisation__organisation=value)
 			# export_xls:
 			if request.GET.get("Submit") == "export_xls":
-				data = []
 				columns = ["ID", "Name", "Date Donated", "Amount", "Payment Mode", "Donation Type", "Organisation"]
-				for i in request.GET.values():
-					if i != "export_xls":
-						donation = donations.get(id=i)
-						data.append([donation.id, donation.contact.name, str(donation.date_donated), 
+				data = [[donation.id, donation.contact.name, str(donation.date_donated), 
 							float(donation.amount), donation.payment_mode.payment_mode, 
-							donation.donation_type.donation_type, donation.organisation.organisation])
-				export_xls("Donations", data, columns)
+							donation.donation_type.donation_type, donation.organisation.organisation] for donation in donations]
+				return export_xls("Donations", data, columns, file_name_extension)
 
 				
 	# context after filter 	
@@ -291,41 +288,40 @@ def donators(request):
 	scroll = 0 # to load with page scroll number so the page appears static on request
 	collapse = 'collapse show' # to register collapse status of filter collapse button
 
+	# filter requests
 	if request.GET.get("Submit") != None:
-		# filter requests
-		if request.GET["Submit"] == "filter":
-			for key, value in request.GET.items():
-				if key == "Submit":
-					continue
-				if key == "scroll":
-					scroll = int(value or 0)
-					continue
-				if key == "collapse":
-					collapse = value
-					if collapse == "collapse_show":
-						collapse = "collapse show" 
-					continue
-				if value not in ("", None, initial_filter_values[key]):
-					if key == "date_donated_gte":
-						date__gte = "-".join(value.split("/")[::-1])
-						donations = donations.filter(date_donated__gte=date__gte)
-					if key == "date_donated_lte":
-						date__lte = "-".join(value.split("/")[::-1])
-						donations = donations.filter(date_donated__lte=date__lte)
-					if key == "amount_gte":
-						donations = donations.filter(amount__gte=float(value))
-					if key == "amount_lte":
-						donations = donations.filter(amount__lte=float(value))
+		file_name_extension = ""
+		for key, value in request.GET.items():
+			if key == "Submit":
+				continue
+			if key == "scroll":
+				scroll = int(value or 0)
+				continue
+			if key == "collapse":
+				collapse = value
+				if collapse == "collapse_show":
+					collapse = "collapse show" 
+				continue
+			if value not in ("", None, initial_filter_values[key]):
+				initial_filter_values[key] = value
+				file_name_extension += f"_{value}"
+				if key == "date_donated_gte":
+					date__gte = "-".join(value.split("/")[::-1])
+					donations = donations.filter(date_donated__gte=date__gte)
+				if key == "date_donated_lte":
+					date__lte = "-".join(value.split("/")[::-1])
+					donations = donations.filter(date_donated__lte=date__lte)
+				if key == "amount_gte":
+					donations = donations.filter(amount__gte=float(value))
+				if key == "amount_lte":
+					donations = donations.filter(amount__lte=float(value))
 		# export_xls:
 		if request.GET.get("Submit") == "export_xls":
 			columns = ["Id", "Name", "Email Address", "Total_donated"]
-			data = []
-			for i in request.GET.values():
-				if i != "export_xls":
-					contact = Contact.objects.get(id=i)
-					data.append([contact.id, contact.name, contact.email, 
-						sum([d.amount for d in Donation.objects.filter(contact=contact)])])
-			export_xls("Contacts", data, columns)
+			contacts = set([donation.contact for donation in donations])
+			data = [[contact.id, contact.name, contact.email, 
+				sum([d.amount for d in donations.filter(contact=contact)])] for contact in contacts]
+			return export_xls("Contacts", data, columns, file_name_extension)
 
 	# contacts
 	contacts = Contact.objects.all()
@@ -343,6 +339,7 @@ def donators(request):
 	total_donated_filter = sum([d.amount for d in donations])
 
 	context = {
+		'initial_filter_values': initial_filter_values,
 		'collapse': collapse,
 		'contacts': contacts,
 		'scroll': scroll,
@@ -355,13 +352,3 @@ def donators(request):
 	}
 	return render(request, 'donators.html', context)
 
-def receipt(request):
-	context = {
-		"id": "37465",
-		"contact": "Bob Halsey", 
-		"address": ["123 street", "Random Square", "Random City, 1180", "United States"],
-		"date_donated": "2021-06-26",
-		"amount": "45.0",
-		"date_today": "2021-06-30",
-	}
-	return render(request, 'receipt.html', context)
