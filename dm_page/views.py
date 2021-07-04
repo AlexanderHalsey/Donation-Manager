@@ -368,7 +368,7 @@ def donators(request):
 			return export_xls("Contacts", data, columns, file_name_extension)
 		# export_csv
 		if request.GET.get("Submit") == "export_csv":
-			return export_csv("Donations", data, file_name_extension)
+			return export_csv("Contacts", data, file_name_extension)
 
 	# contacts
 	contacts = Contact.objects.all()
@@ -429,6 +429,3 @@ def pdf(request):
 				donation.pdf_path = pdf_receipt(text_variables, images).split("/receipts/")[1]
 				donation.save()
 	return dashboard(request)
-
-def pdf_test(request):
-	return render(request, 'pdf_test.html',{})
