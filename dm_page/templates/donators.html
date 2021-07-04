@@ -67,118 +67,122 @@
 </div>
 <hr>
 <div class="card">
-  <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <a class="nav-link" id="donations-tab"  href="{% url 'dashboard' %}">Donations</a>
-    </li>
-    <li class="nav-item" role="presentation">
-      <a class="nav-link active" href="{% url 'donators' %}">Donators</a>
-    </li>
-  </ul>
-  <div class="row">
-    <div class="col-3">
-      <div class="container" style="margin: 20px;">
-        <form method="GET" action="">
-          {% for name,value in initial_filter_values.items %}
-            <input type="hidden" name="{{name}}" value="{{value}}">
-          {% endfor %}
-          <div class="row p-1">
-            <div class="col">
-              <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to .xls</button>
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist" style="font-size: 24px;">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="donations-tab"  href="{% url 'dashboard' %}">Donations</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" href="{% url 'donators' %}">Donators</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-3">
+        <div class="container" style="margin: 20px;">
+          <form method="GET" action="">
+            {% for name,value in initial_filter_values.items %}
+              <input type="hidden" name="{{name}}" value="{{value}}">
+            {% endfor %}
+            <div class="row p-1">
+              <div class="col">
+                <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to .xls</button>
+              </div>
+            </div>
+            <div class="row p-1">
+              <div class="col">
+                <button class="btn btn-info" type="submit" name="Submit" value="export_csv">Export to .csv</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-9 p-3">
+        <form method="GET" autocomplete="off">
+          <div class="card p-2" style="background-color: WhiteSmoke;">
+            <div class="row justify-content-between">
+              <div class="col-2">
+                <h3 class="card-title">Filter</h3>
+              </div>
+              <div class="col-1">
+                <a id="c" for="collapse_id" class="btn btn-secondary" data-bs-toggle="collapse" href="#collapse_id" role="button" aria-expanded="false" aria-controls="collapse_id">&#9660;</a>
+              </div>
+            </div>
+            <div class="{{ collapse }}" id="collapse_id">
+              <div class="card p-1">
+                <div class="row" style="margin-top: 15px">
+                  <div class="col-7">
+                    <div class="input-daterange input-group mb-3" id="datepicker">
+                      <span class="p-2"><strong>Date Donated:</strong></span>
+                      <span class="input-group-text">from</span>
+                      <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+                      <span class="input-group-text">to</span>
+                      <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+                      <script>
+                        $('#date_gte').datepicker({
+                        language: "fr",
+                        format: "dd/mm/yyyy",
+                        todayHighlight: true,
+                        autoclose: true,
+                        });
+                        $('#date_lte').datepicker({
+                        language: "fr",
+                        format: "dd/mm/yyyy",
+                        todayHighlight: true,
+                        autoclose: true,
+                        });
+                      </script>
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-evenly">
+                  <div class="col-7">
+                    <div class="input-group mb-3">
+                      <span class="p-2"><strong>Amount:</strong></span>
+                      <span class="input-group-text">€</span>
+                      <input name="amount_gte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
+                      <span class="input-group-text"><=</span>
+                      <span class="input-group-text">€</span>
+                      <input name="amount_lte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
+                    </div>
+                  </div>
+                </div>
+                <button name="Submit" class="btn btn-primary ms-5" type="submit" value="filter">Search</button>
+              </div>
             </div>
           </div>
-          <div class="row p-1">
-            <div class="col">
-              <button class="btn btn-info" type="submit" name="Submit" value="export_csv">Export to .csv</button>
-            </div>
-          </div>
+          <input type="hidden" name="scroll" value="">
+          <input type="hidden" name="collapse" value="collapse">
         </form>
       </div>
     </div>
-    <div class="col-9 p-3">
-      <form method="GET" autocomplete="off">
-        <div class="card p-2" style="background-color: WhiteSmoke;">
-          <div class="row justify-content-between">
-            <div class="col-2">
-              <h3 class="card-title">Filter</h3>
-            </div>
-            <div class="col-1">
-              <a id="c" for="collapse_id" class="btn btn-secondary" data-bs-toggle="collapse" href="#collapse_id" role="button" aria-expanded="false" aria-controls="collapse_id">&#9660;</a>
-            </div>
-          </div>
-          <div class="{{ collapse }}" id="collapse_id">
-            <div class="card p-1">
-              <div class="row" style="margin-top: 15px">
-                <div class="col-7">
-                  <div class="input-daterange input-group mb-3" id="datepicker">
-                    <span class="p-2"><strong>Date Donated:</strong></span>
-                    <span class="input-group-text">from</span>
-                    <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
-                    <span class="input-group-text">to</span>
-                    <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
-                    <script>
-                      $('#date_gte').datepicker({
-                      language: "fr",
-                      format: "dd/mm/yyyy",
-                      todayHighlight: true,
-                      autoclose: true,
-                      });
-                      $('#date_lte').datepicker({
-                      language: "fr",
-                      format: "dd/mm/yyyy",
-                      todayHighlight: true,
-                      autoclose: true,
-                      });
-                    </script>
-                  </div>
-                </div>
-              </div>
-              <div class="row justify-content-evenly">
-                <div class="col-7">
-                  <div class="input-group mb-3">
-                    <span class="p-2"><strong>Amount:</strong></span>
-                    <span class="input-group-text">€</span>
-                    <input name="amount_gte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
-                    <span class="input-group-text"><=</span>
-                    <span class="input-group-text">€</span>
-                    <input name="amount_lte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
-                  </div>
-                </div>
-              </div>
-              <button name="Submit" class="btn btn-primary ms-5" type="submit" value="filter">Search</button>
-            </div>
-          </div>
-        </div>
-        <input type="hidden" name="scroll" value="">
-        <input type="hidden" name="collapse" value="collapse">
-      </form>
+    <div class="row p-3">
+      <table class="table table-sm table-striped table-bordered">
+        <thead>
+          <tr class="table-primary">
+            <th style="width: 13%;">Id</th>
+            <th style="width: 13%;">Contact</th>
+            <th style="width: 14%;">Tags</th>
+            <th style="width: 13%;">Total Donated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contact in contacts %}
+          <tr>
+            <td style="width: 80px;">{{ contact.id }}</td>
+            <td style="width: 223px;"><a href="{% url 'contact' contact.id %}" >{{ contact.name }}</a></td>
+            <td style="width: 300px;">
+              {% for tag in donation.contact.tags.all %}
+              <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
+              {% endfor %}
+            </td>
+            <td style="width: 123px;">{{ contact.total_donated }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-  </div>
-  <div class="card-body">
-    <table class="table table-sm table-striped table-bordered">
-      <thead>
-        <tr class="table-primary">
-          <th style="width: 13%;">Id</th>
-          <th style="width: 13%;">Contact</th>
-          <th style="width: 14%;">Tags</th>
-          <th style="width: 13%;">Total Donated</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for contact in contacts %}
-        <tr>
-          <td style="width: 80px;">{{ contact.id }}</td>
-          <td style="width: 223px;"><a href="{% url 'contact' contact.id %}" >{{ contact.name }}</a></td>
-          <td style="width: 300px;">
-            {% for tag in donation.contact.tags.all %}
-            <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
-            {% endfor %}
-          </td>
-          <td style="width: 123px;">{{ contact.total_donated }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
 </div>
 {% endblock %}

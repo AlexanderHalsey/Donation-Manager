@@ -1,0 +1,18 @@
+{% load static %}
+<div class="modal fade" id="view_pdf" tabindex="-1" aria-labelledby="disable_donation" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title">View Pdf</h5>
+		  <a href="{% url 'dashboard' %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
+		</div>
+	  	<div class="modal-body" id="view_pdf_body" style="height: 500px;"></div>
+	  </div>
+	</div>
+</div>
+<script>
+  var pdf_path = "{{pdf_path}}";
+  var static = "static/pdf/receipts/" + pdf_path;
+  console.log(static)
+  PDFObject.embed(static, "#view_pdf_body");
+</script>

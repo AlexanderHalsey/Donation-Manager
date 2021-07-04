@@ -47,3 +47,5 @@ class Donation(models.Model):
 	donation_type = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True)
 	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
+	pdf = models.BooleanField(default=False)
+	pdf_path = models.CharField(max_length=200, default="")

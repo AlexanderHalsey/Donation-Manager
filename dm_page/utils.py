@@ -15,6 +15,9 @@ from textwrap import wrap
 # export to excel
 import xlwt
 
+# export to csv
+import csv
+
 # emails
 from donations.settings import EMAIL_ADDRESS, PASSWORD, SEND_TO
 import smtplib
@@ -43,6 +46,15 @@ def export_xls(view, data, columns, file_name_extension):
 			ws.write(row_num, col_num, row[col_num], font_style)
 	wb.save(response)
 	print(response)
+	return response
+
+def export_csv(view, data, file_name_extension):
+	response = HttpResponse()
+	response['Content-Type'] = 'text/csv'
+	response['Content-Disposition'] = f'attachment; filename="{view}_{datetime.date.today()}{file_name_extension}.csv"'
+	writer = csv.writer(response)
+	for row in data:
+		writer.writerow(row)
 	return response
 
 
