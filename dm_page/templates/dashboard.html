@@ -3,6 +3,7 @@
 {% load static %}
 
 <script type="text/javascript">
+  console.log(document.getElementById('disabled'))
   var scroll = "{{ scroll }}";
   window.addEventListener('load', 
     function(){
@@ -39,9 +40,6 @@
       document.getElementById("pdf_view").click();
     }
   );
-  console.log(pdf_path)
-  {% else %}
-  console.log(pdf_path)
   {% endif %}
 
   window.addEventListener('submit',
@@ -80,9 +78,10 @@
         <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
         {% endfor %}
         <hr>
-        <a href="#" class="btn btn-primary">Add Tag</a>
-        <a href="#" class="btn btn-success">Update Tags</a>
-        <a href="#" class="btn btn-danger">Delete Tags</a>
+        <button id="create" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">Create Tag</button>
+        <button id="update" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">Update Tag</button>
+        <button id="delete" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">Delete Tag</button>
+        {% include 'tag_form.html' %}
 	    </div>
     </div>
   </div>
@@ -215,6 +214,5 @@
     <button hidden="hidden" id="delete" data-bs-toggle="modal" data-bs-target="#disable_donation"></button>
     {% include 'disable_donation.html' %}
   </div>
-  <embed src="/{{pdf_path}}" frameborder="0" width="100%" height="100%">
 </div>
 {% endblock %}

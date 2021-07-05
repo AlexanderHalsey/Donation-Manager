@@ -249,8 +249,9 @@ def dashboard(request):
 						donations = donations.filter(organisation__organisation=value)
 			columns = ["ID", "Name", "Date Donated", "Amount", "Payment Mode", "Donation Type", "Organisation"]
 			data = [[donation.id, donation.contact.name, str(donation.date_donated), 
-				float(donation.amount), donation.payment_mode.payment_mode, 
-				donation.donation_type.donation_type, donation.organisation.organisation] for donation in donations]
+				float(donation.amount), (None if donation.payment_mode == None else donation.payment_mode.payment_mode), 
+				(None if donation.donation_type == None else donation.donation_type.donation_type), (None if donation.organisation == None else donation.organisation.organisation)] 
+				for donation in donations]
 			# export_xls:
 			if request.GET.get("Submit") == "export_xls":
 				return export_xls("Donations", data, columns, file_name_extension)
@@ -292,6 +293,7 @@ def contact(request, pk):
 
 	# context
 	contact = Contact.objects.get(id=pk)
+	address = eval(contact.postal_address)
 	tags = contact.tags.all()
 	donations = Donation.objects.filter(contact__name=contact.name)
 	donations_count = donations.count()
@@ -299,6 +301,7 @@ def contact(request, pk):
 
 	context = {
 		'tags': tags,
+		'address': address,
 		'contact': contact,
 		'donations': donations,
 		'donations_count': donations_count,

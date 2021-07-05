@@ -20,7 +20,19 @@
         <br>
         <h6 class="card-text"><strong>Phone Number: </strong>{{ contact.phone }}</h6>
         <br>
-        <h6 class="card-text"><strong>Postal Adress: </strong>{{ contact.postal_address }}</h6>
+        <div class="row">
+          <div class="col-4">
+            <h6 class="card-text"><strong>Postal Adress: </strong></h6>
+          </div>
+          <div class="col-8">
+            <h6>
+              {% for line in address %}
+              {{ line }}
+              <br>
+              {% endfor %}
+            </h6>
+          </div>
+        </div>
         <br>
         <h6 class="card-text"><strong>Additional information: </strong>{{ contact.details }}</h6>
       </div>
