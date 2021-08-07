@@ -432,3 +432,4 @@ def pdf(request):
 				donation.pdf_path = pdf_receipt(text_variables, images).split("/receipts/")[1]
 				donation.save()
 	return dashboard(request)
+

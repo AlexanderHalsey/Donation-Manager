@@ -1,95 +1,116 @@
 <form action="" method="POST" autocomplete="off">
   {% csrf_token %}
   <div class="modal fade" data-bs-backdrop="static" id="tag_form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">{{ form_values.title }} Donation</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Create Tag (title to be dynamic!)</h5>
           <a href="{% url 'dashboard' %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
         </div>
         <div class="modal-body">
-          <div class="row mb-3">
-            <label for="validationCustom1" class="col-md-4 col-form-label text-end"><strong>Contact:</strong></label>
-            <div class="col-md-7">
-              <input id="validationCustom1" name="contact" class="form-control {{form_values.errorlist.contact}}" list="datalistOptions" placeholder="Type to search..." value="{{ form.fields.contact.initial }}" autocomplete="off" required>
-              <datalist id="datalistOptions">
-                {% for id, contact in form.fields.contact.choices %}
-                <option value="{{ contact }}">
-                {% endfor %}
-              </datalist>
-              <div class="invalid-feedback">Select a valid contact.</div>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="col-md-4 col-form-label text-end"><strong>Date Donated:</strong></label>
-            <div class="col-md-7">
-              <div id="dtpkr">
-                <input type="text" class="form-control {{form_values.errorlist.date_donated}}" name="date_donated" value="{{ form.fields.date_donated.initial }}" required>
-              <div class="invalid-feedback">Select a valid date.</div>
-              </div>
-              <script>
-                $('#dtpkr input').datepicker({
-                language: "fr",
-                format: "dd/mm/yyyy",
-                todayHighlight: true,
-                autoclose: true,
-                });
-              </script>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label for="id_amount" class="col-md-4 col-form-label text-end"><strong>Amount:</strong></label>
-            <div class="col-md-7">
+          <div class="row mb-3 justify-content-center">
+            <div class="col-md-10">
               <div class="input-group mb-3">
+                <span class="p-2"><strong>Tag Name:</strong></span>
+                <input id="tag_name" name="tag_name" class="form-control" placeholder="this is an input, updating and deleting will be a select" autocomplete="off" required>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3 justify-content-center">
+            <div class="input-group mb-3 justify-content-center">
+              <span class="p-2"><strong>Contacts:</strong></span>
+              <div class="col-md-9">
+                <input type='text' class='form-control flexdatalist' data-min-length='1' multiple='multiple' list='tag_contact_options' placeholder="Add a contact" name='contacts'>
+                <datalist id="tag_contact_options">
+                  {% for id, contact in form.fields.contact.choices %}
+                    <option value="{{ contact }}">{{contact}}</option>
+                  {% endfor %}
+                </datalist>
+                <div class="invalid-feedback">Select a valid contact.</div>
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="input-daterange input-group mb-3" id="datepicker">
+                <span class="p-2"><strong>Date Donated:</strong></span>
+                <span class="input-group-text">from</span>
+                <input id="tag_date_gte" type="text" class="form-control {{form_values.errorlist.tag_date_gte}}" name="date_donated_gte" value="views will need a tag dictionary" onclick="this.value=''" onBlur="if (this.value == '') {this.value = 'DD/MM/YYYY'}">
+                <span class="input-group-text">to</span>
+                <input id="tag_date_lte" type="text" class="form-control {{form_values.errorlist.tag_date_lte}}" name="date_donated_lte" value="" onclick="this.value=''" onBlur="if (this.value == '') {this.value = 'DD/MM/YYYY'}">
+                <script>
+                  $('#tag_date_gte').datepicker({
+                  language: "fr",
+                  format: "dd/mm/yyyy",
+                  todayHighlight: true,
+                  autoclose: true,
+                  });
+                  $('#tag_date_lte').datepicker({
+                  language: "fr",
+                  format: "dd/mm/yyyy",
+                  todayHighlight: true,
+                  autoclose: true,
+                  });
+                </script>
+                <div class="invalid-feedback">Select a valid date.</div>
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="input-group mb-3">
+                <span class="p-2"><strong>Amount:</strong></span>
                 <span class="input-group-text">€</span>
-                <input id="id_amount" name="amount_euros" class="form-control text-end {{form_values.errorlist.amount_euros}}" aria-label="Amount (to the nearest dollar)" value="{{ form.fields.amount_euros.initial }}" autocomplete="off" required>
-                <div class="col-md-3">
-                  <input type="text" name="amount_cents" class="form-control {{form_values.errorlist.amount_cents}}" id="validationDefault01" value="{{ form.fields.amount_cents.initial }}" autocomplete="off">
-                </div>
+                <input name="amount_gte" class="form-control text-end {{form_values.errorlist.amount_gte}}" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="update function">
+                <span class="input-group-text"><=</span>
+                <span class="input-group-text">€</span>
+                <input name="amount_lte" class="form-control text-end {{form_values.errorlist.amount_lte}}" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="same">
                 <div class="invalid-feedback">Select a valid number.</div>
               </div>
             </div>
-          </div>
-          <div class="row mb-3">
-            <label for="id_payment_mode" class="col-md-4 col-form-label text-end"><strong>Payment Mode:</strong></label>
-            <div class="col-md-7">
-              <select id="id_payment_mode" name="payment_mode" class="form-select" aria-label="Default select example" required>
-              {% for id, mode in form.fields.payment_mode.choices %}
-                {% if form.fields.payment_mode.initial == mode %}
-                <option value="{{ id }}" selected>{{ mode }}</option>
-                {% else %}
-                <option value="{{ id }}">{{ mode }}</option>
-                {% endif %}
-              {% endfor %}
-              </select>
+            <div class="col-md-5">
+              <div class="input-group mb-3">
+                <span class="p-2"><strong>Organisation:</strong></span>
+                <select id="organisation" name="organisation" class="form-select" aria-label="Default select example" required>
+                {% for id, organisation in form.fields.organisation.choices %}
+                  {% if form.fields.organisation.initial == organisation %}
+                  <option value="{{ id }}" selected>{{ organisation }}</option>
+                  {% else %}
+                  <option value="{{ id }}">{{ organisation }}</option>
+                  {% endif %}
+                {% endfor %}
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="row mb-3">
-            <label for="id_donation_type" class="col-md-4 col-form-label text-end"><strong>Donation Type:</strong></label>
-            <div class="col-md-7">
-              <select id="id_donation_type" name="donation_type" class="form-select" aria-label="Default select example" required>
-              {% for id, type in form.fields.donation_type.choices %}
-                {% if form.fields.donation_type.initial == type %}
-                <option value="{{ id }}" selected>{{ type }}</option>
-                {% else %}
-                <option value="{{ id }}">{{ type }}</option>
-                {% endif %}
-              {% endfor %}
-              </select>
+            <div class="col-md-5">
+              <div class="input-group mb-3">
+                <span class="p-2"><strong>Donation Type:</strong></span>
+                <select id="id_donation_type" name="donation_type" class="form-select" aria-label="Default select example" required>
+                {% for id, type in form.fields.donation_type.choices %}
+                  {% if form.fields.donation_type.initial == type %}
+                  <option value="{{ id }}" selected>{{ type }}</option>
+                  {% else %}
+                  <option value="{{ id }}">{{ type }}</option>
+                  {% endif %}
+                {% endfor %}
+                </select>  
+              </div>
             </div>
-          </div>
-          <div class="row mb-3">
-            <label for="id_organisation" class="col-md-4 col-form-label text-end"><strong>Organisation:</strong></label>
-            <div class="col-md-7">
-              <select id="organisation" name="organisation" class="form-select" aria-label="Default select example" value="form.fields.organisation.initial" required>
-              {% for id, organisation in form.fields.organisation.choices %}
-                {% if form.fields.organisation.initial == organisation %}
-                <option value="{{ id }}" selected>{{ organisation }}</option>
-                {% else %}
-                <option value="{{ id }}">{{ organisation }}</option>
-                {% endif %}
-              {% endfor %}
-            </select>
+            <div class="col-md-5">
+              <div class="input-group mb-3">
+                <span class="p-2"><strong>Payment Mode:</strong></span>
+                <select id="tag_payment_mode" name="payment_mode" class="form-select" aria-label="Default select example" required>
+                {% for id, mode in form.fields.payment_mode.choices %}
+                  {% if form.fields.payment_mode.initial == mode %}
+                  <option value="{{ id }}" selected>{{ mode }}</option>
+                  {% else %}
+                  <option value="{{ id }}">{{ mode }}</option>
+                  {% endif %}
+                {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="input-group mb-3">
+                <span class="p-2"><strong>N° Donations:</strong></span>
+                <input id="tag_donation_quantity" name="donation_quantity" class="form-control text-end">
+              </div>
             </div>
           </div>
         </div>

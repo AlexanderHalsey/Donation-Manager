@@ -5,5 +5,5 @@ urlpatterns = [
 	path('', views.dashboard, name='dashboard'),
 	path('donators/', views.donators, name="donators"),
 	path('contact/<str:pk>/', views.contact, name='contact'),
-	path('pdf', views.pdf, name="pdf"),
+	path('pdf/', views.pdf, name="pdf"),
 ]
