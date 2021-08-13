@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from donations.settings import BASE_DIR
 from .models import *
 from .utils import *
@@ -8,9 +11,27 @@ import datetime
 import num2words
 import os
 
-
-
 # Create your views here.
+def loginUser(request):
+	if request.user.is_authenticated:
+		return redirect("/")
+	else:
+		if request.method == "POST":
+			username = request.POST.get('username')
+			password = request.POST.get('password')
+			user = authenticate(request, username=username, password=password)
+			if user is not None:
+				login(request, user)
+				return redirect('/')
+			else:
+				messages.info(request, 'Username or Password is incorrect') 
+		return render(request, 'login.html', {})
+
+def logoutUser(request):
+	logout(request)
+	return redirect('login')
+
+@login_required(login_url='login')
 def dashboard(request):
 	# intial form_values
 	form_values = {
@@ -289,6 +310,7 @@ def dashboard(request):
 	}
 	return render(request, 'dashboard.html', context)
 
+@login_required(login_url='login')
 def contact(request, pk):
 
 	# context
@@ -309,6 +331,7 @@ def contact(request, pk):
 	}
 	return render(request, 'contact.html', context)
 
+@login_required(login_url='login')
 def donators(request):
 
 	# initial filter values
@@ -403,6 +426,7 @@ def donators(request):
 	}
 	return render(request, 'donators.html', context)
 
+@login_required(login_url='login')
 def pdf(request):
 	donations = Donation.objects.all()
 	for donation in donations:
