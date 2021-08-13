@@ -29,7 +29,7 @@ PASSWORD=os.getenv('PASSWORD')
 SEND_TO=os.getenv('SEND_TO')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['dmsivy.herokuapp.com', '127.0.0.1', 'localhost'] 
 
