@@ -1,5 +1,4 @@
 __pycache__
-db.sqlite3
 /venv/
 .DS_Store
 /dm_page/static/word/
