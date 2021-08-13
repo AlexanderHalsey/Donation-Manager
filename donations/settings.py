@@ -29,7 +29,7 @@ PASSWORD=os.getenv('PASSWORD')
 SEND_TO=os.getenv('SEND_TO')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['dmsivy.herokuapp.com', '127.0.0.1', 'localhost'] 
 
@@ -147,20 +147,4 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'my_cache_table',
     }
-}
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'ERROR'),
-        },
-    },
 }
