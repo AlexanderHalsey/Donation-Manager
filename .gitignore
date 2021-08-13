@@ -1,5 +1,8 @@
 __pycache__
 /venv/
 .DS_Store
+.env
+Procfile
+db.sqlite3
 /dm_page/static/word/
 /dm_page/static/pdf/
