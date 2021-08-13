@@ -2,15 +2,10 @@ from django import forms
 from .models import *
 
 class DonationForm(forms.Form):
-	
-	CONTACTS = [(c.name, c.name) for c in Contact.objects.all()]
-	MODES = [("","-----")]+[(m.payment_mode, m.payment_mode) for m in PaymentMode.objects.all()]
-	TYPES = [("","-----")]+[(d.donation_type, d.donation_type) for d in DonationType.objects.all()]
-	ORGANISATIONS = [("","-----")]+[(o.organisation, o.organisation) for o in Organisation.objects.all()]
 
 	contact = forms.TypedChoiceField(
 		initial = "",
-		choices = CONTACTS,
+		choices = [(c.name, c.name) for c in Contact.objects.all()],
 		coerce = str,
 	)
 	date_donated = forms.DateField(
@@ -25,13 +20,13 @@ class DonationForm(forms.Form):
 	)
 	payment_mode = forms.ChoiceField(
 		initial = "-----",
-		choices = MODES,
+		choices = [("","-----")]+[(m.payment_mode, m.payment_mode) for m in PaymentMode.objects.all()],
 	)
 	donation_type = forms.ChoiceField(
 		initial = "-----",
-		choices = TYPES,
+		choices = [("","-----")]+[(d.donation_type, d.donation_type) for d in DonationType.objects.all()],
 	)
 	organisation = forms.ChoiceField(
 		initial = "-----",
-		choices = ORGANISATIONS,
+		choices = [("","-----")]+[(o.organisation, o.organisation) for o in Organisation.objects.all()],
 	)
