@@ -1,1 +1,1 @@
-web: gunicorn donations.wsgi. --log-file - 
+web: gunicorn donations.wsgi --log-file - 
