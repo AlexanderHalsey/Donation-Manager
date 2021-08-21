@@ -87,7 +87,6 @@ def dashboard(request):
 			return redirect("/")
 
 		form = DonationForm(request.POST)
-
 		if form.is_valid():
 			pdf = False
 			# if certain conditions are met, an email confirmation is forwarded my way
@@ -151,25 +150,25 @@ def dashboard(request):
 			form_values["errors"] = True
 			for error in form.errors:
 				form_values["errorlist"][error] = "is-invalid"
-				form.fields["contact"].initial = request.POST["contact"]
-				form.fields["date_donated"].initial = request.POST["date_donated"]
-				form.fields["amount_euros"].initial = request.POST["amount_euros"]
-				form.fields["amount_cents"].initial = request.POST["amount_cents"]
-				form.fields["payment_mode"].initial = request.POST["payment_mode"]
-				form.fields["donation_type"].initial = request.POST["donation_type"]
-				form.fields["organisation"].initial = request.POST["organisation"]
+			form.fields["contact"].initial = request.POST["contact"]
+			form.fields["date_donated"].initial = request.POST["date_donated"]
+			form.fields["amount_euros"].initial = request.POST["amount_euros"]
+			form.fields["amount_cents"].initial = request.POST["amount_cents"]
+			form.fields["payment_mode"].initial = request.POST["payment_mode"]
+			form.fields["donation_type"].initial = request.POST["donation_type"]
+			form.fields["organisation"].initial = request.POST["organisation"]
 
-				scroll = int(request.POST["scroll"] or 0)
-				collapse = request.POST["collapse"]
-				if collapse == "collapse_show":
-					collapse = "collapse show"
-				if request.POST["Submit"] == "update":
-					form_values["title"] = "Update"
-					form_values["colour"] = "success"
-					form_values["button"] = "Update"
-					form_values["update"] = True
-					form_values["type"] = "update"
-					form_values["i"] = request.POST["id"]
+			scroll = int(request.POST["scroll"] or 0)
+			collapse = request.POST["collapse"]
+			if collapse == "collapse_show":
+				collapse = "collapse show"
+			if request.POST["Submit"] == "update":
+				form_values["title"] = "Update"
+				form_values["colour"] = "success"
+				form_values["button"] = "Update"
+				form_values["update"] = True
+				form_values["type"] = "update"
+				form_values["i"] = request.POST["id"]
 
 	# GET requests
 	else:

@@ -68,11 +68,12 @@
               <div class="input-group mb-3">
                 <span class="p-2"><strong>Organisation:</strong></span>
                 <select id="organisation" name="organisation" class="form-select" aria-label="Default select example" required>
+                  <option value="-----" selected>-----</option>
                 {% for id, organisation in form.fields.organisation.choices %}
                   {% if form.fields.organisation.initial == organisation %}
-                  <option value="{{ id }}" selected>{{ organisation }}</option>
+                  <option value="{{ organisation }}" selected>{{ organisation }}</option>
                   {% else %}
-                  <option value="{{ id }}">{{ organisation }}</option>
+                  <option value="{{ organisation }}">{{ organisation }}</option>
                   {% endif %}
                 {% endfor %}
                 </select>
@@ -82,11 +83,12 @@
               <div class="input-group mb-3">
                 <span class="p-2"><strong>Donation Type:</strong></span>
                 <select id="id_donation_type" name="donation_type" class="form-select" aria-label="Default select example" required>
+                  <option value="-----" selected>-----</option>
                 {% for id, type in form.fields.donation_type.choices %}
                   {% if form.fields.donation_type.initial == type %}
-                  <option value="{{ id }}" selected>{{ type }}</option>
+                  <option value="{{ type }}" selected>{{ type }}</option>
                   {% else %}
-                  <option value="{{ id }}">{{ type }}</option>
+                  <option value="{{ type }}">{{ type }}</option>
                   {% endif %}
                 {% endfor %}
                 </select>  
@@ -96,11 +98,12 @@
               <div class="input-group mb-3">
                 <span class="p-2"><strong>Payment Mode:</strong></span>
                 <select id="tag_payment_mode" name="payment_mode" class="form-select" aria-label="Default select example" required>
+                  <option value="-----" selected>-----</option>
                 {% for id, mode in form.fields.payment_mode.choices %}
                   {% if form.fields.payment_mode.initial == mode %}
-                  <option value="{{ id }}" selected>{{ mode }}</option>
+                  <option value="{{ mode }}" selected>{{ mode }}</option>
                   {% else %}
-                  <option value="{{ id }}">{{ mode }}</option>
+                  <option value="{{ mode }}">{{ mode }}</option>
                   {% endif %}
                 {% endfor %}
                 </select>

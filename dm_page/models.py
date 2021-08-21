@@ -48,4 +48,4 @@ class Donation(models.Model):
 	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
 	pdf = models.BooleanField(default=False)
-	pdf_path = models.CharField(max_length=200, default="")
+	pdf_path = models.CharField(null=True, max_length=200, default="")
