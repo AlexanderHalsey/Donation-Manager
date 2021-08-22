@@ -33,6 +33,7 @@ def logoutUser(request):
 
 @login_required(login_url='login')
 def dashboard(request):
+	print(request)
 	# intial form_values
 	form_values = {
 		"title": "New", 
@@ -211,7 +212,8 @@ def dashboard(request):
 			if collapse == "collapse_show":
 				collapse = "collapse show"
 
-		if request.GET.get("view_pdf"):
+		# view_pdf, download_pdf
+		"""if request.GET.get("view_pdf"):
 			show_modal_pdf = True
 			i = request.GET.get("view_pdf")
 			pdf_path = donations.get(id=int(i)).pdf_path
@@ -228,7 +230,7 @@ def dashboard(request):
 			with open(full_path, 'rb') as pdf:
 				response = HttpResponse(pdf, content_type='application/pdf')
 				response['Content-Disposition'] = f'attachment; filename="{filename}"'
-			return response
+			return response"""
 
 		if request.GET.get("Submit") != None:
 			file_name_extension = ""

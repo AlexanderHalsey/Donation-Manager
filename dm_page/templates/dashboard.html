@@ -3,7 +3,6 @@
 {% load static %}
 
 <script type="text/javascript">
-  console.log(document.getElementById('disabled'))
   var scroll = "{{ scroll }}";
   window.addEventListener('load', 
     function(){
@@ -19,6 +18,7 @@
   {% endif %}
 
   {% if form_values.update %}
+  console.log("ok")
   window.addEventListener('load',
     function(){
       document.getElementById("update").click();
@@ -68,10 +68,9 @@
     }
   );
   $('.flexdatalist').flexdatalist({
-    minLength: 1;
+    minLength: 1
   });
 </script>
-<hr>
 <div class="row">
   <div class="col-sm-4">
     <div class="card" style="background-color: FloralWhite;">
@@ -81,9 +80,9 @@
         <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
         {% endfor %}
         <hr>
-        <button id="create" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">Create Tag</button>
-        <button id="update" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">Update Tag</button>
-        <button id="delete" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">Delete Tag</button>
+        <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">Create Tag</button>
+        <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">Update Tag</button>
+        <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">Delete Tag</button>
         {% include 'tag_form.html' %}
 	    </div>
     </div>
@@ -152,20 +151,19 @@
         {% include 'filter_form.html' %}
       </div>
     </div>
-    <div class="row p-3">
-      <table class="table table-sm table-striped table-bordered">
-        <thead>
-          <tr class="table-primary">
-            <th style="width: 5%;">Id</th>
-            <th style="width: 13%;">Contact</th>
-            <th style="width: 14%;">Tags</th>
-            <th style="width: 9%;">Date</th>
-            <th style="width: 8%;">Amount</th>
-            <th style="width: 10%;">Payment Mode</th>
-            <th style="width: 11%;">Type of Donation</th>
-            <th style="width: 10%;">Organisation</th>
-            <th style="width: 9%;">PDF Receipt</th>
-            <th style="width: 9%;">Update/Remove</th>
+    <div class="row p-3" style="height:300px;">
+      <table class="table table-striped table-bordered">
+        <thead class="table-primary">
+          <tr>
+            <th>Id</th>
+            <th>Contact</th>
+            <th>Tags</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Payment Mode</th>
+            <th>Type of Donation</th>
+            <th>Organisation</th>
+            <th>Update/Remove</th>
           </tr>
         </thead>
         <tbody>
@@ -175,36 +173,25 @@
           {% else %}
           <tr>
           {% endif %}
-            <td style="width: 80px;">{{ donation.id }}</td>
-            <td style="width: 223px;"><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.name }}</a></td>
-            <td style="width: 300px;">
+            <td>{{ donation.id }}</td>
+            <td><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.name }}</a></td>
+            <td>
               {% for tag in donation.contact.tags.all %}
               <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
               {% endfor %}
             </td>
-            <td style="width: 167px;">{{ donation.date_donated }}</td>
-            <td style="width: 123px;">{{ donation.amount }}</td>
-            <td style="width: 137px;">{{ donation.payment_mode }}</td>
-            <td style="width: 161px;">{{ donation.donation_type }}</td>
-            <td style="width: 183px;">{{ donation.organisation }}</td>
-            <td style="width: 170px;">
-              {% if donation.pdf %}
-              <form method="GET">
-                {% csrf_token %}
-                <button name="view_pdf" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:17px; border-radius: 50%;" value="{{ donation.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
-                <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:17px;" value="{{ donation.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
-                <input type="hidden" name="scroll" value="">
-                <input type="hidden" name="collapse" value="collapse">
-              </form>
-              {% endif %}
-            </td>
-            <td style="width: 198px;">
+            <td>{{ donation.date_donated }}</td>
+            <td>{{ donation.amount }}</td>
+            <td>{{ donation.payment_mode }}</td>
+            <td>{{ donation.donation_type }}</td>
+            <td>{{ donation.organisation }}</td>
+            <td>
               <form method="GET">
                 {% csrf_token %}
                 <button name="update" class="btn btn-warning btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="{{ donation.id }}"><img src="{% static 'icons/write.png' %}" class="img-fluid" width="21" height="21" alt="update"></button>
                 <button name="delete" class="btn btn-danger btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="{{ donation.id }}"><img src="{% static 'icons/delete.png' %}" class="img-fluid" width="21" height="21" alt="delete"></button>
                 <input type="hidden" name="scroll" value="">
-                <input type="hidden"name="collapse" value="collapse">
+                <input type="hidden"name="collapse" value="collapse show">
               </form>
             </td>
           </tr>

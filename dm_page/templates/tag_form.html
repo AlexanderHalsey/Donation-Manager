@@ -1,10 +1,10 @@
 <form action="" method="POST" autocomplete="off">
   {% csrf_token %}
-  <div class="modal fade" data-bs-backdrop="static" id="tag_form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" data-bs-backdrop="static" id="tag_form" tabindex="-1" aria-labelledby="tag_form_Label" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Create Tag (title to be dynamic!)</h5>
+          <h5 class="modal-title" id="tag_form_Label">Create Tag (title to be dynamic!)</h5>
           <a href="{% url 'dashboard' %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
         </div>
         <div class="modal-body">

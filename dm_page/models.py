@@ -15,12 +15,12 @@ class Tag(models.Model):
 		return self.tag
 
 class Contact(models.Model):
-	name = models.CharField(max_length=200)
+	name = models.CharField(max_length=200, null=True, blank=True)
 	tags = models.ManyToManyField('Tag')
-	email = models.EmailField(max_length=200, null=True)
-	phone = models.CharField(max_length=200, null=True)
-	postal_address = models.TextField(null=True)
-	details = models.TextField(null=True)
+	email = models.EmailField(max_length=200, null=True, blank=True)
+	phone = models.CharField(max_length=200, null=True, blank=True)
+	postal_address = models.TextField(null=True, blank=True)
+	details = models.TextField(null=True, blank=True)
 	def __str__(self):
 		return self.name
 
@@ -40,12 +40,12 @@ class Organisation(models.Model):
 		return self.organisation
 
 class Donation(models.Model):
-	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
-	date_donated = models.DateField(null=True, blank=True)
+	contact = models.ForeignKey('Contact', on_delete=models.PROTECT, null=True, blank=True)
+	date_donated = models.DateField(null=True)
 	amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	payment_mode = models.ForeignKey('PaymentMode', on_delete=models.SET_NULL, null=True, blank=True)
-	donation_type = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True)
-	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
+	payment_mode = models.ForeignKey('PaymentMode', on_delete=models.PROTECT, null=True, blank=True)
+	donation_type = models.ForeignKey('DonationType', on_delete=models.PROTECT, null=True, blank=True)
+	organisation = models.ForeignKey('Organisation', on_delete=models.PROTECT, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
 	pdf = models.BooleanField(default=False)
-	pdf_path = models.CharField(null=True, max_length=200, default="")
+	pdf_path = models.CharField(null=True, max_length=200, blank=True)

@@ -31,26 +31,24 @@
 		<!-- end Flexdatalist -->
 		
 		<title>Donation Management System</title>
-		<style type="text/css">
-			table { width: 100%; border-spacing: 0;}
-			thead, tbody { display: block; }
-			tbody {
-			    height: 575px;  
-			    overflow-y: auto;    /* Trigger vertical scroll    */
-			    overflow-x: hidden;  /* Hide the horizontal scroll */
-			}
+		<style>
+		  .hello-msg{
+		    font-size: 18px;
+		    color: #fff;
+		    margin-right: 20px;
+		  }
 		</style>
 	</head>
 
 	<body>
 		{% include 'navbar.html' %}
+		<hr>
 		<div class="container-fluid">
-			{% block page_content %}
-			{% endblock %}
+		  {% block page_content %}
+		  {% endblock %}
 		</div>
 		<footer>
 		</footer>
-
 	</body>
 
 	<!-- Boostrap JS -->
