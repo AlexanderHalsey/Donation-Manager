@@ -13,7 +13,7 @@ from .forms import DonationForm
 
 import json
 import requests
-from ipadress import ip_address, ip_network
+from ipaddress import ip_address, ip_network
 import datetime
 import num2words
 import os
