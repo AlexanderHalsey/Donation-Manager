@@ -1,16 +1,19 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-import json
 
 from donations.settings import BASE_DIR
 from .models import *
 from .utils import *
 from .forms import DonationForm
+
+import json
+import requests
+from ipadress import ip_address, ip_network
 import datetime
 import num2words
 import os
@@ -37,6 +40,16 @@ def logoutUser(request):
 
 @csrf_exempt
 def webhooks(request):
+	# Verify if request came from GitHub
+	forwarded_for = u'{}'.format(request.META.get('HTTP_X_FORWARDED_FOR'))
+	client_ip_address = ip_address(forwarded_for)
+	whitelist = requests.get('https://api.github.com/meta').json()['hooks']
+	for valid_ip in whitelist:
+		if client_ip_address in ip_network(valid_ip):
+			break
+	else:
+		return HttpResponseForbidden('Permission denied.')
+
 	return HttpResponse('pong')
 
 @login_required(login_url='login')
