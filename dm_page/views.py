@@ -36,7 +36,6 @@ def logoutUser(request):
 	return redirect('login')
 
 @csrf_exempt
-@require_POST
 def webhooks(request):
 	return HttpResponse('pong')
 
