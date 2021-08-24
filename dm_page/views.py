@@ -38,7 +38,7 @@ def logoutUser(request):
 @csrf_exempt
 @require_POST
 def webhooks(request):
-	return HttpResponse("why hello there !")
+	return HttpResponse('pong')
 
 @login_required(login_url='login')
 def dashboard(request):
