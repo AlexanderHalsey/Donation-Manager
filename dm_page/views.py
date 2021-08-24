@@ -3,6 +3,10 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import json
+
 from donations.settings import BASE_DIR
 from .models import *
 from .utils import *
@@ -31,9 +35,13 @@ def logoutUser(request):
 	logout(request)
 	return redirect('login')
 
+@csrf_exempt
+@require_POST
+def webhooks(request):
+	return HttpResponse("why hello there !")
+
 @login_required(login_url='login')
 def dashboard(request):
-	print(request)
 	# intial form_values
 	form_values = {
 		"title": "New", 
@@ -277,9 +285,10 @@ def dashboard(request):
 			# export_xls:
 			if request.GET.get("Submit") == "export_xls":
 				return export_xls("Donations", data, columns, file_name_extension)
+			# export csv
 			if request.GET.get("Submit") == "export_csv":
 				return export_csv("Donations", data, file_name_extension)
-
+				
 			scroll = int(request.GET["scroll"] or 0)
 			collapse = request.GET["collapse"]
 			if collapse == "collapse_show":

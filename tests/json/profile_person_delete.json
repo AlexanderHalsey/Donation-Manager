@@ -1,0 +1,94 @@
+{
+  "id": "34dc8b28049e42c28fdc82dcaf195a87",
+  "attempt": 1,
+  "properties": {
+    "timestamp": 1628761811522
+  },
+  "notifications": [
+    {
+      "action": "profile.delete",
+      "payload": {
+        "id": 5178,
+        "objectType": "PERSON",
+        "salutation": "Herr",
+        "title": "",
+        "name": "<img src=''/> tp2",
+        "language": "",
+        "labels": [],
+        "email": "",
+        "alternativeEmail": "",
+        "website": "",
+        "faxNumber": "",
+        "primaryAddress": {
+          "careOf": null,
+          "streetAddress": null,
+          "streetAddres2": null,
+          "zipCode": null,
+          "city": null,
+          "province": null,
+          "countryCode": null
+        },
+        "billingAddressActive": false,
+        "billingAddress": {
+          "careOf": null,
+          "streetAddress": null,
+          "streetAddres2": null,
+          "zipCode": null,
+          "city": null,
+          "province": null,
+          "countryCode": null
+        },
+        "remarks": "<test '\n<src=''>",
+        "information": "<test '\n<src=''>",
+        "isBlocked": false,
+        "blockedReason": "",
+        "bankAccountData": {
+          "bankName": "",
+          "iban": "",
+          "bic": "",
+          "accountHolder": ""
+        },
+        "taxNumber": "",
+        "vatId": "",
+        "customerNumber": "",
+        "additionalFields": {
+          "Berufsbezeichnung": null,
+          "Mitglied (Sponsor)": false,
+          "Mitglied (Basis)": false,
+          "Beitrittsdatum": null,
+          "Einverständnis zu Werbekontakt": "Ja",
+          "Interessen": [],
+          "Mitgliedsnummer": 0.0,
+          "Arbeitgeber": "Fill text",
+          "Cost as a facilitator": 0.0,
+          "Formatted text": "<strong>test 2</strong>",
+          "Yes No Field": false,
+          "Formatted text 2": "",
+          "Headline": "",
+          "test": "",
+          "dsfdsf": "",
+          "xxxx": "",
+          "bbbb": "",
+          "ddd": "",
+          "ddddd": "",
+          "nnn": "",
+          "hhh": ""
+        },
+        "firstName": "<img src=''/>",
+        "lastName": "tp2",
+        "additionalTitle": "",
+        "dateOfBirth": null,
+        "profession": "",
+        "salutationType": "INFORMAL",
+        "privatePhoneNumber": "",
+        "alternativePhoneNumber": "",
+        "workPhoneNumber": "",
+        "preferredAddress": "PRIVATE",
+        "preferredEmail": "PRIVATE",
+        "preferredPhoneNumber": "PRIVATE",
+        "isSubscribedToNewsletter": false,
+        "isFacilitator": false
+      }
+    }
+  ]
+}

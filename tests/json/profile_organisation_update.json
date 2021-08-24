@@ -1,0 +1,94 @@
+{
+  "id": "70c818d5177440fa9edfff58cb1b52a6",
+  "attempt": 1,
+  "properties": {
+    "timestamp": 1628765402593
+  },
+  "notifications": [
+    {
+      "action": "profile.update",
+      "payload": {
+        "id": 6213,
+        "objectType": "ORGANIZATION",
+        "salutation": "Firma",
+        "title": "",
+        "name": "Corp 202108",
+        "language": "de",
+        "labels": [
+          {
+            "id": 4027,
+            "name": "TP2-T1",
+            "abbreviation": "TP2-T1",
+            "description": [
+              {
+                "language": "DE",
+                "value": ""
+              }
+            ],
+            "pictureUrl": []
+          }
+        ],
+        "email": "corp@mail.com",
+        "alternativeEmail": "",
+        "website": "",
+        "faxNumber": "",
+        "primaryAddress": {
+          "careOf": "",
+          "streetAddress": "",
+          "streetAddres2": "",
+          "zipCode": "",
+          "city": "",
+          "province": "",
+          "countryCode": ""
+        },
+        "billingAddressActive": false,
+        "billingAddress": {
+          "careOf": "",
+          "streetAddress": "",
+          "streetAddres2": "",
+          "zipCode": "",
+          "city": "",
+          "province": "",
+          "countryCode": ""
+        },
+        "remarks": "",
+        "information": "",
+        "isBlocked": false,
+        "blockedReason": "",
+        "bankAccountData": {
+          "bankName": "",
+          "iban": "",
+          "bic": "",
+          "accountHolder": ""
+        },
+        "taxNumber": "",
+        "vatId": "",
+        "customerNumber": "",
+        "additionalFields": {
+          "Berufsbezeichnung": null,
+          "Mitglied (Sponsor)": false,
+          "Mitglied (Basis)": false,
+          "Beitrittsdatum": null,
+          "Einverständnis zu Werbekontakt": "Ja",
+          "Interessen": [],
+          "Mitgliedsnummer": null,
+          "Arbeitgeber": "Fill text",
+          "Cost as a facilitator": null,
+          "Formatted text": "",
+          "Yes No Field": false,
+          "Formatted text 2": "",
+          "Headline": "",
+          "test": "",
+          "dsfdsf": "",
+          "xxxx": "",
+          "bbbb": "",
+          "ddd": "",
+          "ddddd": "",
+          "nnn": "",
+          "hhh": ""
+        },
+        "additionalName": "Company name 2"
+      }
+    }
+  ]
+}

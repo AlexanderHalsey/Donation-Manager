@@ -1,0 +1,94 @@
+{
+  "id": "2ad7798378964337aad07681a7c7a9d0",
+  "attempt": 1,
+  "properties": {
+    "timestamp": 1628763668818
+  },
+  "notifications": [
+    {
+      "action": "profile.create",
+      "payload": {
+        "id": 6213,
+        "objectType": "ORGANIZATION",
+        "salutation": "Firma",
+        "title": "",
+        "name": "Corp 202108",
+        "language": "de",
+        "labels": [
+          {
+            "id": 4027,
+            "name": "TP2-T1",
+            "abbreviation": "TP2-T1",
+            "description": [
+              {
+                "language": "DE",
+                "value": ""
+              }
+            ],
+            "pictureUrl": []
+          }
+        ],
+        "email": "corp@mail.com",
+        "alternativeEmail": "",
+        "website": "",
+        "faxNumber": "",
+        "primaryAddress": {
+          "careOf": null,
+          "streetAddress": null,
+          "streetAddres2": null,
+          "zipCode": null,
+          "city": null,
+          "province": null,
+          "countryCode": null
+        },
+        "billingAddressActive": false,
+        "billingAddress": {
+          "careOf": null,
+          "streetAddress": null,
+          "streetAddres2": null,
+          "zipCode": null,
+          "city": null,
+          "province": null,
+          "countryCode": null
+        },
+        "remarks": "",
+        "information": "",
+        "isBlocked": false,
+        "blockedReason": "",
+        "bankAccountData": {
+          "bankName": "",
+          "iban": "",
+          "bic": "",
+          "accountHolder": ""
+        },
+        "taxNumber": "",
+        "vatId": "",
+        "customerNumber": "",
+        "additionalFields": {
+          "Berufsbezeichnung": null,
+          "Mitglied (Sponsor)": false,
+          "Mitglied (Basis)": false,
+          "Beitrittsdatum": null,
+          "Einverständnis zu Werbekontakt": "Ja",
+          "Interessen": [],
+          "Mitgliedsnummer": null,
+          "Arbeitgeber": "Fill text",
+          "Cost as a facilitator": null,
+          "Formatted text": "",
+          "Yes No Field": false,
+          "Formatted text 2": "",
+          "Headline": "",
+          "test": "",
+          "dsfdsf": "",
+          "xxxx": "",
+          "bbbb": "",
+          "ddd": "",
+          "ddddd": "",
+          "nnn": "",
+          "hhh": ""
+        },
+        "additionalName": ""
+      }
+    }
+  ]
+}

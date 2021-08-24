@@ -1,0 +1,107 @@
+{
+  "id": "8e50be90405a40788d1c6e653237ab51",
+  "attempt": 1,
+  "properties": {
+    "timestamp": 1628765318947
+  },
+  "notifications": [
+    {
+      "action": "profile.update",
+      "payload": {
+        "id": 6212,
+        "objectType": "PERSON",
+        "salutation": "Herr",
+        "title": "Dr.",
+        "name": "Person 20210802",
+        "language": "en",
+        "labels": [
+          {
+            "id": 1023,
+            "name": "TP1-T1 Ex",
+            "abbreviation": "TP1-T1",
+            "description": [
+              {
+                "language": "DE",
+                "value": null
+              }
+            ],
+            "pictureUrl": []
+          }
+        ],
+        "email": "personmail@mail.com",
+        "alternativeEmail": "personemail2@mail2.com",
+        "website": "personwebsite.com",
+        "faxNumber": "",
+        "primaryAddress": {
+          "careOf": "Room 123",
+          "streetAddress": "Apart XYZ",
+          "streetAddres2": "",
+          "zipCode": "4321",
+          "city": "City XYZ",
+          "province": "Province XYZ",
+          "countryCode": ""
+        },
+        "billingAddressActive": false,
+        "billingAddress": {
+          "careOf": "",
+          "streetAddress": "",
+          "streetAddres2": "",
+          "zipCode": "",
+          "city": "",
+          "province": "",
+          "countryCode": ""
+        },
+        "remarks": "Remarks",
+        "information": "Indo",
+        "isBlocked": false,
+        "blockedReason": "",
+        "bankAccountData": {
+          "bankName": "",
+          "iban": "",
+          "bic": "",
+          "accountHolder": ""
+        },
+        "taxNumber": "",
+        "vatId": "",
+        "customerNumber": "",
+        "additionalFields": {
+          "Berufsbezeichnung": null,
+          "Mitglied (Sponsor)": false,
+          "Mitglied (Basis)": false,
+          "Beitrittsdatum": null,
+          "Einverständnis zu Werbekontakt": "Ja",
+          "Interessen": [],
+          "Mitgliedsnummer": null,
+          "Arbeitgeber": "Fill text",
+          "Cost as a facilitator": null,
+          "Formatted text": "",
+          "Yes No Field": false,
+          "Formatted text 2": "",
+          "Headline": "",
+          "test": "",
+          "dsfdsf": "",
+          "xxxx": "",
+          "bbbb": "",
+          "ddd": "",
+          "ddddd": "",
+          "nnn": "",
+          "hhh": ""
+        },
+        "firstName": "Person",
+        "lastName": "20210802",
+        "additionalTitle": "Title 1",
+        "dateOfBirth": "1990-01-02",
+        "profession": "Consultant",
+        "salutationType": "FORMAL",
+        "privatePhoneNumber": "",
+        "alternativePhoneNumber": "",
+        "workPhoneNumber": "",
+        "preferredAddress": "PRIVATE",
+        "preferredEmail": "PRIVATE",
+        "preferredPhoneNumber": "BUSINESS",
+        "isSubscribedToNewsletter": false,
+        "isFacilitator": false
+      }
+    }
+  ]
+}
