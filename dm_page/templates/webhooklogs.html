@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block page_content %}
+{% for log in logs %}
+<h5>Received at:</h5>
+<p>{{log.received_at}}</p>
+<h5>Payload:</h5>
+<p>{{log.payload}}</p>
+</hr>
+{% endfor %}
+{% endblock %}

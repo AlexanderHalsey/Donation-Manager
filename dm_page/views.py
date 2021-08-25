@@ -2,21 +2,24 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.db.transaction import non_atomic_requests
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.utils import timezone
 
-from donations.settings import BASE_DIR
+from donations.settings import BASE_DIR, DMS_WEBHOOK_TOKEN
 from .models import *
 from .utils import *
+from .receive_webhook import process_webhook_payload
 from .forms import DonationForm
 
 import json
-import requests
-from ipaddress import ip_address, ip_network
 import datetime
+from secrets import compare_digest
 import num2words
 import os
+# from pathlib import Path
 
 # Create your views here.
 def loginUser(request):
@@ -39,18 +42,37 @@ def logoutUser(request):
 	return redirect('login')
 
 @csrf_exempt
-def webhooks(request):
-	# Verify if request came from GitHub
-	forwarded_for = u'{}'.format(request.META.get('HTTP_X_FORWARDED_FOR'))
-	client_ip_address = ip_address(forwarded_for)
-	whitelist = requests.get('https://api.github.com/meta').json()['hooks']
-	for valid_ip in whitelist:
-		if client_ip_address in ip_network(valid_ip):
-			break
-	else:
-		return HttpResponseForbidden('Permission denied.')
+@require_POST
+@non_atomic_requests
+def dms_webhook(request):
+	# Verify token
+	given_token = request.headers.get("Dms-Webhook-Token", "")
+	if not compare_digest(given_token, "abc123"):
+		return HttpResponseForbidden(
+				"Incorrect token in Dms-Webhook-Token header.",
+				content_type = "text/plain",
+			)
+	WebhookLogs.objects.filter(
+			received_at__lte = timezone.now() - datetime.timedelta(days=7)
+		).delete()
+	payload = json.loads(request.body)
+	WebhookLogs.objects.create(
+			received_at = timezone.now(),
+			payload = payload,
+		)
+	process_webhook_payload(payload)
+	return HttpResponse("Message received okay.", content_type="text/plain")
 
-	return HttpResponse('pong')
+def webhooklogs(request):
+	'''path = Path("/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json")
+	for file in path.iterdir():
+		payload = json.load(file)
+		WebhookLogs.objects.create(
+			received_at = timezone.now(),
+			payload = payload,
+		)'''
+	logs = WebhookLogs.objects.all()
+	return render(request, 'webhooklogs.html',{'logs': logs})
 
 @login_required(login_url='login')
 def dashboard(request):
@@ -109,7 +131,7 @@ def dashboard(request):
 
 		form = DonationForm(request.POST)
 		if form.is_valid():
-			pdf = False
+			'''pdf = False
 			# if certain conditions are met, an email confirmation is forwarded my way
 			if form.cleaned_data["donation_type"] == "DonationType2" and form.cleaned_data["organisation"] == "CBM":
 				pdf = True
@@ -135,10 +157,10 @@ def dashboard(request):
 					"signature": "/dm_page/static/png/signature_Charles_Trebaol.png",
 				}
 				pdf_path = pdf_receipt(text_variables, images)
-				send_email(pdf_path, text_variables["donation_id"][0])
+				send_email(pdf_path, text_variables["donation_id"][0])'''
 			donation = Donation(
 				contact = Contact.objects.get(
-					name = form.cleaned_data["contact"]
+					profile__name = form.cleaned_data["contact"]
 				),
 				amount = int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"]),
 				date_donated = form.cleaned_data["date_donated"],
@@ -337,7 +359,7 @@ def contact(request, pk):
 
 	# context
 	contact = Contact.objects.get(id=pk)
-	address = eval(contact.postal_address)
+	address = eval(contact.profile.primary_address)
 	tags = contact.tags.all()
 	donations = Donation.objects.filter(contact__name=contact.name)
 	donations_count = donations.count()
@@ -375,10 +397,10 @@ def donators(request):
 	scroll = 0 # to load with page scroll number so the page appears static on request
 	collapse = 'collapse show' # to register collapse status of filter collapse button
 
-	if request.GET.get("view_pdf"):
+	'''if request.GET.get("view_pdf"):
 		i = request.GET.get("view_pdf")
 		listdir = os.listdir("dm_page/static/pdf/receipts/")
-		pdf_path = list(filter(lambda x: x.split(".pdf")[0][-len(i):] == i, listdir))[0]
+		pdf_path = list(filter(lambda x: x.split(".pdf")[0][-len(i):] == i, listdir))[0]'''
 
 	# filter requests
 	if request.GET.get("Submit") != None:
@@ -409,7 +431,7 @@ def donators(request):
 					donations = donations.filter(amount__lte=float(value))
 		columns = ["Id", "Name", "Email Address", "Total_donated"]
 		contacts = set([donation.contact for donation in donations])
-		data = [[contact.id, contact.name, contact.email, 
+		data = [[contact.id, contact.profile.name, contact.profile.email, 
 			sum([d.amount for d in donations.filter(contact=contact)])] for contact in contacts]
 		# export_xls:
 		if request.GET.get("Submit") == "export_xls":
@@ -423,7 +445,7 @@ def donators(request):
 	contacts = [{
 		"id": contact.id,
 		"tags": contact.tags,
-		"name": contact.name,
+		"name": contact.profile.name,
 		"total_donated": sum([donation.amount for donation in donations.filter(contact=contact)]),
 
 	} for contact in contacts]
@@ -448,7 +470,7 @@ def donators(request):
 	}
 	return render(request, 'donators.html', context)
 
-@login_required(login_url='login')
+'''@login_required(login_url='login')
 def pdf(request):
 	donations = Donation.objects.all()
 	for donation in donations:
@@ -477,5 +499,5 @@ def pdf(request):
 				}
 				donation.pdf_path = pdf_receipt(text_variables, images).split("/receipts/")[1]
 				donation.save()
-	return dashboard(request)
+	return dashboard(request)'''
 

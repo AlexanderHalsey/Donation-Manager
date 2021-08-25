@@ -27,6 +27,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 EMAIL_ADDRESS=os.getenv('EMAIL_ADDRESS')
 PASSWORD=os.getenv('PASSWORD')
 SEND_TO=os.getenv('SEND_TO')
+DMS_WEBHOOK_TOKEN = '6f85048b984cdf9a3204ac23c4eb7e2f0cc03a5ec01b4113c77f7b6867d9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
