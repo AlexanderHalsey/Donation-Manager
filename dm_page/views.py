@@ -174,11 +174,8 @@ def dashboard(request):
 				),
 				organisation = None if form.cleaned_data["organisation"] 
 				== "" else Organisation.objects.get(
-					organisation = form.cleaned_data["organisation"]
+					profile__name = form.cleaned_data["organisation"]
 				),
-				disabled = False,
-				pdf = pdf,
-				pdf_path = pdf_path,
 			)
 			donation.save()
 
