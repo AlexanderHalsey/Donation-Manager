@@ -358,7 +358,7 @@ def contact(request, pk):
 	contact = Contact.objects.get(id=pk)
 	address = eval(contact.profile.primary_address)
 	tags = contact.tags.all()
-	donations = Donation.objects.filter(contact__name=contact.name)
+	donations = Donation.objects.filter(contact__profile__name=contact.profile.name)
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
 

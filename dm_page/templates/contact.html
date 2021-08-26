@@ -5,7 +5,7 @@
   <div class="col-sm-4">
     <div class="card">
       <div class="card-body">
-	      <h4 class="card-title">{{ contact.name }}</h4>
+	      <h4 class="card-title">{{ contact.profile.name }}</h4>
 	      <p class="card-text">All the tags underneath as follows.</p>
         {% for tag in tags %}
         <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
@@ -16,9 +16,9 @@
   <div class="col-sm-4">
     <div class="card">
       <div class="card-body">
-        <h6 class="card-text"><strong>Email Address: </strong>{{ contact.email }}</h6>
+        <h6 class="card-text"><strong>Email Address: </strong>{{ contact.profile.email }}</h6>
         <br>
-        <h6 class="card-text"><strong>Phone Number: </strong>{{ contact.phone }}</h6>
+        <h6 class="card-text"><strong>Phone Number: </strong>{{ contact.work_phone_number }}</h6>
         <br>
         <div class="row">
           <div class="col-4">
@@ -34,7 +34,7 @@
           </div>
         </div>
         <br>
-        <h6 class="card-text"><strong>Additional information: </strong>{{ contact.details }}</h6>
+        <h6 class="card-text"><strong>Additional information: </strong>{{ contact.profile.information }}</h6>
       </div>
     </div>
   </div>
