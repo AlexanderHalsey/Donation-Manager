@@ -13,13 +13,17 @@ def process_webhook_payload(payload):
 		p = Profile()
 	finally:
 		if action == "delete" and not new:
+			print("action: ", action, "\n", "new: ", new)
 			p.delete()
 		elif action == "create" or action == "update" or action == "merge":
 			if (action == "create" and not new) or (action == "update" and new) or (action == "merge" and new):
+				print("action: ", action, "\n", "new: ", new)
 				return 
 			if action == "create" or action == "update":
+				print("action: ", action, "\n", "new: ", new)
 				object_type = data["objectType"]
 			if action == "merge":
+				print("action: ", action, "\n", "new: ", new)
 				object_type = data[0]["objectType"]
 				data = data[1]
 
