@@ -15,9 +15,11 @@ def process_webhook_payload(payload):
 		if action == "delete" and not new:
 			p.delete()
 		elif action == "create" or action == "update" or action == "merge":
-			if action == "create" or "update":
+			if (action == "create" and not new) or (action == "update" and new) or (action == "merge" and new):
+				return
+			if action == "create" or action == "update":
 				object_type = data["objectType"]
-			elif action == "merge":
+			if action == "merge" and not new:
 				object_type = data[0]["objectType"]
 				data = data[1]
 
