@@ -6,24 +6,23 @@ def process_webhook_payload(payload):
 	action = payload["notifications"][0]["action"].split("profile.")[1]
 	data = payload["notifications"][0]["payload"]
 	try:
-		p = Profile.objects.get(seminar_desk_id = data["id"])
+		if action == "merge":
+			p = Profile.objects.get(seminar_desk_id = data[0]["id"])
+		else:
+			p = Profile.objects.get(seminar_desk_id = data["id"])
 		new = False
 	except:
 		new = True
 		p = Profile()
 	finally:
 		if action == "delete" and not new:
-			print("action: ", action, "\n", "new: ", new)
-			p.delete()
+			return
 		elif action == "create" or action == "update" or action == "merge":
 			if (action == "create" and not new) or (action == "update" and new) or (action == "merge" and new):
-				print("action: ", action, "\n", "new: ", new)
 				return 
 			if action == "create" or action == "update":
-				print("action: ", action, "\n", "new: ", new)
 				object_type = data["objectType"]
 			if action == "merge":
-				print("action: ", action, "\n", "new: ", new)
 				object_type = data[0]["objectType"]
 				data = data[1]
 
