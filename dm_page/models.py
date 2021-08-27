@@ -40,7 +40,7 @@ class Profile(models.Model):
 
 class Contact(models.Model):
 	tags = models.ManyToManyField('Tag')
-	profile = models.ForeignKey('Profile', on_delete=models.PROTECT, null=True, blank=True)
+	profile = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True, blank=True)
 	first_name = models.CharField(max_length= 200, default=None, null=True, blank=True)
 	last_name = models.CharField(max_length= 200, default=None, null=True)
 	additional_title = models.CharField(max_length= 200, default=None, null=True)
@@ -70,19 +70,19 @@ class DonationType(models.Model):
 		return self.donation_type
 
 class Organisation(models.Model):
-	profile = models.ForeignKey('Profile', on_delete=models.PROTECT, null=True, blank=True)
+	profile = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True, blank=True)
 	additional_name = models.CharField(max_length= 200, default=None, null=True)
 
 	def __str__(self):
 		return self.profile.name
 
 class Donation(models.Model):
-	contact = models.ForeignKey('Contact', on_delete=models.PROTECT, null=True, blank=True)
+	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
 	date_donated = models.DateField(null=True)
 	amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-	payment_mode = models.ForeignKey('PaymentMode', on_delete=models.PROTECT, null=True, blank=True)
-	donation_type = models.ForeignKey('DonationType', on_delete=models.PROTECT, null=True, blank=True)
-	organisation = models.ForeignKey('Organisation', on_delete=models.PROTECT, null=True, blank=True)
+	payment_mode = models.ForeignKey('PaymentMode', on_delete=models.SET_NULL, null=True, blank=True)
+	donation_type = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True)
+	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
 	pdf = models.BooleanField(default=False)
 	pdf_path = models.CharField(null=True, max_length=200, blank=True)
