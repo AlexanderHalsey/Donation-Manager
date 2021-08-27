@@ -46,7 +46,6 @@ def process_webhook_payload(payload):
 	
 		if object_type == "PERSON":
 			c = Contact(
-				tags = None,
 				profile = p,
 				first_name = data["firstName"],
 				last_name = data["lastName"],

@@ -47,7 +47,7 @@ def logoutUser(request):
 def dms_webhook(request):
 	# Verify token
 	given_token = request.headers.get("Dms-Webhook-Token", "")
-	if not compare_digest(given_token, "abc123"):
+	if not compare_digest(given_token, DMS_WEBHOOK_TOKEN):
 		return HttpResponseForbidden(
 				"Incorrect token in Dms-Webhook-Token header.",
 				content_type = "text/plain",
