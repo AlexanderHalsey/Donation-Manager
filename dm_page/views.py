@@ -228,13 +228,13 @@ def dashboard(request):
 				form_values["delete"] = True
 			elif key == "update":
 				# pre-populated donation_form for update
-				form.fields["contact"].initial = donation.contact.name
+				form.fields["contact"].initial = donation.contact.profile.name
 				form.fields["date_donated"].initial = "" if donation.date_donated == None else "/".join(str(donation.date_donated).split("-")[::-1])
 				form.fields["amount_euros"].initial = "" if str(donation.amount).split(".")[0] == "0" else str(donation.amount).split(".")[0]
 				form.fields["amount_cents"].initial = "."+str("{:.2f}".format(donation.amount)).split(".")[1]
 				form.fields["payment_mode"].initial = "" if donation.payment_mode == None else donation.payment_mode.payment_mode
 				form.fields["donation_type"].initial = "" if donation.donation_type == None else donation.donation_type.donation_type
-				form.fields["organisation"].initial = "" if donation.organisation == None else donation.organisation.organisation
+				form.fields["organisation"].initial = "" if donation.organisation == None else donation.organisation.profile.name
 				# donation_form - update 
 				form_values = {
 					"title": "Update",
@@ -291,7 +291,7 @@ def dashboard(request):
 					initial_filter_values[key] = value
 					file_name_extension += f"_{value}"
 					if key == "contact":
-						donations = donations.filter(contact__name=value)
+						donations = donations.filter(contact__profile__name=value)
 					if key == "date_donated_gte":
 						date__gte = "-".join(value.split("/")[::-1])
 						donations = donations.filter(date_donated__gte=date__gte)
@@ -307,11 +307,11 @@ def dashboard(request):
 					if key == "donation_type":
 						donations = donations.filter(donation_type__donation_type=value)
 					if key == "organisation":
-						donations = donations.filter(organisation__organisation=value)
+						donations = donations.filter(organisation__profile__name=value)
 			columns = ["ID", "Name", "Date Donated", "Amount", "Payment Mode", "Donation Type", "Organisation"]
-			data = [[donation.id, donation.contact.name, str(donation.date_donated), 
+			data = [[donation.id, donation.contact.profile.name, str(donation.date_donated), 
 				float(donation.amount), (None if donation.payment_mode == None else donation.payment_mode.payment_mode), 
-				(None if donation.donation_type == None else donation.donation_type.donation_type), (None if donation.organisation == None else donation.organisation.organisation)] 
+				(None if donation.donation_type == None else donation.donation_type.donation_type), (None if donation.organisation == None else donation.organisation.profile.name)] 
 				for donation in donations]
 			# export_xls:
 			if request.GET.get("Submit") == "export_xls":
