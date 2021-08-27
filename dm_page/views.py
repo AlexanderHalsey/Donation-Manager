@@ -71,7 +71,7 @@ def webhooklogs(request):
 			received_at = timezone.now(),
 			payload = payload,
 		)'''
-	logs = WebhookLogs.objects.all()
+	logs = WebhookLogs.objects.all().order_by("-received_at")
 	return render(request, 'webhooklogs.html',{'logs': logs})
 
 @login_required(login_url='login')

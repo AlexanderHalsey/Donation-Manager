@@ -6,7 +6,7 @@ import json
 headers = CaseInsensitiveDict()
 headers["Accept"] = "application/json"
 headers["Content-Type"] = "application/json"
-headers["Dms-Webhook-Token"] = "abc123"
+headers["Dms-Webhook-Token"] = "6f85048b984cdf9a3204ac23c4eb7e2f0cc03a5ec01b4113c77f7b6867d9"
 
 path = Path("/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json")
 
@@ -18,4 +18,5 @@ for p in path.iterdir():
 			headers=headers, 
 			data=json.dumps(payload)
 		)
+		print(p, resp.status_code)
 		print(resp.content.decode())
