@@ -8,7 +8,7 @@ def process_webhook_payload(payload):
 	try:
 		p = Profile.objects.get(seminar_desk_id = data["id"])
 		new = False
-	except DoesNotExist:
+	except:
 		new = True
 		p = Profile()
 	finally:
@@ -16,10 +16,10 @@ def process_webhook_payload(payload):
 			p.delete()
 		elif action == "create" or action == "update" or action == "merge":
 			if (action == "create" and not new) or (action == "update" and new) or (action == "merge" and new):
-				return
+				return 
 			if action == "create" or action == "update":
 				object_type = data["objectType"]
-			if action == "merge" and not new:
+			if action == "merge":
 				object_type = data[0]["objectType"]
 				data = data[1]
 
