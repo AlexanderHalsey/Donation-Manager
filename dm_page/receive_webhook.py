@@ -16,16 +16,17 @@ def process_webhook_payload(payload):
 				p = Profile()
 				object_type = data["objectType"]
 		if action == "merge":
-			p_old = Profile.objects.get(seminar_desk_id = data[0]["id"])
-			p_old.delete()
+			p = Profile.objects.get(seminar_desk_id = data[0]["id"])
+			# not doing anything with old data atm, acting as an update
 			data = data[1]
 			object_type = data["objectType"]
-			p = Profile()
 		if action == "update":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
+			object_type = data["objectType"]
 		if action == "delete":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
-			p.delete()
+			p.disabled = True
+			return
 
 		p.seminar_desk_id = data["id"]
 		p.salutation = data["salutation"]

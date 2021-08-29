@@ -179,7 +179,12 @@
           <tr>
           {% endif %}
             <td>{{ donation.id }}</td>
+            {% if donation.contact.profile.disabled %}
+            <td>{{ donation.contact.profile.name }}</td>
+            <td>
+            {% else %}
             <td><a href="{% url 'contact' donation.contact.id %}" >{{ donation.contact.profile.name }}</a></td>
+            {% endif %}
             <td>
               {% for tag in donation.contact.tags.all %}
               <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>

@@ -1,58 +1,45 @@
 {
-  "id": "70c818d5177440fa9edfff58cb1b52a6",
+  "id": "34dc8b28049e42c28fdc82dcaf195a87",
   "attempt": 1,
   "properties": {
-    "timestamp": 1628765402593
+    "timestamp": 1628761811522
   },
   "notifications": [
     {
-      "action": "profile.update",
+      "action": "profile.delete",
       "payload": {
         "id": 6213,
         "objectType": "ORGANIZATION",
         "salutation": "Firma",
         "title": "",
         "name": "Corp 202109",
-        "language": "de",
-        "labels": [
-          {
-            "id": 4027,
-            "name": "TP2-T1",
-            "abbreviation": "TP2-T1",
-            "description": [
-              {
-                "language": "DE",
-                "value": ""
-              }
-            ],
-            "pictureUrl": []
-          }
-        ],
-        "email": "corp@mail.com",
+        "language": "",
+        "labels": [],
+        "email": "",
         "alternativeEmail": "",
         "website": "",
         "faxNumber": "",
         "primaryAddress": {
-          "careOf": "",
-          "streetAddress": "",
-          "streetAddres2": "",
-          "zipCode": "",
-          "city": "",
-          "province": "",
-          "countryCode": ""
+          "careOf": null,
+          "streetAddress": null,
+          "streetAddres2": null,
+          "zipCode": null,
+          "city": null,
+          "province": null,
+          "countryCode": null
         },
         "billingAddressActive": false,
         "billingAddress": {
-          "careOf": "",
-          "streetAddress": "",
-          "streetAddres2": "",
-          "zipCode": "",
-          "city": "",
-          "province": "",
-          "countryCode": ""
+          "careOf": null,
+          "streetAddress": null,
+          "streetAddres2": null,
+          "zipCode": null,
+          "city": null,
+          "province": null,
+          "countryCode": null
         },
-        "remarks": "",
-        "information": "",
+        "remarks": "<test '\n<src=''>",
+        "information": "<test '\n<src=''>",
         "isBlocked": false,
         "blockedReason": "",
         "bankAccountData": {
@@ -71,10 +58,10 @@
           "Beitrittsdatum": null,
           "Einverständnis zu Werbekontakt": "Ja",
           "Interessen": [],
-          "Mitgliedsnummer": null,
+          "Mitgliedsnummer": 0.0,
           "Arbeitgeber": "Fill text",
-          "Cost as a facilitator": null,
-          "Formatted text": "",
+          "Cost as a facilitator": 0.0,
+          "Formatted text": "<strong>test 2</strong>",
           "Yes No Field": false,
           "Formatted text 2": "",
           "Headline": "",
@@ -87,7 +74,7 @@
           "nnn": "",
           "hhh": ""
         },
-        "additionalName": "Company name 2"
+        "additionalName": null
       }
     }
   ]

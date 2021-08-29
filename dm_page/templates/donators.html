@@ -171,7 +171,11 @@
           {% for contact in contacts %}
           <tr>
             <td style="width: 80px;">{{ contact.id }}</td>
+            {% if contact.profile.disabled %}
+            <td style="width: 223px;">{{ contact.name }}</td>
+            {% else %}
             <td style="width: 223px;"><a href="{% url 'contact' contact.id %}" >{{ contact.name }}</a></td>
+            {% endif %}
             <td style="width: 300px;">
               {% for tag in donation.contact.tags.all %}
               <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>

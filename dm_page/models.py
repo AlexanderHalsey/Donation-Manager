@@ -37,10 +37,11 @@ class Profile(models.Model):
 	vat_id = models.CharField(max_length= 200, default=None, null=True)
 	customer_number = models.CharField(max_length= 200, default=None, null=True)
 	additional_fields = models.TextField(default=None, null=True)
+	disabled = models.BooleanField(default=False)
 
 class Contact(models.Model):
 	tags = models.ManyToManyField('Tag')
-	profile = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True, blank=True)
+	profile = models.ForeignKey('Profile', on_delete=models.CASCADE, null=True, blank=True)
 	first_name = models.CharField(max_length= 200, default=None, null=True, blank=True)
 	last_name = models.CharField(max_length= 200, default=None, null=True)
 	additional_title = models.CharField(max_length= 200, default=None, null=True)
@@ -70,7 +71,7 @@ class DonationType(models.Model):
 		return self.donation_type
 
 class Organisation(models.Model):
-	profile = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True, blank=True)
+	profile = models.ForeignKey('Profile', on_delete=models.CASCADE, null=True, blank=True)
 	additional_name = models.CharField(max_length= 200, default=None, null=True)
 
 	def __str__(self):
