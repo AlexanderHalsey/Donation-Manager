@@ -15,14 +15,26 @@ def process_webhook_payload(payload):
 			finally:
 				p = Profile()
 				object_type = data["objectType"]
+				if object_type == "PERSON":
+					c = Contact()
+				elif object_type == "ORGANIZATION":
+					o = Organisation()
 		if action == "merge":
 			p = Profile.objects.get(seminar_desk_id = data[0]["id"])
-			# not doing anything with old data atm, acting as an update
+			# Do nothing: acting as an update
 			data = data[1]
 			object_type = data["objectType"]
+			if object_type == "PERSON":
+					c = Contact.objects.get(profile = p)
+				elif object_type == "ORGANIZATION":
+					o = Organisation.objects.get(profile = p)
 		if action == "update":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			object_type = data["objectType"]
+			if object_type == "PERSON":
+					c = Contact.objects.get(profile = p)
+				elif object_type == "ORGANIZATION":
+					o = Organisation.objects.get(profile = p)
 		if action == "delete":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			p.disabled = True
@@ -54,30 +66,26 @@ def process_webhook_payload(payload):
 		p.save()
 
 		if object_type == "PERSON":
-			c = Contact(
-				profile = p,
-				first_name = data["firstName"],
-				last_name = data["lastName"],
-				additional_title = data["additionalTitle"],
-				date_of_birth = data["dateOfBirth"],
-				profession = data["profession"],
-				salutation_type = data["salutationType"], 
-				private_phone_number = data["privatePhoneNumber"],
-				alternative_phone_number = data["alternativePhoneNumber"],
-				work_phone_number = data["workPhoneNumber"],
-				preferred_address = data["preferredAddress"],
-				preferred_email = data["preferredEmail"],
-				preferred_phone_number = data["preferredPhoneNumber"],
-				is_subscribed_to_newsletter = data["isSubscribedToNewsletter"],
-				is_facilitator = data["isFacilitator"],
-			)
+			c.profile = p,
+			c.first_name = data["firstName"],
+			c.last_name = data["lastName"],
+			c.additional_title = data["additionalTitle"],
+			c.date_of_birth = data["dateOfBirth"],
+			c.profession = data["profession"],
+			c.salutation_type = data["salutationType"], 
+			c.private_phone_number = data["privatePhoneNumber"],
+			c.alternative_phone_number = data["alternativePhoneNumber"],
+			c.work_phone_number = data["workPhoneNumber"],
+			c.preferred_address = data["preferredAddress"],
+			c.preferred_email = data["preferredEmail"],
+			c.preferred_phone_number = data["preferredPhoneNumber"],
+			c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"],
+			c.is_facilitator = data["isFacilitator"],
 			c.save()
 
 		elif object_type == "ORGANIZATION":
-			o = Organisation(
-				profile = p,
-				additional_name = data["additionalName"],
-			)
+			o.profile = p,
+			o.additional_name = data["additionalName"],
 			o.save()
 
 	except:
