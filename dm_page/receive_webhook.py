@@ -66,26 +66,26 @@ def process_webhook_payload(payload):
 		p.save()
 
 		if object_type == "PERSON":
-			c.profile = p,
-			c.first_name = data["firstName"],
-			c.last_name = data["lastName"],
-			c.additional_title = data["additionalTitle"],
-			c.date_of_birth = data["dateOfBirth"],
-			c.profession = data["profession"],
-			c.salutation_type = data["salutationType"], 
-			c.private_phone_number = data["privatePhoneNumber"],
-			c.alternative_phone_number = data["alternativePhoneNumber"],
-			c.work_phone_number = data["workPhoneNumber"],
-			c.preferred_address = data["preferredAddress"],
-			c.preferred_email = data["preferredEmail"],
-			c.preferred_phone_number = data["preferredPhoneNumber"],
-			c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"],
-			c.is_facilitator = data["isFacilitator"],
+			c.profile = p
+			c.first_name = data["firstName"]
+			c.last_name = data["lastName"]
+			c.additional_title = data["additionalTitle"]
+			c.date_of_birth = data["dateOfBirth"]
+			c.profession = data["profession"]
+			c.salutation_type = data["salutationType"] 
+			c.private_phone_number = data["privatePhoneNumber"]
+			c.alternative_phone_number = data["alternativePhoneNumber"]
+			c.work_phone_number = data["workPhoneNumber"]
+			c.preferred_address = data["preferredAddress"]
+			c.preferred_email = data["preferredEmail"]
+			c.preferred_phone_number = data["preferredPhoneNumber"]
+			c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
+			c.is_facilitator = data["isFacilitator"]
 			c.save()
 
 		elif object_type == "ORGANIZATION":
-			o.profile = p,
-			o.additional_name = data["additionalName"],
+			o.profile = p
+			o.additional_name = data["additionalName"]
 			o.save()
 
 	except:
