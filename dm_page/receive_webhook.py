@@ -25,16 +25,16 @@ def process_webhook_payload(payload):
 			data = data[1]
 			object_type = data["objectType"]
 			if object_type == "PERSON":
-					c = Contact.objects.get(profile = p)
-				elif object_type == "ORGANIZATION":
-					o = Organisation.objects.get(profile = p)
+				c = Contact.objects.get(profile = p)
+			elif object_type == "ORGANIZATION":
+				o = Organisation.objects.get(profile = p)
 		if action == "update":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			object_type = data["objectType"]
 			if object_type == "PERSON":
-					c = Contact.objects.get(profile = p)
-				elif object_type == "ORGANIZATION":
-					o = Organisation.objects.get(profile = p)
+				c = Contact.objects.get(profile = p)
+			elif object_type == "ORGANIZATION":
+				o = Organisation.objects.get(profile = p)
 		if action == "delete":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			p.disabled = True
