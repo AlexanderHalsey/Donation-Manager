@@ -77,6 +77,7 @@
                   {% endif %}
                 {% endfor %}
                 </select>
+                <div class="invalid-feedback">Select a valid Organisation.</div>
               </div>
             </div>
             <div class="col-md-5">
@@ -91,7 +92,8 @@
                   <option value="{{ type }}">{{ type }}</option>
                   {% endif %}
                 {% endfor %}
-                </select>  
+                </select>
+                <div class="invalid-feedback">Select a valid Donation Type.</div> 
               </div>
             </div>
             <div class="col-md-5">
@@ -107,12 +109,14 @@
                   {% endif %}
                 {% endfor %}
                 </select>
+                <div class="invalid-feedback">Select a valid Payment Mode.</div>
               </div>
             </div>
             <div class="col-md-5">
               <div class="input-group mb-3">
                 <span class="p-2"><strong>N° Donations:</strong></span>
                 <input id="tag_donation_quantity" name="donation_quantity" class="form-control text-end">
+                <div class="invalid-feedback">Select a valid Number.</div>
               </div>
             </div>
           </div>

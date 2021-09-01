@@ -8,38 +8,51 @@
     {
       "action": "profile.delete",
       "payload": {
-        "id": 5178,
+        "id": 6212,
         "objectType": "PERSON",
         "salutation": "Herr",
-        "title": "",
-        "name": "<img src=''/> tp2",
-        "language": "",
-        "labels": [],
-        "email": "",
-        "alternativeEmail": "",
-        "website": "",
+        "title": "Dr.",
+        "name": "Person 20210804",
+        "language": "en",
+        "labels": [
+          {
+            "id": 1023,
+            "name": "TP1-T1 Ex",
+            "abbreviation": "TP1-T1",
+            "description": [
+              {
+                "language": "DE",
+                "value": null
+              }
+            ],
+            "pictureUrl": []
+          }
+        ],
+        "email": "personmail@mail.com",
+        "alternativeEmail": "personemail2@mail2.com",
+        "website": "personwebsite.com",
         "faxNumber": "",
         "primaryAddress": {
-          "careOf": null,
-          "streetAddress": null,
-          "streetAddres2": null,
-          "zipCode": null,
-          "city": null,
-          "province": null,
-          "countryCode": null
+          "careOf": "Room 123",
+          "streetAddress": "Apart XYZ",
+          "streetAddres2": "",
+          "zipCode": "4321",
+          "city": "City XYZ",
+          "province": "Province XYZ",
+          "countryCode": ""
         },
         "billingAddressActive": false,
         "billingAddress": {
-          "careOf": null,
-          "streetAddress": null,
-          "streetAddres2": null,
-          "zipCode": null,
-          "city": null,
-          "province": null,
-          "countryCode": null
+          "careOf": "",
+          "streetAddress": "",
+          "streetAddres2": "",
+          "zipCode": "",
+          "city": "",
+          "province": "",
+          "countryCode": ""
         },
-        "remarks": "<test '\n<src=''>",
-        "information": "<test '\n<src=''>",
+        "remarks": "Remarks",
+        "information": "Indo",
         "isBlocked": false,
         "blockedReason": "",
         "bankAccountData": {
@@ -58,10 +71,10 @@
           "Beitrittsdatum": null,
           "Einverständnis zu Werbekontakt": "Ja",
           "Interessen": [],
-          "Mitgliedsnummer": 0.0,
+          "Mitgliedsnummer": null,
           "Arbeitgeber": "Fill text",
-          "Cost as a facilitator": 0.0,
-          "Formatted text": "<strong>test 2</strong>",
+          "Cost as a facilitator": null,
+          "Formatted text": "",
           "Yes No Field": false,
           "Formatted text 2": "",
           "Headline": "",
@@ -74,18 +87,18 @@
           "nnn": "",
           "hhh": ""
         },
-        "firstName": "<img src=''/>",
-        "lastName": "tp2",
-        "additionalTitle": "",
-        "dateOfBirth": null,
-        "profession": "",
-        "salutationType": "INFORMAL",
+        "firstName": "Person",
+        "lastName": "20210804",
+        "additionalTitle": "Title 1",
+        "dateOfBirth": "1990-01-02",
+        "profession": "Consultant",
+        "salutationType": "FORMAL",
         "privatePhoneNumber": "",
         "alternativePhoneNumber": "",
         "workPhoneNumber": "",
         "preferredAddress": "PRIVATE",
         "preferredEmail": "PRIVATE",
-        "preferredPhoneNumber": "PRIVATE",
+        "preferredPhoneNumber": "BUSINESS",
         "isSubscribedToNewsletter": false,
         "isFacilitator": false
       }
