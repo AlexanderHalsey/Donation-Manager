@@ -85,13 +85,13 @@
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input type="username" name="username" placeholder="Username..." class="form-control">
+							<input type="username" name="username" placeholder="{{language.login.username}}" class="form-control">
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							<input type="password" name="password" placeholder="Password..." class="form-control">
+							<input type="password" name="password" placeholder="{{language.login.password}}" class="form-control">
 						</div>
 
 							<div class="d-flex justify-content-center mt-3 login_container">
@@ -102,6 +102,11 @@
 				{% for message in messages %}
 					<p id="messages">{{message}}</p>
 				{% endfor %}
+				<span class="d-flex justify-content-center" style="margin-top: 10px;">
+					<a href="{% url 'login' lang='fr' %}">fr</a>
+	      			<span>&nbsp;/&nbsp;</span>
+	      			<a href="{% url 'login' lang='en' %}">en</a>
+	      		</span>
 			</div>
 		</div>
 	</div>

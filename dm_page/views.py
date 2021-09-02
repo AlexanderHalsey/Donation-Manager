@@ -24,22 +24,27 @@ import os
 # Create your views here.
 def loginUser(request, lang):
 	if request.user.is_authenticated:
-		return redirect(f"{lang}/")
+		return redirect(f"/{lang}/")
 	else:
 		if request.method == "POST":
 			username = request.POST.get('username')
 			password = request.POST.get('password')
 			user = authenticate(request, username=username, password=password)
 			if user is not None:
+				print(request.META)
 				login(request, user)
-				return redirect(f'{lang}/')
+				return redirect(f"/{lang}/")
 			else:
-				messages.info(request, 'Username or Password is incorrect') 
+				if lang == "fr":
+					m = "le nom d'utilisateur ou le mot de passe est incorrect"
+				if lang == "en":
+					m = "The username or password is incorrect"
+				messages.info(request, m) 
 		return render(request, 'login.html', {"language": language_text(lang=lang)})
 
 def logoutUser(request, lang):
 	logout(request)
-	return redirect(f'{lang}/login/')
+	return redirect(f"/{lang}/login")
 
 @csrf_exempt
 @require_POST
