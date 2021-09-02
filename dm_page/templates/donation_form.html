@@ -4,12 +4,12 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">{{ form_values.title }} Donation</h5>
-          <a href="{% url 'dashboard' %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
+          <h5 class="modal-title" id="exampleModalLabel">{{ form_values.title }}</h5>
+          <a href="{% url 'dashboard' lang=language.language %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
         </div>
         <div class="modal-body">
           <div class="row mb-3">
-            <label for="validationCustom1" class="col-md-4 col-form-label text-end"><strong>Contact:</strong></label>
+            <label for="validationCustom1" class="col-md-4 col-form-label text-end"><strong>{{language.forms.contactLabelName}}</strong></label>
             <div class="col-md-7">
               <input id="validationCustom1" name="contact" class="form-control {{form_values.errorlist.contact}}" list="datalistOptions" placeholder="Type to search..." value="{{ form.fields.contact.initial }}" autocomplete="off" required>
               <datalist id="datalistOptions">
@@ -17,15 +17,15 @@
                 <option value="{{ contact }}">
                 {% endfor %}
               </datalist>
-              <div class="invalid-feedback">Select a valid contact.</div>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.contact}}</div>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-md-4 col-form-label text-end"><strong>Date Donated:</strong></label>
+            <label class="col-md-4 col-form-label text-end"><strong>{{language.forms.dateDonatedLabelName}}</strong></label>
             <div class="col-md-7">
               <div id="dtpkr">
                 <input type="text" class="form-control {{form_values.errorlist.date_donated}}" name="date_donated" value="{{ form.fields.date_donated.initial }}" required>
-              <div class="invalid-feedback">Select a valid date.</div>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.dateDonated}}</div>
               </div>
               <script>
                 $('#dtpkr input').datepicker({
@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label for="id_amount" class="col-md-4 col-form-label text-end"><strong>Amount:</strong></label>
+            <label for="id_amount" class="col-md-4 col-form-label text-end"><strong>{{language.forms.amountLabelName}}</strong></label>
             <div class="col-md-7">
               <div class="input-group mb-3">
                 <span class="input-group-text">€</span>
@@ -46,12 +46,12 @@
                 <div class="col-md-3">
                   <input type="text" name="amount_cents" class="form-control {{form_values.errorlist.amount_cents}}" id="validationDefault01" value="{{ form.fields.amount_cents.initial }}" autocomplete="off">
                 </div>
-                <div class="invalid-feedback">Select a valid number.</div>
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.amount}}</div>
               </div>
             </div>
           </div>
           <div class="row mb-3">
-            <label for="id_payment_mode" class="col-md-4 col-form-label text-end"><strong>Payment Mode:</strong></label>
+            <label for="id_payment_mode" class="col-md-4 col-form-label text-end"><strong>{{language.forms.paymentModeLabelName}}</strong></label>
             <div class="col-md-7">
               <select id="id_payment_mode" name="payment_mode" class="form-select {{form_values.errorlist.payment_mode}}" aria-label="Default select example" required>
                 <option value="-----" selected>-----</option>
@@ -63,11 +63,11 @@
                 {% endif %}
               {% endfor %}
               </select>
-              <div class="invalid-feedback">Select a valid payment mode.</div>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.paymentMode}}</div>
             </div>
           </div>
           <div class="row mb-3">
-            <label for="id_donation_type" class="col-md-4 col-form-label text-end"><strong>Donation Type:</strong></label>
+            <label for="id_donation_type" class="col-md-4 col-form-label text-end"><strong>{{language.forms.donationTypeLabelName}}</strong></label>
             <div class="col-md-7">
               <select id="id_donation_type" name="donation_type" class="form-select {{form_values.errorlist.donation_type}}" aria-label="Default select example" required>
                 <option value="-----" selected>-----</option>
@@ -79,11 +79,11 @@
                 {% endif %}
               {% endfor %}
               </select>
-              <div class="invalid-feedback">Select a valid donation type.</div>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div>
             </div>
           </div>
           <div class="row mb-3">
-            <label for="id_organisation" class="col-md-4 col-form-label text-end"><strong>Organisation:</strong></label>
+            <label for="id_organisation" class="col-md-4 col-form-label text-end"><strong>{{language.forms.organisationLabelName}}</strong></label>
             <div class="col-md-7">
               <select id="organisation" name="organisation" class="form-select {{form_values.errorlist.organisation}}" aria-label="Default select example" value="form.fields.organisation.initial" required>
                 <option value="-----" selected>-----</option>
@@ -95,12 +95,12 @@
                 {% endif %}
               {% endfor %}
               </select>
-              <div class="invalid-feedback">Select a valid organisation.</div>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.organisation}}</div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+          <a href="{% url 'dashboard' lang=language.language %}" class="btn btn-secondary">{{language.buttons.cancel}}</a>
           <input type="hidden" name="id" value="{{ form_values.i }}">
           <button type="submit" name="Submit" class="btn btn-{{ form_values.colour }}" value="{{ form_values.type }}">{{ form_values.button }}</button>
           <input type="hidden" name="scroll" value="">

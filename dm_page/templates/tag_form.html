@@ -4,21 +4,21 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="tag_form_Label">Create Tag (title to be dynamic!)</h5>
-          <a href="{% url 'dashboard' %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
+          <h5 class="modal-title" id="tag_form_Label">{{language.forms.tagTitle.create}}</h5>
+          <a href="{% url 'dashboard' lang=language.language %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
         </div>
         <div class="modal-body">
           <div class="row mb-3 justify-content-center">
             <div class="col-md-10">
               <div class="input-group mb-3">
-                <span class="p-2"><strong>Tag Name:</strong></span>
+                <span class="p-2"><strong>{{language.forms.tagLabelName}}</strong></span>
                 <input id="tag_name" name="tag_name" class="form-control" placeholder="this is an input, updating and deleting will be a select" autocomplete="off" required>
               </div>
             </div>
           </div>
           <div class="row mb-3 justify-content-center">
             <div class="input-group mb-3 justify-content-center">
-              <span class="p-2"><strong>Contacts:</strong></span>
+              <span class="p-2"><strong>{{language.forms.contactLabelName}}</strong></span>
               <div class="col-md-9">
                 <input type='text' class='form-control flexdatalist' data-min-length='1' multiple='multiple' list='tag_contact_options' placeholder="Add a contact" name='contacts'>
                 <datalist id="tag_contact_options">
@@ -26,15 +26,15 @@
                     <option value="{{ contact }}">{{contact}}</option>
                   {% endfor %}
                 </datalist>
-                <div class="invalid-feedback">Select a valid contact.</div>
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.contact}}</div>
               </div>
             </div>
             <div class="col-md-10">
               <div class="input-daterange input-group mb-3" id="datepicker">
-                <span class="p-2"><strong>Date Donated:</strong></span>
-                <span class="input-group-text">from</span>
+                <span class="p-2"><strong>{{language.forms.dateDonatedLabelName}}</strong></span>
+                <span class="input-group-text">{{language.forms.filterDateFrom}}</span>
                 <input id="tag_date_gte" type="text" class="form-control {{form_values.errorlist.tag_date_gte}}" name="date_donated_gte" value="views will need a tag dictionary" onclick="this.value=''" onBlur="if (this.value == '') {this.value = 'DD/MM/YYYY'}">
-                <span class="input-group-text">to</span>
+                <span class="input-group-text">{{language.forms.filterDateTo}}</span>
                 <input id="tag_date_lte" type="text" class="form-control {{form_values.errorlist.tag_date_lte}}" name="date_donated_lte" value="" onclick="this.value=''" onBlur="if (this.value == '') {this.value = 'DD/MM/YYYY'}">
                 <script>
                   $('#tag_date_gte').datepicker({
@@ -50,23 +50,23 @@
                   autoclose: true,
                   });
                 </script>
-                <div class="invalid-feedback">Select a valid date.</div>
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.dateDonated}}</div>
               </div>
             </div>
             <div class="col-md-10">
               <div class="input-group mb-3">
-                <span class="p-2"><strong>Amount:</strong></span>
+                <span class="p-2"><strong>{{language.forms.amountLabelName}}</strong></span>
                 <span class="input-group-text">€</span>
                 <input name="amount_gte" class="form-control text-end {{form_values.errorlist.amount_gte}}" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="update function">
                 <span class="input-group-text"><=</span>
                 <span class="input-group-text">€</span>
                 <input name="amount_lte" class="form-control text-end {{form_values.errorlist.amount_lte}}" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="same">
-                <div class="invalid-feedback">Select a valid number.</div>
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.amount}}</div>
               </div>
             </div>
             <div class="col-md-5">
               <div class="input-group mb-3">
-                <span class="p-2"><strong>Organisation:</strong></span>
+                <span class="p-2"><strong>{{language.forms.organisationLabelName}}</strong></span>
                 <select id="organisation" name="organisation" class="form-select" aria-label="Default select example" required>
                   <option value="-----" selected>-----</option>
                 {% for id, organisation in form.fields.organisation.choices %}
@@ -77,12 +77,12 @@
                   {% endif %}
                 {% endfor %}
                 </select>
-                <div class="invalid-feedback">Select a valid Organisation.</div>
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.organisation}}</div>
               </div>
             </div>
             <div class="col-md-5">
               <div class="input-group mb-3">
-                <span class="p-2"><strong>Donation Type:</strong></span>
+                <span class="p-2"><strong>{{language.forms.donationTypeLabelName}}</strong></span>
                 <select id="id_donation_type" name="donation_type" class="form-select" aria-label="Default select example" required>
                   <option value="-----" selected>-----</option>
                 {% for id, type in form.fields.donation_type.choices %}
@@ -93,12 +93,12 @@
                   {% endif %}
                 {% endfor %}
                 </select>
-                <div class="invalid-feedback">Select a valid Donation Type.</div> 
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div> 
               </div>
             </div>
             <div class="col-md-5">
               <div class="input-group mb-3">
-                <span class="p-2"><strong>Payment Mode:</strong></span>
+                <span class="p-2"><strong>{{language.forms.paymentModeLabelName}}</strong></span>
                 <select id="tag_payment_mode" name="payment_mode" class="form-select" aria-label="Default select example" required>
                   <option value="-----" selected>-----</option>
                 {% for id, mode in form.fields.payment_mode.choices %}
@@ -109,22 +109,22 @@
                   {% endif %}
                 {% endfor %}
                 </select>
-                <div class="invalid-feedback">Select a valid Payment Mode.</div>
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.PaymentMode}}</div>
               </div>
             </div>
             <div class="col-md-5">
               <div class="input-group mb-3">
-                <span class="p-2"><strong>N° Donations:</strong></span>
+                <span class="p-2"><strong>{{language.forms.numberDonationsLabelName}}</strong></span>
                 <input id="tag_donation_quantity" name="donation_quantity" class="form-control text-end">
-                <div class="invalid-feedback">Select a valid Number.</div>
+                <div class="invalid-feedback">{{language.forms.invalidFeedback.number}}</div>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+          <a href="{% url 'dashboard' lang=language.language %}" class="btn btn-secondary">{{language.buttons.cancel}}</a>
           <input type="hidden" name="id" value="{{ form_values.i }}">
-          <button type="submit" name="Submit" class="btn btn-{{ form_values.colour }}" value="{{ form_values.type }}">{{ form_values.button }}</button>
+          <button type="submit" name="Submit" class="btn btn-{{ form_values.colour }}" value="{{ form_values.type }}">{{language.buttons.submit}}</button>
           <input type="hidden" name="scroll" value="">
           <input type="hidden" name="collapse" value="collapse">
         </div>

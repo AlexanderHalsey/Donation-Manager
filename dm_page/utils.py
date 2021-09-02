@@ -11,6 +11,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.utils import simpleSplit, ImageReader
 from reportlab.pdfbase.ttfonts import TTFont
 from textwrap import wrap
+import json
 
 # export to excel
 import xlwt
@@ -26,6 +27,16 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+
+def language_text(lang="fr"):
+	if lang == "en":
+		l = "english"
+	if lang == "fr":
+		l = "french"
+	print(BASE_DIR)
+	with open(f"{BASE_DIR}/static/language/{l}.json", "r") as f:
+		payload = json.load(f)
+		return payload
 
 
 def export_xls(view, data, columns, file_name_extension):

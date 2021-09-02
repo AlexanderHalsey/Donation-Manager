@@ -33,34 +33,34 @@
   <div class="col-sm-4">
     <div class="card" style="background-color: FloralWhite;">
       <div class="card-body">
-	      <h4 class="card-title">Tags</h4>
+	      <h4 class="card-title">{{language.titles.tags}}</h4>
         {% for tag in tags %}
         <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
         {% endfor %}
         <hr>
-        <a href="#" class="btn btn-primary">Add Tag</a>
-        <a href="#" class="btn btn-success">Update Tags</a>
-        <a href="#" class="btn btn-danger">Delete Tags</a>
+        <a href="#" class="btn btn-primary">{{language.buttons.tagButton.create}}</a>
+        <a href="#" class="btn btn-success">{{language.buttons.tagButton.update}}</a>
+        <a href="#" class="btn btn-danger">{{language.buttons.tagButton.delete}}</a>
 	    </div>
     </div>
   </div>
   <div class="col-sm-4">
     <div class="card text-center" style="background-color: AliceBlue;">
       <div class="card-body">
-        <h4 class="card-title">Total Number of Donations</h4>
+        <h4 class="card-title">{{language.titles.totalNumberOfDonations}}</h4>
         <h1 class="card-text">{{ donations_count }}</h1>
         <br>
-        <h3 class="card-text" style="color: Green;">With Filter: &nbsp; {{ donation_count_filter }}</h3>
+        <h3>{{language.titles.withFilter}}&nbsp; {{ donation_count_filter }}</h3>
       </div>
     </div>
   </div>
   <div class="col-sm-4">
     <div class="card text-center" style="background-color: HoneyDew;">
       <div class="card-body">
-        <h4 class="card-title">Total Amount Donated</h4>
+        <h4 class="card-title">{{language.titles.totalAmountDonated}}</h4>
         <h1 class="card-text">{{ total_donated }}</h1>
         <br>
-        <h3 class="card-text" style="color: Green;">With Filter: &nbsp; {{ total_donated_filter }}</h3>
+        <h3 class="card-text" style="color: Green;">{{language.titles.withFilter}}&nbsp; {{ total_donated_filter }}</h3>
       </div>
     </div>
   </div>
@@ -70,10 +70,10 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist" style="font-size: 24px;">
       <li class="nav-item" role="presentation">
-        <a class="nav-link" id="donations-tab"  href="{% url 'dashboard' %}">Donations</a>
+        <a class="nav-link" id="donations-tab"  href="{% url 'dashboard' lang=language.language %}">{{language.titles.donations}}</a>
       </li>
       <li class="nav-item" role="presentation">
-        <a class="nav-link active" href="{% url 'donators' %}">Donators</a>
+        <a class="nav-link active" href="{% url 'donators' lang=language.language %}">{{language.titles.donators}}</a>
       </li>
     </ul>
   </div>
@@ -87,12 +87,12 @@
             {% endfor %}
             <div class="row p-1">
               <div class="col">
-                <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">Export to .xls</button>
+                <button class="btn btn-warning" type="submit" name="Submit" value="export_xls">{{language.buttons.exportXls}}</button>
               </div>
             </div>
             <div class="row p-1">
               <div class="col">
-                <button class="btn btn-info" type="submit" name="Submit" value="export_csv">Export to .csv</button>
+                <button class="btn btn-info" type="submit" name="Submit" value="export_csv">{{language.buttons.exportCsv}}</button>
               </div>
             </div>
           </form>
@@ -103,7 +103,7 @@
           <div class="card p-2" style="background-color: WhiteSmoke;">
             <div class="row justify-content-between">
               <div class="col-2">
-                <h3 class="card-title">Filter</h3>
+                <h3 class="card-title">{{language.titles.filter}}</h3>
               </div>
               <div class="col-1">
                 <a id="c" for="collapse_id" class="btn btn-secondary" data-bs-toggle="collapse" href="#collapse_id" role="button" aria-expanded="false" aria-controls="collapse_id">&#9660;</a>
@@ -114,10 +114,10 @@
                 <div class="row" style="margin-top: 15px">
                   <div class="col-7">
                     <div class="input-daterange input-group mb-3" id="datepicker">
-                      <span class="p-2"><strong>Date Donated:</strong></span>
-                      <span class="input-group-text">from</span>
+                      <span class="p-2"><strong>{{language.forms.dateDonatedLabelName}}</strong></span>
+                      <span class="input-group-text">{{language.forms.filterDateFrom}}</span>
                       <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
-                      <span class="input-group-text">to</span>
+                      <span class="input-group-text">{{language.forms.filterDateTo}}</span>
                       <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
                       <script>
                         $('#date_gte').datepicker({
@@ -139,7 +139,7 @@
                 <div class="row justify-content-evenly">
                   <div class="col-7">
                     <div class="input-group mb-3">
-                      <span class="p-2"><strong>Amount:</strong></span>
+                      <span class="p-2"><strong>{{language.forms.amountLabelName}}</strong></span>
                       <span class="input-group-text">€</span>
                       <input name="amount_gte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
                       <span class="input-group-text"><=</span>
@@ -148,7 +148,7 @@
                     </div>
                   </div>
                 </div>
-                <button name="Submit" class="btn btn-primary ms-5" type="submit" value="filter">Search</button>
+                <button name="Submit" class="btn btn-primary ms-5" type="submit" value="filter">{{language.buttons.search}}</button>
               </div>
             </div>
           </div>
@@ -161,10 +161,10 @@
       <table class="table table-sm table-striped table-bordered">
         <thead>
           <tr class="table-primary">
-            <th style="width: 13%;">Id</th>
-            <th style="width: 13%;">Contact</th>
-            <th style="width: 14%;">Tags</th>
-            <th style="width: 13%;">Total Donated</th>
+            <th style="width: 13%;">{{language.table.id}}</th>
+            <th style="width: 13%;">{{language.table.contact}}</th>
+            <th style="width: 14%;">{{language.table.tags}}</th>
+            <th style="width: 13%;">{{language.table.totalDonated}}</th>
           </tr>
         </thead>
         <tbody>
@@ -174,7 +174,7 @@
             {% if contact.profile.disabled %}
             <td style="width: 223px;">{{ contact.name }}</td>
             {% else %}
-            <td style="width: 223px;"><a href="{% url 'contact' contact.id %}" >{{ contact.name }}</a></td>
+            <td style="width: 223px;"><a href="{% url 'contact' lang=language.language pk=contact.id %}" >{{ contact.name }}</a></td>
             {% endif %}
             <td style="width: 300px;">
               {% for tag in donation.contact.tags.all %}

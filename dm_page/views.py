@@ -22,9 +22,9 @@ import os
 # from pathlib import Path
 
 # Create your views here.
-def loginUser(request):
+def loginUser(request, lang):
 	if request.user.is_authenticated:
-		return redirect("/")
+		return redirect(f"{lang}/")
 	else:
 		if request.method == "POST":
 			username = request.POST.get('username')
@@ -32,14 +32,14 @@ def loginUser(request):
 			user = authenticate(request, username=username, password=password)
 			if user is not None:
 				login(request, user)
-				return redirect('/')
+				return redirect(f'{lang}/')
 			else:
 				messages.info(request, 'Username or Password is incorrect') 
-		return render(request, 'login.html', {})
+		return render(request, 'login.html', {"language": language_text(lang=lang)})
 
-def logoutUser(request):
+def logoutUser(request, lang):
 	logout(request)
-	return redirect('login')
+	return redirect(f'{lang}/login/')
 
 @csrf_exempt
 @require_POST
@@ -75,12 +75,12 @@ def webhooklogs(request):
 	return render(request, 'webhooklogs.html',{'logs': logs})
 
 @login_required(login_url='login')
-def dashboard(request):
+def dashboard(request, lang):
 	# intial form_values
 	form_values = {
-		"title": "New", 
+		"title": language_text(lang=lang)["forms"]["donationTitle"]["create"], 
 		"colour": "primary",
-		"button": "Submit",
+		"button": language_text(lang=lang)["buttons"]["submit"],
 		"update": False,
 		"delete": False,
 		"type": "create",
@@ -127,7 +127,7 @@ def dashboard(request):
 			disable_donation.disabled = True
 			disable_donation.save()
 
-			return redirect("/")
+			return redirect(f"{lang}/")
 
 		form = DonationForm(request.POST)
 		if form.is_valid():
@@ -184,7 +184,7 @@ def dashboard(request):
 				disable_donation.disabled = True
 				disable_donation.save()
 
-			return redirect("/")
+			return redirect(f"{lang}/")
 
 		else:
 			form_values["errors"] = True
@@ -203,9 +203,9 @@ def dashboard(request):
 			if collapse == "collapse_show":
 				collapse = "collapse show"
 			if request.POST["Submit"] == "update":
-				form_values["title"] = "Update"
+				form_values["title"] = language_text(lang=lang)["forms"]["donationTitle"]["update"]
 				form_values["colour"] = "success"
-				form_values["button"] = "Update"
+				form_values["button"] = language_text(lang=lang)["buttons"]["update"]
 				form_values["update"] = True
 				form_values["type"] = "update"
 				form_values["i"] = request.POST["id"]
@@ -237,9 +237,9 @@ def dashboard(request):
 				form.fields["organisation"].initial = "" if donation.organisation == None else donation.organisation.profile.name
 				# donation_form - update 
 				form_values = {
-					"title": "Update",
+					"title": language_text(lang=lang)["forms"]["donationTitle"]["update"],
 					"colour": "success",
-					"button": "Update",
+					"button": language_text(lang=lang)["buttons"]["update"],
 					"update": True,
 					"delete": False,
 					"type": "update",
@@ -330,10 +330,6 @@ def dashboard(request):
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
 
-	# redirect when filter is empty
-	if list(filter(lambda x: x, [request.GET.get(item) for item in request.GET])) in ([], ["Type to search..."]) and request.get_full_path_info() != "/":
-		return redirect("/")
-
 	context = {
 		'show_modal_pdf': show_modal_pdf,
 		'pdf_path': pdf_path,
@@ -348,11 +344,12 @@ def dashboard(request):
 		'total_donated_filter': total_donated_filter,
 		'form': form,
 		'form_values': form_values,
+		'language': language_text(lang=lang),
 	}
 	return render(request, 'dashboard.html', context)
 
 @login_required(login_url='login')
-def contact(request, pk):
+def contact(request, pk, lang):
 
 	# context
 	contact = Contact.objects.get(id=pk)
@@ -369,11 +366,12 @@ def contact(request, pk):
 		'donations': donations,
 		'donations_count': donations_count,
 		'total_donated': total_donated,
+		'language': language_text(lang=lang),
 	}
 	return render(request, 'contact.html', context)
 
 @login_required(login_url='login')
-def donators(request):
+def donators(request, lang):
 
 	# initial filter values
 	initial_filter_values = {
@@ -464,6 +462,7 @@ def donators(request):
 		'total_donated': total_donated,
 		'donation_count_filter': donation_count_filter,
 		'total_donated_filter': total_donated_filter,
+		'language': language_text(lang=lang),
 	}
 	return render(request, 'donators.html', context)
 

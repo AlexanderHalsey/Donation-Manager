@@ -1,20 +1,25 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <span class="navbar-brand" href="#">Navbar</span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item active">
-          <a class="nav-link" href="{% url 'dashboard' %}">DashBoard</a>
+          <a class="nav-link" href="{% url 'dashboard' lang=language.language %}">{{language.navbar.dashboard}}</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+          <a class="nav-link" href="{% url 'admin:index' %}">{{language.navbar.admin}}</a>
         </li>
       </ul>
     </div>
-    <span class="hello-msg">Hello, {{request.user}}</span>
-    <span ><a class="hello-msg" href="{% url 'logout' %}">Logout</a></span>
+    <span class="hello-msg">
+      <a href="{% url 'dashboard' lang='fr' %}" style="color: #fff;">fr</a>
+      <span>/</span>
+      <a href="{% url 'dashboard' lang='en' %}" style="margin-right: 30px; color: #fff;">en</a> 
+    </span>
+    <span class="hello-msg">{{language.navbar.hello}}{{request.user}}</span>
+    <span ><a class="hello-msg" href="{% url 'logout' lang=language.language %}">{{language.navbar.logout}}</a></span>
   </div>
 </nav>

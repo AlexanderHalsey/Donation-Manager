@@ -1,80 +1,94 @@
 {
-	"login": {
-		"username": "Username...",
-		"password": "Password...",
+  "language": "en",
+  "login": {
+	"username": "Username...",
+	"password": "Password..."
+  },
+  "navbar": {
+	"dashboard": "Dashboard",
+	"admin": "Admin",
+	"hello": "Hello, ",
+	"logout": "Logout"
+  },
+  "titles": {
+	"tags": "Tags",
+	"totalNumberOfDonations": "Total Number of Donations",
+	"totalAmountDonated": "Total Amount Donated",
+	"donations": "Donations",
+	"donators": "Donators",
+	"filter": "Filter",
+	"withFilter": "With the Filter: "
+  },
+  "buttons": {
+	"tagButton": {
+	  "create": "Create a Tag",
+	  "update": "Update a Tag",
+	  "delete": "Delete Tags"
 	},
-	"navbar": {
-		"dashboard": "Dashboard",
-		"admin": "Admin",
-		"hello": "Hello,",
-		"logout": "Logout",
+	"donationButton": {
+	  "create": "Add a Donation"
 	},
-	"titles": {
-		"tags": "Tags",
-		"totalNumberOfDonations": "Total Number of Donations",
-		"totalAmountDonated": "Total Amount Donated",
-		"donations": "Donations",
-		"donators": "Donators",
-		"filter": "Filter",
-		"withFilter": "With the Filter: ",
+	"exportCsv": "Export to .csv",
+	"exportXls": "Export to .xls",
+	"search": "Search",
+	"update": "Update",
+	"remove": "Remove",
+	"delete": "Delete",
+	"submit": "Submit",
+	"cancel": "Cancel"
+  },
+  "forms": { 
+	"tagTitle": {
+	  "create": "Create a Tag",
+      "update": "Update a Tag",
+	  "delete": "Delete Tags"
 	},
-	"buttons": {
-		"tagButton": {
-			"create": "Create a Tag",
-			"update": "Update a Tag",
-			"delete": "Delete Tags",
-		},
-		"donationButton": {
-			"create": "Add a Donation",
-		},
-		"exportCsv": "Export to .csv",
-		"exportXls": "Export to .xls",
-		"search": "Search",
-		"update": "Update",
-		"remove": "Remove",
-		"delete": "Delete",
-		"submit": "Submit",
+	"donationTitle": {
+	  "create": "New Donation",
+	  "update": "Update Donation",
+	  "delete": "Delete Donation",
+	  "deleteText": "Are you sure you want to remove this donation? This will move the donation to a disabled status."
 	},
-	"forms": { 
-		"tagTitle": {
-			"create": "Create a Tag",
-			"update": "Update a Tag",
-			"delete": "Delete Tags",
-		},
-		"donationTitle": {
-			"create": "New Donation",
-			"update": "Update Donation",
-			"delete": "Delete Donation",
-		},
-		"tagLabelName": "Tag Name:",
-		"multipleContactsLabelName": "Contacts:",
-		"contactLabelName": "Contact:",
-		"dateDonatedLabelName": "Date Donated:",
-		"donationTypeLabelName:": "Donation Type:",
-		"organisationLabelName": "Organisation:",
-		"paymentModeLabelName": "Payment Mode:",
-		"amountLabelName": "Amount:",
-		"disabledLabelName": "Include Deleted", 
-		"invalid-feedback": {
-			"selectA": "Select a ",
-			"valid": "valid ",
-			"contact": "contact",
-			"amount": "amount",
-			"number": "number",
-			"organisation": "organisation",
-			"paymentMode": "payment mode",
-			"donationType": "donation type", 
-		},
-	},
-	"table": {
-		"id": "ID",
-		"contact": "Contact",
-		"dateDonated": "Date Donated",
-		"amount": "Amount",
-		"organsation": "Organisation",
-		"paymentMode": "Payment Mode",
-		"donationType": "Donation Type",
-		"tags": "Tags",
-		"updateRemove": "Update / Remove",
-	},
+	"tagLabelName": "Tag Name:",
+	"multipleContactsLabelName": "Contacts:",
+	"contactLabelName": "Contact:",
+	"dateDonatedLabelName": "Date Donated:",
+	"filterDateFrom": "from",
+	"filterDateTo": "to",
+	"donationTypeLabelName": "Donation Type:",
+	"organisationLabelName": "Organisation:",
+	"paymentModeLabelName": "Payment Mode:",
+	"amountLabelName": "Amount:",
+	"numberDonationsLabelName": "N° de Dons",
+	"disabledLabelName": "Include Deleted", 
+	"contactPlaceholder": "Type to search...",
+	"datePlaceholder": "DD  / MM / YYYY",
+	"invalidFeedback": {
+	  "contact": "Select a valid contact.",
+	  "amount": "Select a valid amount.",
+	  "number": "Select a valid number.",
+	  "dateDonated": "Select a valid date.",
+	  "organisation": "Select a valid organisation.",
+	  "paymentMode": "Select a valid payment mode.",
+	  "donationType": "Select a valid donation type." 
+	}
+  },
+  "table": {
+	"id": "ID",
+	"contact": "Contact",
+	"dateDonated": "Date Donated",
+	"totalDonated": "Total Donated",
+	"amount": "Amount",
+	"organisation": "Organisation",
+	"paymentMode": "Payment Mode",
+	"donationType": "Donation Type",
+	"tags": "Tags",
+	"updateRemove": "Update / Remove"
+  },
+  "contact": {
+  	"emailLabel": "Email Address: ",
+  	"phoneLabel": "Phone Number: ",
+  	"addressLabel": "Postal Address: ",
+  	"informationLabel": "Additional information: "
+  }
 }
