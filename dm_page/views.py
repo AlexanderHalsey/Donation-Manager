@@ -132,7 +132,7 @@ def dashboard(request, lang):
 			disable_donation.disabled = True
 			disable_donation.save()
 
-			return redirect(f"{lang}/")
+			return redirect(f"/{lang}/")
 
 		form = DonationForm(request.POST)
 		if form.is_valid():
@@ -189,7 +189,7 @@ def dashboard(request, lang):
 				disable_donation.disabled = True
 				disable_donation.save()
 
-			return redirect(f"{lang}/")
+			return redirect(f"/{lang}/")
 
 		else:
 			form_values["errors"] = True

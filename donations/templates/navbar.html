@@ -15,9 +15,9 @@
       </ul>
     </div>
     <span class="hello-msg">
-      <a href="{% url 'dashboard' lang='fr' %}" style="color: #fff;">fr</a>
+      <a href="{% url 'dashboard' lang='fr' %}">fr</a>
       <span>/</span>
-      <a href="{% url 'dashboard' lang='en' %}" style="margin-right: 30px; color: #fff;">en</a> 
+      <a href="{% url 'dashboard' lang='en' %}" style="margin-right: 30px;">en</a> 
     </span>
     <span class="hello-msg">{{language.navbar.hello}}{{request.user}}</span>
     <span ><a class="hello-msg" href="{% url 'logout' lang=language.language %}">{{language.navbar.logout}}</a></span>
