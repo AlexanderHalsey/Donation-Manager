@@ -4,4 +4,3 @@ __pycache__
 .env
 Procfile
 db.sqlite3
-/dm_page/static/*
