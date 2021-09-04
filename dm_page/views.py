@@ -68,7 +68,8 @@ def dms_webhook(request):
 	process_webhook_payload(payload)
 	return HttpResponse("Message received okay.", content_type="text/plain")
 
-def webhooklogs(request):
+@login_required(login_url="/fr/login")
+def webhooklogs(request, lang):
 	'''path = Path("/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json")
 	for file in path.iterdir():
 		payload = json.load(file)
@@ -77,9 +78,9 @@ def webhooklogs(request):
 			payload = payload,
 		)'''
 	logs = WebhookLogs.objects.all().order_by("-received_at")
-	return render(request, 'webhooklogs.html',{'logs': logs})
+	return render(request, 'webhooklogs.html',{'logs': logs, 'language': language_text(lang=lang)})
 
-@login_required(login_url='login')
+@login_required(login_url='/fr/login')
 def dashboard(request, lang):
 	# intial form_values
 	form_values = {
@@ -353,7 +354,7 @@ def dashboard(request, lang):
 	}
 	return render(request, 'dashboard.html', context)
 
-@login_required(login_url='login')
+@login_required(login_url='/fr/login')
 def contact(request, pk, lang):
 
 	# context
@@ -375,7 +376,7 @@ def contact(request, pk, lang):
 	}
 	return render(request, 'contact.html', context)
 
-@login_required(login_url='login')
+@login_required(login_url='/fr/login')
 def donators(request, lang):
 
 	# initial filter values
