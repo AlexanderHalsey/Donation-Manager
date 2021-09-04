@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from dotenv import load_dotenv
+import django_heroku
 
 load_dotenv()
 
@@ -150,3 +151,5 @@ CACHES = {
         'LOCATION': 'my_cache_table',
     }
 }
+
+django_heroku.settings(locals())
