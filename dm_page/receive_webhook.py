@@ -9,10 +9,12 @@ def process_webhook_payload(payload):
 		if action == "create":
 			try:
 				p = Profile.objects.get(seminar_desk_id = data["id"])
+				HttpResponse("Are we here?", content_type="text/plain")
 				return
 			except:
 				pass
 			finally:
+				HttpResponse("Or here?", content_type="text/plain")
 				p = Profile()
 				object_type = data["objectType"]
 				if object_type == "PERSON":
