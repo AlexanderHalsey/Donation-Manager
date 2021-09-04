@@ -29,7 +29,7 @@ PASSWORD=os.getenv('PASSWORD')
 SEND_TO=os.getenv('SEND_TO')
 DMS_WEBHOOK_TOKEN = os.getenv('DMS_WEBHOOK_TOKEN')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.getenv('DEBUG_VALUE') == 'True')
 
 ALLOWED_HOSTS = ['dmsivy.herokuapp.com', '127.0.0.1', 'localhost'] 
 
@@ -114,6 +114,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Secure
+
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 
 # Internationalization
