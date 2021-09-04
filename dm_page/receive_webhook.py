@@ -60,7 +60,9 @@ def process_webhook_payload(payload):
 		p.title = data["title"]
 		p.name = data["name"]
 		p.language = data["language"]
+		messages.append("non iterable fields completed ok")
 		p.labels = str([label for key, label in data["labels"].items()])
+		messages.append("labels completed ok")
 		p.email = data["email"]
 		p.alternative_email = data["alternativeEmail"]
 		p.website = data["website"]
@@ -105,8 +107,7 @@ def process_webhook_payload(payload):
 		message = ""
 		for m in messages:
 			message += (m + "\n")
-		if len(messages) == 0:
-			message == "Message received okay."
+		message += "Message received okay."
 		return message 
 	except:
 		messages.append("Something went wrong.")
