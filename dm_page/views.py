@@ -22,6 +22,9 @@ import os
 # from pathlib import Path
 
 # Create your views here.
+def redir(request):
+	return redirect("/fr")
+
 def loginUser(request, lang):
 	if request.user.is_authenticated:
 		return redirect(f"/{lang}/")
