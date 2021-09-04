@@ -83,12 +83,6 @@ def webhooklogs(request, lang):
 	logs = WebhookLogs.objects.all().order_by("-received_at")
 	return render(request, 'webhooklogs.html',{'logs': logs, 'language': language_text(lang=lang)})
 
-
-@login_required(login_url="/fr/login")
-def profil(request, lang):
-	profiles = Profile.objects.all()
-	return render(request, 'profil.html', {'language': language_text(lang=lang), 'profiles': profiles})
-
 @login_required(login_url='/fr/login')
 def dashboard(request, lang):
 	# intial form_values

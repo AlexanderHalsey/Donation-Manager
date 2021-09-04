@@ -6,7 +6,6 @@ urlpatterns = [
 	re_path(r'^(?P<lang>en|fr)/logout/$', views.logoutUser, name='logout'),
 	path('', views.redir, name='redir'),
 	path('webhooks/7f6qy3IqT5L2x75mFoUkaEdrY9Kuutuu2dzbuxOwcfw/', views.dms_webhook),
-	re_path(r'^(?P<lang>en|fr)/profil/$', views.profil),
 	re_path(r'^(?P<lang>en|fr)/webhooklogs/$', views.webhooklogs),
 	re_path(r'^(?P<lang>en|fr)/$', views.dashboard, name='dashboard'),
 	re_path(r'^(?P<lang>en|fr)/donators/$', views.donators, name="donators"),

@@ -61,8 +61,7 @@ def process_webhook_payload(payload):
 		p.name = data["name"]
 		p.language = data["language"]
 		messages.append("non iterable fields completed ok")
-		p.labels = str([label for key, label in data["labels"].items()])
-		messages.append("labels completed ok")
+		p.labels = str([(["SD_Label",label["id"],label["name"]]) for label in data["labels"]])
 		p.email = data["email"]
 		p.alternative_email = data["alternativeEmail"]
 		p.website = data["website"]
@@ -79,6 +78,7 @@ def process_webhook_payload(payload):
 		p.vat_id = data["vatId"]
 		p.customer_number = data["customerNumber"]
 		p.additional_fields = str([field for key, field in data["additionalFields"].items()])
+		messages.append("iterable fields completed ok")
 		p.save()
 
 		if object_type == "PERSON":
