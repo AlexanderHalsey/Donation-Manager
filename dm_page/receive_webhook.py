@@ -5,38 +5,51 @@ from .models import Profile, Contact, Organisation
 def process_webhook_payload(payload):
 	action = payload["notifications"][0]["action"].split("profile.")[1]
 	data = payload["notifications"][0]["payload"]
+	messages = []
 	try:
 		if action == "create":
 			try:
 				p = Profile.objects.get(seminar_desk_id = data["id"])
+				messages.append("Profile object found at create.")
 				return
 			except:
 				pass
 			finally:
+				messages.append("new profile being created.")
 				p = Profile()
 				object_type = data["objectType"]
 				if object_type == "PERSON":
 					c = Contact()
+					messages.append("new contact being created.")
 				elif object_type == "ORGANIZATION":
 					o = Organisation()
+					messages.append("new organisation being created.")
 		if action == "merge":
 			p = Profile.objects.get(seminar_desk_id = data[0]["id"])
+			messages.append("old profile found for merge.")
 			# Do nothing: acting as an update
 			data = data[1]
+			messages.append("new profile to be processed.")
 			object_type = data["objectType"]
 			if object_type == "PERSON":
 				c = Contact.objects.get(profile = p)
+				messages.append("contact found for merge.")
 			elif object_type == "ORGANIZATION":
 				o = Organisation.objects.get(profile = p)
+				messages.append("organisation found for merge.")
 		if action == "update":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
+			messages.append("profile found for update.")
 			object_type = data["objectType"]
 			if object_type == "PERSON":
 				c = Contact.objects.get(profile = p)
+				messages.append("contact found for update.")
 			elif object_type == "ORGANIZATION":
 				o = Organisation.objects.get(profile = p)
+				messages.append("organisation found for update.")
 		if action == "delete":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
+			messages.append("profile found for delete.")
 			p.disabled = True
 			p.save()
 			return
@@ -89,5 +102,13 @@ def process_webhook_payload(payload):
 			o.additional_name = data["additionalName"]
 			o.save()
 
+		message = ""
+		for m in messages:
+			message += (m + "\n")
+		return message 
 	except:
-		return
+		messages.append("Something went wrong.")
+		message = ""
+		for m in messages:
+			message += (m + "\n")
+		return message

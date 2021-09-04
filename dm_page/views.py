@@ -68,8 +68,8 @@ def dms_webhook(request):
 			received_at = timezone.now(),
 			payload = payload,
 		)
-	process_webhook_payload(payload)
-	return HttpResponse("Message received okay.", content_type="text/plain")
+	messages = process_webhook_payload(payload)
+	return HttpResponse(messages, content_type="text/plain")
 
 @login_required(login_url="/fr/login")
 def webhooklogs(request, lang):
