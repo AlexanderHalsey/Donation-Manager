@@ -38,6 +38,7 @@ def process_webhook_payload(payload):
 		if action == "delete":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			p.disabled = True
+			p.save()
 			return
 
 		p.seminar_desk_id = data["id"]
@@ -46,23 +47,23 @@ def process_webhook_payload(payload):
 		p.title = data["title"]
 		p.name = data["name"]
 		p.language = data["language"]
-		p.labels = data["labels"]
+		p.labels = [label for key, label in data["labels"].items()]
 		p.email = data["email"]
 		p.alternative_email = data["alternativeEmail"]
 		p.website = data["website"]
 		p.fax_number = data["faxNumber"]
-		p.primary_address = data["primaryAddress"]
+		p.primary_address = [address for key, address in data["primaryAddress"].items()]
 		p.billing_address_active = data["billingAddressActive"]
-		p.billing_address = data["billingAddress"]
+		p.billing_address = [address for key, address in data["billingAddress"].items()]
 		p.remarks = data["remarks"]
 		p.information = data["information"]
 		p.is_blocked = data["isBlocked"]
 		p.blocked_reason = data["blockedReason"]
-		p.bank_account_data = data["bankAccountData"]
+		p.bank_account_data = [d for key, d in data["bankAccountData"].items()]
 		p.tax_number = data["taxNumber"]
 		p.vat_id = data["vatId"]
 		p.customer_number = data["customerNumber"]
-		p.additional_fields = data["additionalFields"]
+		p.additional_fields = [field for key, field in data["additionalFields"].items()]
 		p.save()
 
 		if object_type == "PERSON":
