@@ -85,6 +85,7 @@ def webhooklogs(request, lang):
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang):
+
 	# intial form_values
 	form_values = {
 		"title": language_text(lang=lang)["forms"]["donationTitle"]["create"], 
@@ -451,7 +452,6 @@ def donators(request, lang):
 		"tags": contact.tags,
 		"name": contact.profile.name,
 		"total_donated": sum([donation.amount for donation in donations.filter(contact=contact)]),
-
 	} for contact in contacts]
 	contacts = list(filter(lambda x: x["total_donated"]>0, contacts))
 
@@ -474,6 +474,27 @@ def donators(request, lang):
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'donators.html', context)
+
+@login_required(login_url='/fr/login')
+def pdf_receipts(request, lang):
+	tags = Tag.objects.all()
+	donations = Donation.objects.filter(disabled=False).order_by("-date_donated")
+	file_storage_check(donations)
+	donations_count = donations.count()
+	total_donated = sum([d.amount for d in donations])
+
+	donation_count_filter = donations.count()
+	total_donated_filter = sum([d.amount for d in donations])
+	context = {
+		'tags': tags,
+		'donations': donations,
+		'donations_count': donations_count,
+		'total_donated': total_donated,
+		'total_donated_filter': total_donated_filter,
+		'donation_count_filter': donation_count_filter,
+		'language': language_text(lang=lang),
+	}
+	return render(request, 'pdf_receipts.html', context)
 
 '''@login_required(login_url='login')
 def pdf(request):

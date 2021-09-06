@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block page_content %}
+{% load static %}
+
+<script type="text/javascript">
+  var scroll = "{{ scroll }}";
+  window.addEventListener('load', 
+    function(){
+      window.scrollTo(0,scroll);
+    }
+  );
+  {% if form_values.errors %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("create").click();
+    }
+  );
+  {% endif %}
+
+  {% if form_values.update %}
+  console.log("ok")
+  window.addEventListener('load',
+    function(){
+      document.getElementById("update").click();
+    }
+  );
+  {% endif %}
+
+  {% if form_values.delete %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("delete").click();
+    }
+  );
+  {% endif %}
+
+  {% if show_modal_pdf %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("pdf_view").click();
+    }
+  );
+  {% endif %}
+
+  window.addEventListener('submit',
+    function(){
+      let scroll = document.getElementsByName('scroll');
+      for (let i = 0; i < scroll.length; i++) {
+        scroll[i].setAttribute('value', window.scrollY.toString());
+      }
+    }
+  );
+  window.addEventListener('submit',
+    function(){
+      let collapse = document.getElementsByName('collapse');
+      if (document.getElementById('c').getAttribute('aria-expanded') == 'true') {
+        for (let i = 0; i < collapse.length; i++) {
+          collapse[i].setAttribute('value', 'collapse show');
+        }
+      }
+      else {
+        for (let i = 0; i < collapse.length; i++) {
+          collapse[i].setAttribute('value', 'collapse');
+        }
+      }
+    }
+  );
+  window.addEventListener('submit',
+    function(){
+      if (document.getElementById('disabled').checked) {
+        document.getElementById('disabled').setAttribute('value', 'true');
+      }
+    }
+  );
+  $('.flexdatalist').flexdatalist({
+    minLength: 1
+  });
+</script>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="card" style="background-color: FloralWhite;">
+      <div class="card-body">
+	      <h4 class="card-title">{{language.titles.tags}}</h4>
+        {% for tag in tags %}
+        <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
+        {% endfor %}
+        <hr>
+        <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        {% include 'tag_form.html' %}
+	    </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center" style="background-color: AliceBlue;">
+      <div class="card-body">
+        <h4 class="card-title">{{language.titles.totalNumberOfDonations}}</h4>
+        <h1 class="card-text">{{ donations_count }}</h1>
+        <br>
+        <h3 class="card-text" style="color: Green;">{{language.titles.withFilter}}&nbsp; {{ donation_count_filter }}</h3>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center" style="background-color: HoneyDew;">
+      <div class="card-body">
+        <h4 class="card-title">{{language.titles.totalAmountDonated}}</h4>
+        <h1 class="card-text">{{ total_donated }}</h1>
+        <br>
+        <h3 class="card-text" style="color: Green;">{{language.titles.withFilter}}&nbsp; {{ total_donated_filter }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="card">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist" style="font-size: 24px;">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="donations-tab" href="{% url 'dashboard' lang=language.language %}">{{language.titles.donations}}</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="donators-tab" href="{% url 'donators' lang=language.language %}">{{language.titles.donators}}</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="pdf-receipts-tab" href="{% url 'pdf-receipts' lang=language.language %}">{{language.titles.pdfReceipts}}</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <p>Up to here everything working ok</p>
+  </div>
+</div>
+{% endblock %}

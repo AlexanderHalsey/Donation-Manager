@@ -13,6 +13,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 from textwrap import wrap
 import json
 
+# file storage
+from pathlib import Path
+
 # export to excel
 import xlwt
 
@@ -38,6 +41,12 @@ def language_text(lang="fr"):
 		payload = json.load(f)
 		return payload
 
+def file_storage_check(donations):
+	for donation in donations:
+		if donation.pdf_receipt == True:
+			path = Path(f"{BASE_DIR}/static/pdf/receipts/")
+			for entry in path.iterdir():
+				print(entry, type(entry))
 
 def export_xls(view, data, columns, file_name_extension):
 	response = HttpResponse()

@@ -8,7 +8,7 @@
     {
       "action": "profile.update",
       "payload": {
-        "id": 6212,
+        "id": 6215,
         "objectType": "PERSON",
         "salutation": "Herr",
         "title": "Dr.",
@@ -33,7 +33,7 @@
         "website": "personwebsite.com",
         "faxNumber": "",
         "primaryAddress": {
-          "careOf": "Room 123",
+          "careOf": "Room 456",
           "streetAddress": "Apart XYZ",
           "streetAddres2": "",
           "zipCode": "4321",
@@ -95,7 +95,7 @@
         "salutationType": "FORMAL",
         "privatePhoneNumber": "",
         "alternativePhoneNumber": "",
-        "workPhoneNumber": "",
+        "workPhoneNumber": "027-7346-267",
         "preferredAddress": "PRIVATE",
         "preferredEmail": "PRIVATE",
         "preferredPhoneNumber": "BUSINESS",

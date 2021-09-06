@@ -1,5 +1,5 @@
 from django.db.transaction import atomic
-from .models import Profile, Contact, Organisation
+from .models import Profile, Contact, Organisation, Donation
 
 @atomic
 def process_webhook_payload(payload):
@@ -27,8 +27,12 @@ def process_webhook_payload(payload):
 		if action == "merge":
 			p = Profile.objects.get(seminar_desk_id = data[0]["id"])
 			messages.append("old profile found for merge.")
-			# Do nothing: acting as an update
 			data = data[1]
+			# To be continued ...
+			#try:
+				# if new data already exists in system
+				#p_new = Profile.objects.get(seminar_desk_id = data["id"])
+
 			messages.append("new profile to be processed.")
 			object_type = data["objectType"]
 			if object_type == "PERSON":

@@ -62,6 +62,7 @@ class Contact(models.Model):
 
 class PaymentMode(models.Model):
 	payment_mode = models.CharField(max_length=200, null=True, blank=True)
+
 	def __str__(self):
 		return self.payment_mode
 
@@ -85,8 +86,11 @@ class Donation(models.Model):
 	donation_type = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True)
 	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
-	pdf = models.BooleanField(default=False)
-	pdf_path = models.CharField(null=True, max_length=200, blank=True)
+	pdf_receipt = models.BooleanField(default=False)
+
+	def __str__(self):
+		return str(self.id) + "_" + self.contact.profile.name + "_" + str(self.date_donated)
+
 
 class WebhookLogs(models.Model):
 	received_at = models.DateTimeField(help_text="When we received the event.")

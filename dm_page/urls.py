@@ -9,6 +9,7 @@ urlpatterns = [
 	re_path(r'^(?P<lang>en|fr)/webhooklogs/$', views.webhooklogs),
 	re_path(r'^(?P<lang>en|fr)/$', views.dashboard, name='dashboard'),
 	re_path(r'^(?P<lang>en|fr)/donators/$', views.donators, name="donators"),
+	re_path(r'^(?P<lang>en|fr)/pdf_receipts/$', views.pdf_receipts, name="pdf-receipts"),
 	re_path(r'^(?P<lang>en|fr)/contact/(?P<pk>\w+)/$', views.contact, name='contact'),
 	# path('pdf/', views.pdf, name="pdf"),
 ]
