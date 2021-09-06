@@ -86,7 +86,8 @@ class Donation(models.Model):
 	donation_type = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True)
 	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
-	pdf_receipt = models.BooleanField(default=False)
+	pdf = models.BooleanField(default=False)
+	pdf_receipt = models.FileField(null=True, blank=True)
 
 	def __str__(self):
 		return str(self.id) + "_" + self.contact.profile.name + "_" + str(self.date_donated)
