@@ -497,6 +497,8 @@ def pdf_receipts(request, lang):
 		i = request.GET.get("view_pdf")
 		file_name = donation_receipts.get(id=int(i)).file_name
 		file_name = f"/static/pdf/receipts/{file_name}"
+	else:
+		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
 		i = request.GET.get("download_pdf")
 		file_name = donation_receipts.get(id=int(i)).file_name
@@ -505,11 +507,10 @@ def pdf_receipts(request, lang):
 			response = HttpResponse(pdf, content_type='application/pdf')
 			response['Content-Disposition'] = f'attachment; filename="{file_name}"'
 		return response
-	elif request.GET.get("scroll"):
-		show_modal_pdf = False
-		file_name = ""
-	else:
-		show_modal_pdf = False
+
+	try:
+		file_name
+	except:
 		file_name = ""
 
 	context = {
