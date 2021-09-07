@@ -12,7 +12,6 @@
 </div>
 <script>
   var file_name = "{{file_name}}";
-  var path = "static/pdf/receipts/" + file_name;
-  console.log(path);
-  PDFObject.embed(path, "#view_pdf_body");
+  console.log(file_name);
+  PDFObject.embed(file_name, "#view_pdf_body");
 </script>

@@ -98,9 +98,9 @@ def dashboard(request, lang):
 
 	# initial filter values
 	initial_filter_values = {
-		"contact": "Type to search...",
-		"date_donated_gte": "DD/MM/YYYY",
-		"date_donated_lte": "DD/MM/YYYY",
+		"contact": language_text(lang=lang)["forms"]["contactPlaceholder"],
+		"date_donated_gte": language_text(lang=lang)["forms"]["datePlaceholder"],
+		"date_donated_lte": language_text(lang=lang)["forms"]["datePlaceholder"],
 		"payment_mode": "-----",
 		"donation_type": "-----",
 		"organisation": "-----",
@@ -335,8 +335,8 @@ def donators(request, lang):
 
 	# initial filter values
 	initial_filter_values = {
-		"date_donated_gte": "DD/MM/YYYY",
-		"date_donated_lte": "DD/MM/YYYY",
+		"date_donated_gte": language_text(lang=lang)["forms"]["datePlaceholder"],
+		"date_donated_lte": language_text(lang=lang)["forms"]["datePlaceholder"],
 		"amount_gte": "",
 		"amount_lte": "",
 	}
@@ -428,6 +428,14 @@ def donators(request, lang):
 @login_required(login_url='/fr/login')
 def pdf_receipts(request, lang):
 
+	# initial filter values
+	initial_filter_values = {
+		"contact": language_text(lang=lang)["forms"]["contactPlaceholder"],
+		"date_donated_gte": language_text(lang=lang)["forms"]["datePlaceholder"],
+		"file_name": language_text(lang=lang)["forms"]["contactPlaceholder"],
+		"canceled": False,
+	}
+
 	tags = Tag.objects.all()
 	donations = Donation.objects.filter(disabled = False).order_by("-date_donated")
 	file_storage_check(donations)
@@ -443,15 +451,14 @@ def pdf_receipts(request, lang):
 		except:
 			donation_types.append([donation_receipt.id, None])
 
+	scroll = int(request.GET.get("scroll") or 0)
+	collapse = (request.GET.get("collapse") if request.GET.get("collapse") != None else "collapse show")
 	# view_pdf, download_pdf
 	if request.GET.get("view_pdf"):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
 		file_name = donation_receipts.get(id=int(i)).file_name
-		scroll = int(request.GET["scroll"] or 0)
-		collapse = request.GET["collapse"]
-		if collapse == "collapse_show":
-			collapse = "collapse show"
+		file_name = f"/static/pdf/receipts/{file_name}"
 	elif request.GET.get("download_pdf"):
 		i = request.GET.get("download_pdf")
 		file_name = donation_receipts.get(id=int(i)).file_name
@@ -460,11 +467,12 @@ def pdf_receipts(request, lang):
 			response = HttpResponse(pdf, content_type='application/pdf')
 			response['Content-Disposition'] = f'attachment; filename="{file_name}"'
 		return response
+	elif request.GET.get("scroll"):
+		show_modal_pdf = False
+		file_name = ""
 	else:
 		show_modal_pdf = False
 		file_name = ""
-		scroll = 0
-		collapse = "collapse show"
 
 	context = {
 		'tags': tags,

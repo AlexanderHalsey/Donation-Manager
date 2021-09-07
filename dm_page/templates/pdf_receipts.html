@@ -9,30 +9,6 @@
       window.scrollTo(0,scroll);
     }
   );
-  {% if form_values.errors %}
-  window.addEventListener('load',
-    function(){
-      document.getElementById("create").click();
-    }
-  );
-  {% endif %}
-
-  {% if form_values.update %}
-  console.log("ok")
-  window.addEventListener('load',
-    function(){
-      document.getElementById("update").click();
-    }
-  );
-  {% endif %}
-
-  {% if form_values.delete %}
-  window.addEventListener('load',
-    function(){
-      document.getElementById("delete").click();
-    }
-  );
-  {% endif %}
 
   {% if show_modal_pdf %}
   window.addEventListener('load',
@@ -230,8 +206,8 @@
               <td>
                 <form method="GET">
                   {% csrf_token %}
-                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
-                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:25px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
+                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:30px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
+                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:50px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
                 </form>

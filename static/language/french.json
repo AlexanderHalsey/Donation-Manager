@@ -66,7 +66,7 @@
 	"datePlaceholder": "JJ  / MM / AAAA", 
 	"receiptLabelName": "Nom du Fichier:",
 	"receiptLabelType": "Type de reçu:",
-	"receiptLabel": {
+	"receiptType": {
 		"annual": "Annuel",
 		"individual": "Individuel"
 	},
