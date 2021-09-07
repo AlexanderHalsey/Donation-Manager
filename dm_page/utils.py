@@ -26,7 +26,7 @@ import xlwt
 import csv
 
 # emails
-from donations.settings import EMAIL_ADDRESS, PASSWORD, SEND_TO
+from donations.settings import EMAIL_ADDRESS, PASSWORD, SEND_TO, SMTP, PORT
 import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
@@ -174,7 +174,7 @@ def cancel_pdf_receipt(path):
 	return new_path.split("/receipts/")[1]
 
 def send_email(pdf_path, donation_id):
-	smtp_object = smtplib.SMTP('smtp.gmail.com',587)
+	smtp_object = smtplib.SMTP(SMTP,PORT)
 	smtp_object.ehlo()
 	smtp_object.starttls()
 	smtp_object.ehlo()

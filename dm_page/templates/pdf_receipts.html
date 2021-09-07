@@ -41,6 +41,40 @@
       }
     }
   );
+  $(document).ready( function () {
+    var lang = "{{language.language}}";
+    if (lang == 'en') {
+      $('#pdfTable').DataTable();
+    } else if (lang == 'fr') {
+      $('#pdfTable').DataTable({
+        'language':  {
+            "emptyTable": "Aucune donnée disponible dans le tableau",
+            "lengthMenu": "Afficher _MENU_ éléments",
+            "loadingRecords": "Chargement...",
+            "processing": "Traitement...",
+            "zeroRecords": "Aucun élément correspondant trouvé",
+            "paginate": {
+                "first": "Premier",
+                "last": "Dernier",
+                "previous": "Précédent",
+                "next": "Suiv"
+            },
+            "aria": {
+                "sortAscending": ": activer pour trier la colonne par ordre croissant",
+                "sortDescending": ": activer pour trier la colonne par ordre décroissant"
+            },
+            "decimal": ",",
+            "info": "Affichage de _START_ à _END_ sur _TOTAL_ éléments",
+            "infoEmpty": "Affichage de 0 à 0 sur 0 éléments",
+            "infoThousands": ".",
+            "search": "Rechercher:",
+            "thousands": ".",
+            "infoFiltered": "(filtrés depuis un total de _MAX_ éléments)",
+          }   
+        }
+      );
+    }
+  } );
   $('.flexdatalist').flexdatalist({
     minLength: 1
   });
@@ -180,7 +214,7 @@
     </div>
     <div class="row p-3 justify-content-center">
       <div class="col-10">
-        <table class="table table-striped table-bordered">
+        <table id="pdfTable" class="table table-striped table-bordered">
           <thead class="table-primary">
             <tr>
               <th>ID</th>

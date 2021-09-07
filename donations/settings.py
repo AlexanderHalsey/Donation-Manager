@@ -28,6 +28,8 @@ EMAIL_ADDRESS=os.getenv('EMAIL_ADDRESS')
 PASSWORD=os.getenv('PASSWORD')
 SEND_TO=os.getenv('SEND_TO')
 DMS_WEBHOOK_TOKEN = os.getenv('DMS_WEBHOOK_TOKEN')
+PORT = os.getenv('PORT')
+SMTP = os.getenv('SMTP')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.getenv('DEBUG_VALUE') == 'True')
