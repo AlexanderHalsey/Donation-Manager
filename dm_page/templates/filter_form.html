@@ -14,7 +14,7 @@
           <div class="col-4">
             <div class="input-group mb-3">
               <span class="p-2"><strong>{{language.forms.contactLabelName}}</strong></span>
-              <input name="contact" class="float-left form-control" list="datalistO" value="{{ initial_filter_values.contact }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'Type to search...'}" autocomplete="off">
+              <input name="contact" class="float-left form-control" list="datalistO" value="{{ initial_filter_values.contact }}" autocomplete="off">
               <datalist id="datalistO">
                 {% for id, contact in form.fields.contact.choices %}
                 <option value="{{ contact }}"></option>
@@ -26,9 +26,9 @@
             <div class="input-daterange input-group mb-3" id="datepicker">
               <span class="p-2"><strong>{{language.forms.dateDonatedLabelName}}</strong></span>
               <span class="input-group-text">{{language.forms.filterDateFrom}}</span>
-              <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+              <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}">
               <span class="input-group-text">{{language.forms.filterDateTo}}</span>
-              <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+              <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}">
               <script>
                 $('#date_gte').datepicker({
                 language: "fr",
@@ -94,7 +94,7 @@
           </div>
         </div>
         <div class="row justify-content-evenly">
-          <div class="col-7">
+          <div class="col-6">
             <div class="input-group mb-3">
               <span class="p-2"><strong>{{language.forms.amountLabelName}}</strong></span>
               <span class="input-group-text">€</span>
@@ -104,7 +104,7 @@
               <input name="amount_lte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
             </div>
           </div>
-          <div class="col-5 form-check">
+          <div class="col-6 form-check">
             {% if initial_filter_values.disabled %}
             <input class="form-check-input mt-2 ms-1" id="disabled" type="checkbox" name="disabled" value="" checked>
             {% else %}

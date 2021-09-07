@@ -32,7 +32,6 @@ def loginUser(request, lang):
 			password = request.POST.get('password')
 			user = authenticate(request, username=username, password=password)
 			if user is not None:
-				print(request.META)
 				login(request, user)
 				return redirect(f"/{lang}/")
 			else:
@@ -428,14 +427,45 @@ def donators(request, lang):
 
 @login_required(login_url='/fr/login')
 def pdf_receipts(request, lang):
+
 	tags = Tag.objects.all()
-	donations = Donation.objects.filter(disabled=False).order_by("-date_donated")
+	donations = Donation.objects.filter(disabled = False).order_by("-date_donated")
 	file_storage_check(donations)
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
-
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
+	donation_receipts = DonationReceipt.objects.filter(canceled=False)
+	donation_types = []
+	for donation_receipt in donation_receipts:
+		try:
+			donation_types.append([donation_receipt.id, eval(donation_receipt.receipt_type)[1]])
+		except:
+			donation_types.append([donation_receipt.id, None])
+
+	# view_pdf, download_pdf
+	if request.GET.get("view_pdf"):
+		show_modal_pdf = True
+		i = request.GET.get("view_pdf")
+		file_name = donation_receipts.get(id=int(i)).file_name
+		scroll = int(request.GET["scroll"] or 0)
+		collapse = request.GET["collapse"]
+		if collapse == "collapse_show":
+			collapse = "collapse show"
+	elif request.GET.get("download_pdf"):
+		i = request.GET.get("download_pdf")
+		file_name = donation_receipts.get(id=int(i)).file_name
+		full_path = f"{BASE_DIR}/static/pdf/receipts/{file_name}"
+		with open(full_path, 'rb') as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+		return response
+	else:
+		show_modal_pdf = False
+		file_name = ""
+		scroll = 0
+		collapse = "collapse show"
+
 	context = {
 		'tags': tags,
 		'donations': donations,
@@ -443,6 +473,12 @@ def pdf_receipts(request, lang):
 		'total_donated': total_donated,
 		'total_donated_filter': total_donated_filter,
 		'donation_count_filter': donation_count_filter,
+		'donation_receipts': donation_receipts,
+		'donation_types': donation_types,
+		'show_modal_pdf': show_modal_pdf,
+		'file_name': file_name,
+		'scroll': scroll,
+		'collapse': collapse,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'pdf_receipts.html', context)
@@ -454,24 +490,3 @@ def receipt(request, file):
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = f'attachment; filename="{file}"'
 	return response
-
-	# view_pdf, download_pdf
-	"""if request.GET.get("view_pdf"):
-		show_modal_pdf = True
-		i = request.GET.get("view_pdf")
-		pdf_path = donations.get(id=int(i)).pdf_path
-		scroll = int(request.GET["scroll"] or 0)
-		collapse = request.GET["collapse"]
-		if collapse == "collapse_show":
-			collapse = "collapse show"
-
-	if request.GET.get("download_pdf"):
-		i = request.GET.get("download_pdf")
-		filename = donations.get(id=int(i)).pdf_path
-		full_path = f"{BASE_DIR}/dm_page/static/pdf/receipts/{filename}"
-		print(full_path)
-		with open(full_path, 'rb') as pdf:
-			response = HttpResponse(pdf, content_type='application/pdf')
-			response['Content-Disposition'] = f'attachment; filename="{filename}"'
-		return response"""
-

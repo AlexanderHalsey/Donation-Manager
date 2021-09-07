@@ -87,11 +87,19 @@ class Donation(models.Model):
 	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
 	pdf = models.BooleanField(default=False)
-	pdf_receipt = models.FileField(null=True, blank=True)
 
 	def __str__(self):
 		return str(self.id) + "_" + self.contact.profile.name + "_" + str(self.date_donated)
 
+class DonationReceipt(models.Model):
+	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
+	date_created = models.DateField(auto_now_add=True, null=True)
+	receipt_type = models.CharField(max_length=200, choices=(('A','Annual'),('I','Individual'),))
+	file_name = models.CharField(max_length=200, null=True, blank=True)
+	canceled = models.BooleanField(default=False)
+
+class AutomaticReceiptTrigger(models.Model):
+	date = models.DateField()
 
 class WebhookLogs(models.Model):
 	received_at = models.DateTimeField(help_text="When we received the event.")

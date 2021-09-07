@@ -64,6 +64,12 @@
 	"disabledLabelName": "Include Deleted", 
 	"contactPlaceholder": "Type to search...",
 	"datePlaceholder": "DD  / MM / YYYY",
+	"receiptLabelName": "File name:",
+	"receiptLabelType": "Receipt type:",
+	"receiptLabel": {
+		"annual": "Annual",
+		"individual": "Individuel"
+	},
 	"invalidFeedback": {
 	  "contact": "Select a valid contact.",
 	  "amount": "Select a valid amount.",
@@ -78,6 +84,10 @@
 	"id": "ID",
 	"contact": "Contact",
 	"dateDonated": "Date Donated",
+	"dateCreated": "Date Created",
+	"receiptType": "Receipt Type",
+	"fileName": "File Name",
+	"viewDownload": "View / Download",
 	"totalDonated": "Total Donated",
 	"amount": "Amount",
 	"organisation": "Organisation",

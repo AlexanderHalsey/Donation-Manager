@@ -81,8 +81,8 @@
     </ul>
   </div>
   <div class="card-body">
-    <div class="row">
-      <div class="col-3">
+    <div class="row justify-content-center">
+      <div class="col-5">
         <div class="container" style="margin: 20px;">
           <form method="GET" action="">
             {% for name,value in initial_filter_values.items %}
@@ -100,28 +100,26 @@
             </div>
           </form>
         </div>
-      </div>
-      <div class="col-9 p-3">
         <form method="GET" autocomplete="off">
-          <div class="card p-2" style="background-color: WhiteSmoke;">
+          <div class="card p-1" style="background-color: WhiteSmoke;">
             <div class="row justify-content-between">
               <div class="col-2">
                 <h3 class="card-title">{{language.titles.filter}}</h3>
               </div>
-              <div class="col-1">
+              <div class="col-1" style="margin-right: 30px;">
                 <a id="c" for="collapse_id" class="btn btn-secondary" data-bs-toggle="collapse" href="#collapse_id" role="button" aria-expanded="false" aria-controls="collapse_id">&#9660;</a>
               </div>
             </div>
             <div class="{{ collapse }}" id="collapse_id">
               <div class="card p-1">
                 <div class="row" style="margin-top: 15px">
-                  <div class="col-7">
+                  <div class="col-12">
                     <div class="input-daterange input-group mb-3" id="datepicker">
                       <span class="p-2"><strong>{{language.forms.dateDonatedLabelName}}</strong></span>
                       <span class="input-group-text">{{language.forms.filterDateFrom}}</span>
-                      <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+                      <input id="date_gte" type="text" class="form-control" name="date_donated_gte" value="{{ initial_filter_values.date_donated_gte }}">
                       <span class="input-group-text">{{language.forms.filterDateTo}}</span>
-                      <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}" onclick="this.value=''" onBlur="if(this.value == '') {this.value = 'DD/MM/YYYY'}">
+                      <input id="date_lte" type="text" class="form-control" name="date_donated_lte" value="{{ initial_filter_values.date_donated_lte }}">
                       <script>
                         $('#date_gte').datepicker({
                         language: "fr",
@@ -140,7 +138,7 @@
                   </div>
                 </div>
                 <div class="row justify-content-evenly">
-                  <div class="col-7">
+                  <div class="col-12">
                     <div class="input-group mb-3">
                       <span class="p-2"><strong>{{language.forms.amountLabelName}}</strong></span>
                       <span class="input-group-text">€</span>
@@ -159,36 +157,36 @@
           <input type="hidden" name="collapse" value="collapse">
         </form>
       </div>
-    </div>
-    <div class="row p-3">
-      <table class="table table-sm table-striped table-bordered">
-        <thead>
-          <tr class="table-primary">
-            <th style="width: 13%;">{{language.table.id}}</th>
-            <th style="width: 13%;">{{language.table.contact}}</th>
-            <th style="width: 14%;">{{language.table.tags}}</th>
-            <th style="width: 13%;">{{language.table.totalDonated}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for contact in contacts %}
-          <tr>
-            <td style="width: 80px;">{{ contact.id }}</td>
-            {% if contact.profile.disabled %}
-            <td style="width: 223px;">{{ contact.name }}</td>
-            {% else %}
-            <td style="width: 223px;"><a href="{% url 'contact' lang=language.language pk=contact.id %}" >{{ contact.name }}</a></td>
-            {% endif %}
-            <td style="width: 300px;">
-              {% for tag in donation.contact.tags.all %}
-              <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
-              {% endfor %}
-            </td>
-            <td style="width: 123px;">{{ contact.total_donated }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="col-7">
+        <table class="table table-sm table-striped table-bordered">
+          <thead>
+            <tr class="table-primary">
+              <th>{{language.table.id}}</th>
+              <th>{{language.table.contact}}</th>
+              <th>{{language.table.tags}}</th>
+              <th>{{language.table.totalDonated}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for contact in contacts %}
+            <tr>
+              <td>{{ contact.id }}</td>
+              {% if contact.profile.disabled %}
+              <td>{{ contact.name }}</td>
+              {% else %}
+              <td><a href="{% url 'contact' lang=language.language pk=contact.id %}" >{{ contact.name }}</a></td>
+              {% endif %}
+              <td>
+                {% for tag in donation.contact.tags.all %}
+                <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
+                {% endfor %}
+              </td>
+              <td>{{ contact.total_donated }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

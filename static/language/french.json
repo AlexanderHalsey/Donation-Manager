@@ -64,6 +64,12 @@
 	"disabledLabelName": "Inclure les Tags Supprimés",
 	"contactPlaceholder": "Tapez pour chercher...",
 	"datePlaceholder": "JJ  / MM / AAAA", 
+	"receiptLabelName": "Nom du Fichier:",
+	"receiptLabelType": "Type de reçu:",
+	"receiptLabel": {
+		"annual": "Annuel",
+		"individual": "Individuel"
+	},
 	"invalidFeedback": {
 	  "contact": "Sélectionnez un contact valide.",
 	  "amount": "Sélectionnez un montant valide.",
@@ -78,6 +84,10 @@
 	"id": "ID",
 	"contact": "Contact",
 	"dateDonated": "Date du Don",
+	"dateCreated": "Date de Création",
+	"receiptType": "Type de Reçu",
+	"fileName": "Nom du Fichier",
+	"viewDownload": "Visualiser / Télécharger",
 	"totalDonated": "Total des dons",
 	"amount": "Quantité",
 	"organisation": "Organisation",

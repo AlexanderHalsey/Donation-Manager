@@ -165,3 +165,7 @@ CACHES = {
 }
 
 django_heroku.settings(locals())
+
+CELERY_BROKER_URL = '' # HEROKU REDIS URI
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

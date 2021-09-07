@@ -11,7 +11,8 @@
 	</div>
 </div>
 <script>
-  var pdf_path = "{{pdf_path}}";
-  var static = "static/pdf/receipts/" + pdf_path;
-  PDFObject.embed(static, "#view_pdf_body");
+  var file_name = "{{file_name}}";
+  var path = "static/pdf/receipts/" + file_name;
+  console.log(path);
+  PDFObject.embed(path, "#view_pdf_body");
 </script>
