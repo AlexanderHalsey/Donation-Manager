@@ -9,6 +9,19 @@
       window.scrollTo(0,scroll);
     }
   );
+
+  window.addEventListener('load',
+    function() {
+      var datePlaceholder = "{{language.forms.datePlaceholder}}";
+      var dates_donated_lte = document.getElementsByName("date_donated_lte");
+      var dates_donated_gte = document.getElementsByName("date_donated_gte");
+      for (let i=0; i < dates_donated_lte.length; i++) {
+        dates_donated_lte[i].placeholder = datePlaceholder;
+        dates_donated_gte[i].placeholder = datePlaceholder;
+      }
+    }
+  );
+
   window.addEventListener('submit',
     function(){
       let scroll = document.getElementsByName('scroll');
@@ -182,10 +195,12 @@
                     <div class="input-group mb-3">
                       <span class="p-2"><strong>{{language.forms.amountLabelName}}</strong></span>
                       <span class="input-group-text">€</span>
-                      <input name="amount_gte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
+                      <input name="amount_gte" class="form-control {{is_invalid.amount_gte}} text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
+                      <div class="invalid-tooltip input-group-text">{{language.forms.invalidFeedback.amount}}</div>
                       <span class="input-group-text"><=</span>
                       <span class="input-group-text">€</span>
-                      <input name="amount_lte" class="form-control text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
+                      <input name="amount_lte" class="form-control {{is_invalid.amount_lte}} text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
+                      <div class="invalid-tooltip input-group-text">{{language.forms.invalidFeedback.amount}}</div>
                     </div>
                   </div>
                 </div>
@@ -204,7 +219,7 @@
               <th>{{language.table.id}}</th>
               <th>{{language.table.contact}}</th>
               <th>{{language.table.tags}}</th>
-              <th>{{language.table.totalDonated}}</th>
+              <th>{{language.table.totalSumDonated}}</th>
             </tr>
           </thead>
           <tbody>

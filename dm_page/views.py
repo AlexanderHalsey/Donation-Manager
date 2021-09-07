@@ -98,9 +98,9 @@ def dashboard(request, lang):
 
 	# initial filter values
 	initial_filter_values = {
-		"contact": language_text(lang=lang)["forms"]["contactPlaceholder"],
-		"date_donated_gte": language_text(lang=lang)["forms"]["datePlaceholder"],
-		"date_donated_lte": language_text(lang=lang)["forms"]["datePlaceholder"],
+		"contact": "",
+		"date_donated_gte": "",
+		"date_donated_lte": "",
 		"payment_mode": "-----",
 		"donation_type": "-----",
 		"organisation": "-----",
@@ -259,9 +259,15 @@ def dashboard(request, lang):
 						date__lte = "-".join(value.split("/")[::-1])
 						donations = donations.filter(date_donated__lte=date__lte)
 					if key == "amount_gte":
-						donations = donations.filter(amount__gte=float(value))
+						try:
+							donations = donations.filter(amount__gte=float(value))
+						except:
+							form_values["errorlist"]["amount_gte"] = "is-invalid"
 					if key == "amount_lte":
-						donations = donations.filter(amount__lte=float(value))
+						try:
+							donations = donations.filter(amount__lte=float(value))
+						except:
+							form_values["errorlist"]["amount_lte"] = "is-invalid"
 					if key == "payment_mode":
 						donations = donations.filter(payment_mode__payment_mode=value)
 					if key == "donation_type":
@@ -335,8 +341,13 @@ def donators(request, lang):
 
 	# initial filter values
 	initial_filter_values = {
-		"date_donated_gte": language_text(lang=lang)["forms"]["datePlaceholder"],
-		"date_donated_lte": language_text(lang=lang)["forms"]["datePlaceholder"],
+		"date_donated_gte": "",
+		"date_donated_lte": "",
+		"amount_gte": "",
+		"amount_lte": "",
+	}
+
+	is_invalid = {
 		"amount_gte": "",
 		"amount_lte": "",
 	}
@@ -381,9 +392,15 @@ def donators(request, lang):
 					date__lte = "-".join(value.split("/")[::-1])
 					donations = donations.filter(date_donated__lte=date__lte)
 				if key == "amount_gte":
-					donations = donations.filter(amount__gte=float(value))
+					try:
+						donations = donations.filter(amount__gte=float(value))
+					except:
+						is_invalid["amount_gte"] = "is-invalid"
 				if key == "amount_lte":
-					donations = donations.filter(amount__lte=float(value))
+					try:
+						donations = donations.filter(amount__lte=float(value))
+					except:
+						is_invalid["amount_lte"] = "is-invalid"
 		columns = ["Id", "Name", "Email Address", "Total_donated"]
 		contacts = set([donation.contact for donation in donations])
 		data = [[contact.id, contact.profile.name, contact.profile.email, 
@@ -415,6 +432,7 @@ def donators(request, lang):
 		'collapse': collapse,
 		'contacts': contacts,
 		'scroll': scroll,
+		'is_invalid': is_invalid,
 		'tags': tags,
 		'donations': donations,
 		'donations_count': donations_count,
@@ -430,14 +448,15 @@ def pdf_receipts(request, lang):
 
 	# initial filter values
 	initial_filter_values = {
-		"contact": language_text(lang=lang)["forms"]["contactPlaceholder"],
-		"date_donated_gte": language_text(lang=lang)["forms"]["datePlaceholder"],
-		"file_name": language_text(lang=lang)["forms"]["contactPlaceholder"],
-		"canceled": False,
+		"contact": "",
+		"date_donated_gte": "",
+		"date_donated__lte": "",
+		"file_name": "",
 	}
 
 	tags = Tag.objects.all()
 	donations = Donation.objects.filter(disabled = False).order_by("-date_donated")
+	contact_names = [contact.profile.name for contact in Contact.objects.all()]
 	file_storage_check(donations)
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
@@ -453,13 +472,32 @@ def pdf_receipts(request, lang):
 
 	scroll = int(request.GET.get("scroll") or 0)
 	collapse = (request.GET.get("collapse") if request.GET.get("collapse") != None else "collapse show")
+
+	# filter
+	if request.GET.get("contact") not in ("", None):
+		donation_receipts = donation_receipts.filter(contact__profile__name = request.GET.get("contact"))
+		initial_filter_values["contact"] = request.GET.get("contact")
+	if request.GET.get("date_donated_gte") not in ("", None):
+		date__gte = "-".join(request.GET.get("date_donated_gte").split("/")[::-1])
+		donation_receipts = donation_receipts.filter(date_created__gte = date__gte)
+		initial_filter_values["date_donated_gte"] = request.GET.get("date_donated_gte")
+	if request.GET.get("date_donated_lte") not in ("", None):
+		date__lte = "-".join(request.GET.get("date_donated_lte").split("/")[::-1])
+		donation_receipts = donation_receipts.filter(date_created__lte = date__lte)
+		initial_filter_values["date_donated__lte"] = request.GET.get("date_donated__lte")
+	if request.GET.get("file_name") not in ("", None):
+		donation_receipts = donation_receipts.filter(file_name = request.GET.get("file_name"))
+		initial_filter_values["file_name"] = request.GET.get("file_name")
+	if request.GET.get("receipt_type") not in ("", "-----", None):
+		donation_receipts = donation_receipts.filter(receipt_type = request.GET.get("receipt_type"))
+
 	# view_pdf, download_pdf
 	if request.GET.get("view_pdf"):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
 		file_name = donation_receipts.get(id=int(i)).file_name
 		file_name = f"/static/pdf/receipts/{file_name}"
-	elif request.GET.get("download_pdf"):
+	if request.GET.get("download_pdf"):
 		i = request.GET.get("download_pdf")
 		file_name = donation_receipts.get(id=int(i)).file_name
 		full_path = f"{BASE_DIR}/static/pdf/receipts/{file_name}"
@@ -477,10 +515,12 @@ def pdf_receipts(request, lang):
 	context = {
 		'tags': tags,
 		'donations': donations,
+		'contact_names': contact_names,
 		'donations_count': donations_count,
 		'total_donated': total_donated,
 		'total_donated_filter': total_donated_filter,
 		'donation_count_filter': donation_count_filter,
+		'initial_filter_values': initial_filter_values,
 		'donation_receipts': donation_receipts,
 		'donation_types': donation_types,
 		'show_modal_pdf': show_modal_pdf,

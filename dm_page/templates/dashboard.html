@@ -9,6 +9,28 @@
       window.scrollTo(0,scroll);
     }
   );
+
+  window.addEventListener('load',
+    function() {
+      var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
+      var datePlaceholder = "{{language.forms.datePlaceholder}}";
+      var contacts = document.getElementsByName("contact");
+      var dates_donated = document.getElementsByName("date_donated");
+      var dates_donated_lte = document.getElementsByName("date_donated_lte");
+      var dates_donated_gte = document.getElementsByName("date_donated_gte");
+      for (let i=0; i < dates_donated.length; i++) {
+        dates_donated[i].placeholder = datePlaceholder;
+      }
+      for (let i=0; i < dates_donated_lte.length; i++) {
+        dates_donated_lte[i].placeholder = datePlaceholder;
+        dates_donated_gte[i].placeholder = datePlaceholder;
+      }
+      for (let i=0; i < contacts.length; i++) {
+        contacts[i].placeholder = contactPlaceholder;
+      }
+    }
+  );
+
   {% if form_values.errors %}
   window.addEventListener('load',
     function(){
@@ -17,8 +39,8 @@
   );
   {% endif %}
 
+
   {% if form_values.update %}
-  console.log("ok")
   window.addEventListener('load',
     function(){
       document.getElementById("update").click();
