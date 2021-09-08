@@ -69,7 +69,7 @@ def dms_webhook(request):
 	return HttpResponse(messages, content_type="text/plain")
 
 @login_required(login_url="/fr/login")
-def webhooklogs(request, lang):
+def webhooklogs(request, lang, change):
 	'''path = Path("/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json")
 	for file in path.iterdir():
 		payload = json.load(file)
@@ -81,7 +81,10 @@ def webhooklogs(request, lang):
 	return render(request, 'webhooklogs.html',{'logs': logs, 'language': language_text(lang=lang)})
 
 @login_required(login_url='/fr/login')
-def dashboard(request, lang):
+def dashboard(request, lang, change=None):
+
+	if change != None:
+		return redirect(f'/{change}')
 
 	# intial form_values
 	form_values = {
@@ -148,13 +151,13 @@ def dashboard(request, lang):
 				== "" else PaymentMode.objects.get(
 					payment_mode = form.cleaned_data["payment_mode"]
 				),
-				donation_type = None if form.cleaned_data["donation_type"] 
-				== "" else DonationType.objects.get(
-					donation_type = form.cleaned_data["donation_type"]
-				),
 				organisation = None if form.cleaned_data["organisation"] 
 				== "" else Organisation.objects.get(
 					profile__name = form.cleaned_data["organisation"]
+				),
+				donation_type = None if form.cleaned_data["donation_type"] 
+				== "" else DonationType.objects.get(
+					name = form.cleaned_data["donation_type"]
 				),
 			)
 			donation.save()
@@ -213,8 +216,8 @@ def dashboard(request, lang):
 				form.fields["amount_euros"].initial = "" if str(donation.amount).split(".")[0] == "0" else str(donation.amount).split(".")[0]
 				form.fields["amount_cents"].initial = "."+str("{:.2f}".format(donation.amount)).split(".")[1]
 				form.fields["payment_mode"].initial = "" if donation.payment_mode == None else donation.payment_mode.payment_mode
-				form.fields["donation_type"].initial = "" if donation.donation_type == None else donation.donation_type.donation_type
 				form.fields["organisation"].initial = "" if donation.organisation == None else donation.organisation.profile.name
+				form.fields["donation_type"].initial = "" if donation.donation_type == None else donation.donation_type.name
 				# donation_form - update 
 				form_values = {
 					"title": language_text(lang=lang)["forms"]["donationTitle"]["update"],
@@ -271,13 +274,13 @@ def dashboard(request, lang):
 					if key == "payment_mode":
 						donations = donations.filter(payment_mode__payment_mode=value)
 					if key == "donation_type":
-						donations = donations.filter(donation_type__donation_type=value)
+						donations = donations.filter(donation_type__name=value)
 					if key == "organisation":
 						donations = donations.filter(organisation__profile__name=value)
 			columns = ["ID", "Name", "Date Donated", "Amount", "Payment Mode", "Donation Type", "Organisation"]
 			data = [[donation.id, donation.contact.profile.name, str(donation.date_donated), 
 				float(donation.amount), (None if donation.payment_mode == None else donation.payment_mode.payment_mode), 
-				(None if donation.donation_type == None else donation.donation_type.donation_type), (None if donation.organisation == None else donation.organisation.profile.name)] 
+				(None if donation.donation_type == None else donation.donation_type.name), (None if donation.organisation == None else donation.organisation.profile.name)] 
 				for donation in donations]
 			# export_xls:
 			if request.GET.get("Submit") == "export_xls":
@@ -295,6 +298,8 @@ def dashboard(request, lang):
 	# context after filter 	
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
+	donation_types = [(t.organisation.profile.name, t.name) for t in DonationType.objects.all()]
+	donation_types = json.dumps(donation_types)
 
 	context = {
 		'show_modal_pdf': show_modal_pdf,
@@ -310,12 +315,16 @@ def dashboard(request, lang):
 		'total_donated_filter': total_donated_filter,
 		'form': form,
 		'form_values': form_values,
+		'donation_types': donation_types,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'dashboard.html', context)
 
 @login_required(login_url='/fr/login')
-def contact(request, pk, lang):
+def contact(request, pk, lang, change=None):
+
+	if change != None:
+		return redirect(f'/{change}/contact/{pk}')
 
 	# context
 	contact = Contact.objects.get(id=pk)
@@ -337,7 +346,10 @@ def contact(request, pk, lang):
 	return render(request, 'contact.html', context)
 
 @login_required(login_url='/fr/login')
-def donators(request, lang):
+def donators(request, lang, change=None):
+	
+	if change != None:
+		return redirect(f'/{change}/donators')
 
 	# initial filter values
 	initial_filter_values = {
@@ -444,7 +456,10 @@ def donators(request, lang):
 	return render(request, 'donators.html', context)
 
 @login_required(login_url='/fr/login')
-def pdf_receipts(request, lang):
+def pdf_receipts(request, lang, change=None):
+	
+	if change != None:
+		return redirect(f'/{change}/pdf_receipts')
 
 	# initial filter values
 	initial_filter_values = {

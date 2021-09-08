@@ -91,9 +91,10 @@
         <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
         {% endfor %}
         <hr>
-        <a href="#" class="btn btn-primary">{{language.buttons.tagButton.create}}</a>
-        <a href="#" class="btn btn-success">{{language.buttons.tagButton.update}}</a>
-        <a href="#" class="btn btn-danger">{{language.buttons.tagButton.delete}}</a>
+        <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        {% include 'tag_form.html' %}
 	    </div>
     </div>
   </div>

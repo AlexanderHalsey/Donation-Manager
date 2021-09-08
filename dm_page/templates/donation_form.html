@@ -1,6 +1,6 @@
 <form action="" method="POST" autocomplete="off">
   {% csrf_token %}
-  <div class="modal fade" data-bs-backdrop="static" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" data-bs-backdrop="static" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -68,25 +68,9 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label for="id_donation_type" class="col-md-4 col-form-label text-end"><strong>{{language.forms.donationTypeLabelName}}</strong></label>
-            <div class="col-md-7">
-              <select id="id_donation_type" name="donation_type" class="form-select {{form_values.errorlist.donation_type}}" aria-label="Default select example" required>
-                <option value="-----" selected>-----</option>
-              {% for id, type in form.fields.donation_type.choices %}
-                {% if form.fields.donation_type.initial == type %}
-                <option value="{{ type }}" selected>{{ type }}</option>
-                {% else %}
-                <option value="{{ type }}">{{ type }}</option>
-                {% endif %}
-              {% endfor %}
-              </select>
-              <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div>
-            </div>
-          </div>
-          <div class="row mb-3">
             <label for="id_organisation" class="col-md-4 col-form-label text-end"><strong>{{language.forms.organisationLabelName}}</strong></label>
             <div class="col-md-7">
-              <select id="organisation" name="organisation" class="form-select {{form_values.errorlist.organisation}}" aria-label="Default select example" value="form.fields.organisation.initial" required>
+              <select id="id_organisation" name="organisation" class="form-select {{form_values.errorlist.organisation}}" aria-label="Default select example" value="form.fields.organisation.initial" required>
                 <option value="-----" selected>-----</option>
               {% for id, organisation in form.fields.organisation.choices %}
                 {% if form.fields.organisation.initial == organisation %}
@@ -97,6 +81,15 @@
               {% endfor %}
               </select>
               <div class="invalid-feedback">{{language.forms.invalidFeedback.organisation}}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="id_donation_type" class="col-md-4 col-form-label text-end"><strong>{{language.forms.donationTypeLabelName}}</strong></label>
+            <div class="col-md-7">
+              <select id="id_donation_type" name="donation_type" class="form-select {{form_values.errorlist.donation_type}}" aria-label="Default select example" disabled="disabled" required>
+                <option value="-----" selected>-----</option>
+              </select>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div>
             </div>
           </div>
         </div>

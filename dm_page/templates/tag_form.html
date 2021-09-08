@@ -5,7 +5,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="tag_form_Label">{{language.forms.tagTitle.create}}</h5>
-          <a href="{% url 'dashboard' lang=language.language %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
+          <a href="{{request.get_full_path}}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
         </div>
         <div class="modal-body">
           <div class="row mb-3 justify-content-center">
@@ -122,7 +122,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <a href="{% url 'dashboard' lang=language.language %}" class="btn btn-secondary">{{language.buttons.cancel}}</a>
+          <a href="{{request.get_full_path}}" class="btn btn-secondary">{{language.buttons.cancel}}</a>
           <input type="hidden" name="id" value="{{ form_values.i }}">
           <button type="submit" name="Submit" class="btn btn-{{ form_values.colour }}" value="{{ form_values.type }}">{{language.buttons.submit}}</button>
           <input type="hidden" name="scroll" value="">

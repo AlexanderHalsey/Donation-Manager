@@ -31,6 +31,42 @@
     }
   );
 
+  window.addEventListener('load', function() {
+    document.getElementById("id_organisation").onchange = function () {
+      $('#id_donation_type').prop('disabled', true);
+      var  organisations = document.getElementById("id_organisation").getElementsByTagName("option");
+      var donation_types = eval('{{ donation_types|safe }}');
+      for (let i=0; i < organisations.length; i++) {
+        if ($(this).val() == organisations[i].innerHTML) {
+          document.getElementById("id_donation_type").removeAttribute("disabled");
+          for (let i=0; i < donation_types.length; i++) {
+            if (donation_types[i][0] == $(this).val()) {
+              $('#id_donation_type').html(`<option value="${donation_types[i][1]}">${donation_types[i][1]}</option>`);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  window.addEventListener('load', function() {
+    document.getElementById("filter_organisation").onchange = function () {
+      $('#filter_donation_type').prop('disabled', true);
+      var  organisations = document.getElementById("filter_organisation").getElementsByTagName("option");
+      var donation_types = eval('{{ donation_types|safe }}');
+      for (let i=0; i < organisations.length; i++) {
+        if ($(this).val() == organisations[i].innerHTML) {
+          document.getElementById("filter_donation_type").removeAttribute("disabled");
+          for (let i=0; i < donation_types.length; i++) {
+            if (donation_types[i][0] == $(this).val()) {
+              $('#filter_donation_type').html(`<option value="${donation_types[i][1]}">${donation_types[i][1]}</option>`);
+            }
+          }
+        }
+      }
+    }
+  });
+
   {% if form_values.errors %}
   window.addEventListener('load',
     function(){
@@ -217,8 +253,8 @@
               <th>{{language.table.dateDonated}}</th>
               <th>{{language.table.amount}}</th>
               <th>{{language.table.paymentMode}}</th>
-              <th>{{language.table.donationType}}</th>
               <th>{{language.table.organisation}}</th>
+              <th>{{language.table.donationType}}</th>
               <th>{{language.table.updateRemove}}</th>
             </tr>
           </thead>
@@ -238,8 +274,8 @@
               <td>{{ donation.date_donated }}</td>
               <td>{{ donation.amount }}</td>
               <td>{{ donation.payment_mode }}</td>
-              <td>{{ donation.donation_type }}</td>
               <td>{{ donation.organisation }}</td>
+              <td>{{ donation.donation_type }}</td>
               <td>
                 <form method="GET">
                   {% csrf_token %}

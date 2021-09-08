@@ -64,23 +64,8 @@
           </div>
           <div class="col-4">
             <div class="input-group mb-3">
-              <span class="p-2"><strong>{{language.forms.donationTypeLabelName}}</strong></span>
-              <select name="donation_type" class="form-select" aria-label="Default select example">
-                <option value="-----" selected>-----</option>
-                {% for id, type in form.fields.donation_type.choices %}
-                {% if initial_filter_values.donation_type == type %}
-                <option value="{{ type }}" selected>{{ type }}</option>
-                {% else %}
-                <option value="{{ type }}">{{ type }}</option>
-                {% endif %}
-              {% endfor %}
-              </select>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="input-group mb-3">
               <span class="p-2"><strong>{{language.forms.organisationLabelName}}</strong></span>
-              <select name="organisation" class="form-select" aria-label="Default select example">
+              <select id="filter_organisation" name="organisation" class="form-select" aria-label="Default select example">
                 <option value="-----" selected>-----</option>
                 {% for id, organisation in form.fields.organisation.choices %}
                 {% if initial_filter_values.organisation == organisation %}
@@ -93,6 +78,21 @@
             </div>
           </div>
         </div>
+        <div class="col-4">
+            <div class="input-group mb-3">
+              <span class="p-2"><strong>{{language.forms.donationTypeLabelName}}</strong></span>
+              <select id="filter_donation_type" name="donation_type" class="form-select input-group-text" aria-label="Default select example" disabled>
+                <option value="-----" selected>-----</option>
+                {% for id, type in form.fields.donation_type.choices %}
+                {% if initial_filter_values.donation_type == type %}
+                <option value="{{ type }}" selected>{{ type }}</option>
+                {% else %}
+                <option value="{{ type }}">{{ type }}</option>
+                {% endif %}
+              {% endfor %}
+              </select>
+            </div>
+          </div>
         <div class="row justify-content-evenly">
           <div class="col-6">
             <div class="input-group mb-3">
