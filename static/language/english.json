@@ -63,13 +63,14 @@
 	"amountLabelName": "Amount:",
 	"numberDonationsLabelName": "N° de Dons",
 	"disabledLabelName": "Include Deleted", 
+	"canceledLabelName": "Cancelled Receipts",
 	"contactPlaceholder": "Type to search...",
 	"datePlaceholder": "DD  / MM / YYYY",
 	"receiptLabelName": "File name:",
 	"receiptLabelType": "Receipt type:",
 	"receiptType": {
 		"annual": "Annual",
-		"individual": "Individuel"
+		"individual": "Individual"
 	},
 	"invalidFeedback": {
 	  "contact": "Select a valid contact.",

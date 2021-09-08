@@ -63,6 +63,7 @@
 	"amountLabelName": "Quantité:",
 	"numberDonationsLabelName": "N° of Donations",
 	"disabledLabelName": "Inclure les Tags Supprimés",
+	"canceledLabelName": "Reçus Annulés",
 	"contactPlaceholder": "Tapez pour chercher...",
 	"datePlaceholder": "JJ  / MM / AAAA", 
 	"receiptLabelName": "Nom du Fichier:",

@@ -32,34 +32,97 @@
   );
 
   window.addEventListener('load', function() {
+    var orgs = document.getElementById("id_organisation");
+      var dTypes = document.getElementById("id_donation_type");
+      if (orgs[orgs.selectedIndex].value == '-----') {
+        dTypes.disabled = true;
+      } else {
+        dTypes.disabled = false;
+        var  orgName = orgs[orgs.selectedIndex].value;
+        var dTypeNames = eval('{{ donation_types|safe }}');
+        dTypeNames = dTypeNames.filter(function([o,n],i){
+            if (orgName == o) return n;
+        });
+        dTypes.options.length = 0;
+        dTypes.options[0] = new Option("-----", "-----");
+        for (let i=0; i < dTypeNames.length; i++) {
+          if (dTypeNames[i][0] == orgName) {
+            dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
+          }
+        } 
+        var selected = "{{initial_filter_values.donation_type}}";
+        dTypes.value = selected;  
+      }
+  });
+
+  window.addEventListener('load', function() {
     document.getElementById("id_organisation").onchange = function () {
-      $('#id_donation_type').prop('disabled', true);
-      var  organisations = document.getElementById("id_organisation").getElementsByTagName("option");
-      var donation_types = eval('{{ donation_types|safe }}');
-      for (let i=0; i < organisations.length; i++) {
-        if ($(this).val() == organisations[i].innerHTML) {
-          document.getElementById("id_donation_type").removeAttribute("disabled");
-          for (let i=0; i < donation_types.length; i++) {
-            if (donation_types[i][0] == $(this).val()) {
-              $('#id_donation_type').html(`<option value="${donation_types[i][1]}">${donation_types[i][1]}</option>`);
-            }
+      var orgs = document.getElementById("id_organisation");
+      var dTypes = document.getElementById("id_donation_type");
+      if (orgs[orgs.selectedIndex].value == '-----') {
+        dTypes.disabled = true;
+        dTypes.options.length = 0;
+        dTypes.value = "-----";
+        console.log(dTypes);
+      } else {
+        dTypes.disabled = false;
+        var  orgNames = orgs.getElementsByTagName("option");
+        var dTypeNames = eval('{{ donation_types|safe }}');
+        dTypes.options.length = 0;
+        dTypes.options[0] = new Option("-----", "-----");
+        for (let i=0; i < dTypeNames.length; i++) {
+          if (dTypeNames[i][0] == $(this).val()) {
+            dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
           }
         }
+        console.log(dTypes);
       }
     }
   });
 
   window.addEventListener('load', function() {
+    var orgs = document.getElementById("filter_organisation");
+      var dTypes = document.getElementById("filter_donation_type");
+      if (orgs[orgs.selectedIndex].value == '-----') {
+        dTypes.disabled = true;
+      } else {
+        dTypes.disabled = false;
+        var  orgName = orgs[orgs.selectedIndex].value;
+        var dTypeNames = eval('{{ donation_types|safe }}');
+        dTypeNames = dTypeNames.filter(function([o,n],i){
+            if (orgName == o) return n;
+        });
+        dTypes.options.length = 0;
+        dTypes.options[0] = new Option("-----", "-----");
+        for (let i=0; i < dTypeNames.length; i++) {
+          if (dTypeNames[i][0] == orgName) {
+            dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
+          }
+        } 
+        var selected = "{{initial_filter_values.donation_type}}";
+        dTypes.value = selected;  
+      }
+  });
+
+  window.addEventListener('load', function() {
     document.getElementById("filter_organisation").onchange = function () {
-      $('#filter_donation_type').prop('disabled', true);
-      var  organisations = document.getElementById("filter_organisation").getElementsByTagName("option");
-      var donation_types = eval('{{ donation_types|safe }}');
-      for (let i=0; i < organisations.length; i++) {
-        if ($(this).val() == organisations[i].innerHTML) {
-          document.getElementById("filter_donation_type").removeAttribute("disabled");
-          for (let i=0; i < donation_types.length; i++) {
-            if (donation_types[i][0] == $(this).val()) {
-              $('#filter_donation_type').html(`<option value="${donation_types[i][1]}">${donation_types[i][1]}</option>`);
+      var orgs = document.getElementById("filter_organisation");
+      var dTypes = document.getElementById("filter_donation_type");
+      if (orgs[orgs.selectedIndex].value == '-----') {
+        dTypes.disabled = true;
+        dTypes.value = "-----"
+      } else {
+        dTypes.disabled = false;
+        var  orgNames = orgs.getElementsByTagName("option");
+        var dTypeNames = eval('{{ donation_types|safe }}');
+        for (let i=0; i < orgNames.length; i++) {
+          if ($(this).val() == orgNames[i].innerHTML) {
+            dTypes.options.length = 0;
+            dTypes.options[0] = new Option("-----", "-----");
+            for (let i=0; i < dTypeNames.length; i++) {
+              if (dTypeNames[i][0] == $(this).val()) {
+                dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
+              }
             }
           }
         }

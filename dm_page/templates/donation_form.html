@@ -1,7 +1,7 @@
 <form action="" method="POST" autocomplete="off">
   {% csrf_token %}
-  <div class="modal fade" data-bs-backdrop="static" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+  <div class="modal fade" role="dialog" data-bs-backdrop="static" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">{{ form_values.title }}</h5>
@@ -86,7 +86,7 @@
           <div class="row mb-3">
             <label for="id_donation_type" class="col-md-4 col-form-label text-end"><strong>{{language.forms.donationTypeLabelName}}</strong></label>
             <div class="col-md-7">
-              <select id="id_donation_type" name="donation_type" class="form-select {{form_values.errorlist.donation_type}}" aria-label="Default select example" disabled="disabled" required>
+              <select id="id_donation_type" name="donation_type" class="form-select {{form_values.errorlist.donation_type}}" aria-label="Default select example" required>
                 <option value="-----" selected>-----</option>
               </select>
               <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div>

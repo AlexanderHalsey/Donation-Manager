@@ -62,6 +62,15 @@
       }
     }
   );
+
+  window.addEventListener('submit',
+    function(){
+      if (document.getElementById('canceled').checked) {
+        document.getElementById('canceled').setAttribute('value', 'true');
+      }
+    }
+  );
+
   $(document).ready( function () {
     var lang = "{{language.language}}";
     if (lang == 'en') {
@@ -165,7 +174,7 @@
                 <a id="c" for="collapse_id" class="btn btn-secondary" data-bs-toggle="collapse" href="#collapse_id" role="button" aria-expanded="true" aria-controls="collapse_id">&#9660;</a>
               </div>
             </div>
-            <div class="{{ collapse }}" id="collapse_id">
+            <div class="collapse show" id="collapse_id">
               <div class="card p-1">
                 <div class="row justify-content-around" style="margin-top: 15px">
                   <div class="col-4">
@@ -204,7 +213,7 @@
                   </div>
                 </div>
                 <div class="row justify-content-around">
-                  <div class="col-5">
+                  <div class="col-4">
                     <div class="input-group mb-3">
                       <span class="p-2"><strong>{{language.forms.receiptLabelName}}</strong></span>
                       <input name="file_name" class="float-left form-control" list="datalistO" value="{{ initial_filter_values.file_name }}" autocomplete="off">
@@ -218,6 +227,16 @@
                         <option value="{{language.forms.receiptType.annual}}">{{language.forms.receiptType.annual}}</option>
                         <option value="{{language.forms.receiptType.individual}}">{{language.forms.receiptType.individual}}</option>
                       </select>
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <div class="input-group mb-3">
+                      {% if initial_filter_values.canceled %}
+                      <input class="form-check-input mt-2 ms-1" id="canceled" type="checkbox" name="canceled" value="" checked>
+                      {% else %}
+                      <input class="form-check-input mt-2 ms-1" id="canceled" type="checkbox" name="canceled" value="">
+                      {% endif %}
+                      <span class="ms-2"><strong>{{language.forms.canceledLabelName}}</strong></span>
                     </div>
                   </div>
                   <div class="col-2">

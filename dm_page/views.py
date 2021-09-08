@@ -465,8 +465,10 @@ def pdf_receipts(request, lang, change=None):
 	initial_filter_values = {
 		"contact": "",
 		"date_donated_gte": "",
-		"date_donated__lte": "",
+		"date_donated_lte": "",
 		"file_name": "",
+		"receipt_type": "",
+		"canceled": False,
 	}
 
 	tags = Tag.objects.all()
@@ -477,16 +479,23 @@ def pdf_receipts(request, lang, change=None):
 	total_donated = sum([d.amount for d in donations])
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
-	donation_receipts = DonationReceipt.objects.filter(canceled=False)
+	if request.GET.get("canceled") == 'true':
+		print("am I here")
+		initial_filter_values["canceled"] = True
+		donation_receipts = DonationReceipt.objects.all()
+	else:
+		donation_receipts = DonationReceipt.objects.filter(canceled=False)
 	donation_types = []
 	for donation_receipt in donation_receipts:
 		try:
-			donation_types.append([donation_receipt.id, eval(donation_receipt.receipt_type)[1]])
+			receipt_type = eval(donation_receipt.receipt_type)[1]
+			if lang == "fr":
+				receipt_type = receipt_type[0:-2] + "e" + receipt_type[-1]
+			donation_types.append([donation_receipt.id, receipt_type])
 		except:
 			donation_types.append([donation_receipt.id, None])
 
 	scroll = int(request.GET.get("scroll") or 0)
-	collapse = (request.GET.get("collapse") if request.GET.get("collapse") != None else "collapse show")
 
 	# filter
 	if request.GET.get("contact") not in ("", None):
@@ -499,24 +508,26 @@ def pdf_receipts(request, lang, change=None):
 	if request.GET.get("date_donated_lte") not in ("", None):
 		date__lte = "-".join(request.GET.get("date_donated_lte").split("/")[::-1])
 		donation_receipts = donation_receipts.filter(date_created__lte = date__lte)
-		initial_filter_values["date_donated__lte"] = request.GET.get("date_donated__lte")
+		initial_filter_values["date_donated_lte"] = request.GET.get("date_donated_lte")
 	if request.GET.get("file_name") not in ("", None):
 		donation_receipts = donation_receipts.filter(file_name = request.GET.get("file_name"))
 		initial_filter_values["file_name"] = request.GET.get("file_name")
 	if request.GET.get("receipt_type") not in ("", "-----", None):
-		donation_receipts = donation_receipts.filter(receipt_type = request.GET.get("receipt_type"))
+		choice = request.GET.get("receipt_type").replace("e","a")
+		choice = str((choice[0],choice))
+		donation_receipts = donation_receipts.filter(receipt_type = choice)
 
 	# view_pdf, download_pdf
 	if request.GET.get("view_pdf"):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
-		file_name = donation_receipts.get(id=int(i)).file_name
+		file_name = DonationReceipt.objects.get(id=int(i)).file_name
 		file_name = f"/static/pdf/receipts/{file_name}"
 	else:
 		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
 		i = request.GET.get("download_pdf")
-		file_name = donation_receipts.get(id=int(i)).file_name
+		file_name = DonationReceipt.objects.get(id=int(i)).file_name
 		full_path = f"{BASE_DIR}/static/pdf/receipts/{file_name}"
 		with open(full_path, 'rb') as pdf:
 			response = HttpResponse(pdf, content_type='application/pdf')
@@ -528,6 +539,7 @@ def pdf_receipts(request, lang, change=None):
 	except:
 		file_name = ""
 
+	print(initial_filter_values)
 	context = {
 		'tags': tags,
 		'donations': donations,
@@ -542,7 +554,6 @@ def pdf_receipts(request, lang, change=None):
 		'show_modal_pdf': show_modal_pdf,
 		'file_name': file_name,
 		'scroll': scroll,
-		'collapse': collapse,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'pdf_receipts.html', context)
