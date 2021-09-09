@@ -51,7 +51,7 @@ def file_storage_check(donations):
 	for donation in donations:
 		donation_file_name = donation.contact.profile.name + "_" + str(donation.date_donated) + "_" + str(donation.id) + "_" + "Individuel" + ".pdf"
 		if donation.pdf == True and donation_file_name not in files:
-			donation_receipt = DonationReceipt()
+			donation_receipt = RecettesFiscale()
 			donation_receipt.save()
 			# Create pdf
 			address = eval(donation.contact.profile.primary_address)

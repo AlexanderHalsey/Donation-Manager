@@ -88,15 +88,36 @@ class Donation(models.Model):
 	def __str__(self):
 		return str(self.id) + "_" + self.contact.profile.name + "_" + str(self.date_donated)
 
-class DonationReceipt(models.Model):
+class RecettesFiscale(models.Model):
 	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
 	date_created = models.DateField(auto_now_add=True, null=True)
 	receipt_type = models.CharField(max_length=200, choices=(('A','Annual'),('I','Individual'),))
 	file_name = models.CharField(max_length=200, null=True, blank=True)
-	canceled = models.BooleanField(default=False)
+	cancel = models.BooleanField(default=False)
 
-class AutomaticReceiptTrigger(models.Model):
-	date = models.DateField()
+class Paramètre(models.Model):
+	date_range_start = models.DateField(null=True, blank=True, verbose_name="Date de début")
+	date_range_end = models.DateField(null=True, blank=True, verbose_name="Date de fin")
+	release_date = models.DateField(null=True, blank=True, verbose_name="Date de Libération")
+	automatic = models.BooleanField(default=False, verbose_name="Automatique")
+	manual = models.URLField(max_length=200, null=True, blank=True, verbose_name="Manuel")
+	organisation_1 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation1")
+	donation_type_1 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type1")
+	organisation_2 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation2")
+	donation_type_2 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type2")
+	organisation_3 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation3")
+	donation_type_3 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type3")
+	organisation_4 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation4")
+	donation_type_4 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type4")
+	organisation_5 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation5")
+	donation_type_5 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type5")
+	def __str__(self):
+		if self.id == 1:
+			return "Plage de dates pour l'Année Fiscale"
+		if self.id == 2:
+			return "Date de Libération / de Contrôle"
+		if self.id == 3:
+			return "Conditions d'éligibilité des reçus"
 
 class WebhookLogs(models.Model):
 	received_at = models.DateTimeField(help_text="When we received the event.")

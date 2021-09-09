@@ -83,6 +83,29 @@ def webhooklogs(request, lang, change):
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
 
+	# receipt settings check
+	for setting in range(3):
+		setting = Paramètre(
+			date_range_start = None,
+			date_range_end = None,
+			release_date = None,
+			automatic = False,
+			manual = None,
+			organisation_1 = None,
+			donation_type_1 = None,
+			organisation_2 = None,
+			donation_type_2 = None,
+			organisation_3 = None,
+			donation_type_3 = None,
+			organisation_4 = None,
+			donation_type_4 = None,
+			organisation_5 = None,
+			donation_type_5 = None,
+			
+		)
+		setting.save()
+
+	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}')
 
