@@ -162,7 +162,10 @@
     </ul>
   </div>
   <div class="card-body">
-    <div class="row justify-content-center">
+    <div class="row justify-content-end" style="position:relative;">
+      <div class="col-2 my-2" style="position: absolute; bottom:0; left:0;">
+        <p><span style="background-color: #e5b3c5; padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.redReceipt}}</p>
+      </div>
       <div class="col-10 p-3">
         <form method="GET" autocomplete="off">
           <div class="card p-2" style="background-color: WhiteSmoke;">
@@ -253,7 +256,7 @@
       </div>
     </div>
     <div class="row p-3 justify-content-center">
-      <div class="col-10">
+      <div class="col-12">
         <table id="pdfTable" class="table table-striped table-bordered">
           <thead class="table-primary">
             <tr>
@@ -267,7 +270,11 @@
           </thead>
           <tbody>
             {% for donation_receipt in donation_receipts %}
+            {% if donation_receipt.cancel %}
+            <tr class="table-danger">
+            {% else %}
             <tr>
+            {% endif %}
               <td>{{donation_receipt.id}}</td>
               <td>{{donation_receipt.contact.profile.name}}</td>
               <td>{{donation_receipt.date_created}}</td>

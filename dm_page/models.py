@@ -84,6 +84,7 @@ class Donation(models.Model):
 	donation_type = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True)
 	organisation = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True)
 	disabled = models.BooleanField(default=False)
+	eligible = models.BooleanField(default=False)
 	pdf = models.BooleanField(default=False)
 	def __str__(self):
 		return str(self.id) + "_" + self.contact.profile.name + "_" + str(self.date_donated)
@@ -93,6 +94,7 @@ class RecettesFiscale(models.Model):
 	date_created = models.DateField(auto_now_add=True, null=True)
 	receipt_type = models.CharField(max_length=200, choices=(('A','Annual'),('I','Individual'),))
 	file_name = models.CharField(max_length=200, null=True, blank=True)
+	donation_list = models.TextField(null=True, blank=True)
 	cancel = models.BooleanField(default=False)
 
 class Paramètre(models.Model):

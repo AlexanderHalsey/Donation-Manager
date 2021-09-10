@@ -84,30 +84,34 @@ def webhooklogs(request, lang, change):
 def dashboard(request, lang, change=None):
 
 	# receipt settings check
-	for setting in range(3):
-		setting = Paramètre(
-			date_range_start = None,
-			date_range_end = None,
-			release_date = None,
-			automatic = False,
-			manual = None,
-			organisation_1 = None,
-			donation_type_1 = None,
-			organisation_2 = None,
-			donation_type_2 = None,
-			organisation_3 = None,
-			donation_type_3 = None,
-			organisation_4 = None,
-			donation_type_4 = None,
-			organisation_5 = None,
-			donation_type_5 = None,
-			
-		)
-		setting.save()
+	if len(Paramètre.objects.all()) < 3:
+		for setting in range(3):
+			setting = Paramètre(
+				date_range_start = None,
+				date_range_end = None,
+				release_date = None,
+				automatic = False,
+				manual = None,
+				organisation_1 = None,
+				donation_type_1 = None,
+				organisation_2 = None,
+				donation_type_2 = None,
+				organisation_3 = None,
+				donation_type_3 = None,
+				organisation_4 = None,
+				donation_type_4 = None,
+				organisation_5 = None,
+				donation_type_5 = None,
+				
+			)
+			setting.save()
 
 	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}')
+
+	# update receipts
+	file_storage_check()
 
 	# intial form_values
 	form_values = {
@@ -142,8 +146,16 @@ def dashboard(request, lang, change=None):
 		initial_filter_values["disabled"] = True
 	else:
 		donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
-	donations_count = donations.count()
-	total_donated = sum([d.amount for d in donations])
+	donations_count = Donation.objects.filter(disabled=False).count()
+	total_donated = sum([d.amount for d in Donation.objects.filter(disabled=False)])
+
+	# receipt eligibility
+	eligibility = Paramètre.objects.get(id=3)
+	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}"))) for i in range(1,6)]))
+	for donation in donations:
+		if (donation.organisation.profile.name, donation.donation_type.name) in receipt_conditions:
+			donation.eligible = True
+			donation.save()
 
 	# front-end functionality
 	scroll = 0 # to load with page scroll number so the page appears static on request
@@ -218,14 +230,17 @@ def dashboard(request, lang, change=None):
 
 	# GET requests
 	else:
-		# update delete
-		if request.GET.get("delete") != None or request.GET.get("update") != None:
+		# update / delete / receipt
+		if request.GET.get("delete") != None or request.GET.get("update") != None or request.GET.get("create_receipt") != None:
 			if request.GET.get("delete") != None:
 				key = "delete"
 				value = request.GET["delete"]
-			else:
+			elif request.GET.get("update") != None:
 				key = "update"
 				value = request.GET["update"]
+			else: 
+				key = "create_receipt"
+				value = request.GET["create_receipt"]
 
 			donation = donations.get(id=value)
 
@@ -251,6 +266,20 @@ def dashboard(request, lang, change=None):
 					"type": "update",
 					"i": value,
 				}
+			else:
+				donation.pdf = True
+				donation.save()
+				receipt = RecettesFiscale()
+				receipt.save()
+				receipt.contact = donation.contact
+				receipt.date_created = datetime.date.today()
+				receipt.receipt_type = ('I','Individual')
+				receipt.file_name = f"{receipt.id}_{donation.contact.profile.name}_{str(donation.date_donated)}_Individuel_{donation.id}.pdf"
+				receipt.donation_list = [donation.id]
+				receipt.cancel = False
+				receipt.save()
+				create_individual_receipt(receipt, donation,receipt.file_name)
+				return redirect("/")
 
 			scroll = int(request.GET["scroll"] or 0)
 			collapse = request.GET["collapse"]
@@ -339,6 +368,7 @@ def dashboard(request, lang, change=None):
 		'form': form,
 		'form_values': form_values,
 		'donation_types': donation_types,
+		'receipt_conditions': receipt_conditions,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'dashboard.html', context)
@@ -346,6 +376,7 @@ def dashboard(request, lang, change=None):
 @login_required(login_url='/fr/login')
 def contact(request, pk, lang, change=None):
 
+	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}/contact/{pk}')
 
@@ -371,6 +402,7 @@ def contact(request, pk, lang, change=None):
 @login_required(login_url='/fr/login')
 def donators(request, lang, change=None):
 	
+	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}/donators')
 
@@ -484,6 +516,9 @@ def pdf_receipts(request, lang, change=None):
 	if change != None:
 		return redirect(f'/{change}/pdf_receipts')
 
+	# update receipts
+	file_storage_check()
+
 	# initial filter values
 	initial_filter_values = {
 		"contact": "",
@@ -497,17 +532,16 @@ def pdf_receipts(request, lang, change=None):
 	tags = Tag.objects.all()
 	donations = Donation.objects.filter(disabled = False).order_by("-date_donated")
 	contact_names = [contact.profile.name for contact in Contact.objects.all()]
-	file_storage_check(donations)
+	
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
 	if request.GET.get("canceled") == 'true':
-		print("am I here")
 		initial_filter_values["canceled"] = True
-		donation_receipts = DonationReceipt.objects.all()
+		donation_receipts = RecettesFiscale.objects.all()
 	else:
-		donation_receipts = DonationReceipt.objects.filter(canceled=False)
+		donation_receipts = RecettesFiscale.objects.filter(cancel=False)
 	donation_types = []
 	for donation_receipt in donation_receipts:
 		try:
@@ -544,13 +578,13 @@ def pdf_receipts(request, lang, change=None):
 	if request.GET.get("view_pdf"):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
-		file_name = DonationReceipt.objects.get(id=int(i)).file_name
+		file_name = RecettesFiscale.objects.get(id=int(i)).file_name
 		file_name = f"/static/pdf/receipts/{file_name}"
 	else:
 		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
 		i = request.GET.get("download_pdf")
-		file_name = DonationReceipt.objects.get(id=int(i)).file_name
+		file_name = RecettesFiscale.objects.get(id=int(i)).file_name
 		full_path = f"{BASE_DIR}/static/pdf/receipts/{file_name}"
 		with open(full_path, 'rb') as pdf:
 			response = HttpResponse(pdf, content_type='application/pdf')
@@ -562,7 +596,6 @@ def pdf_receipts(request, lang, change=None):
 	except:
 		file_name = ""
 
-	print(initial_filter_values)
 	context = {
 		'tags': tags,
 		'donations': donations,
