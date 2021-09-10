@@ -119,14 +119,14 @@ def create_individual_receipt(receipt, donation, file_name):
 			can.drawString(t[2],t[3], value[index])
 
 	for key,value in images.items():
-		img = ImageReader(value)
+		img = ImageReader(f'dmsivy.herokuapp.com{value}')
 		can.drawImage(img, image_matrix[key][0], image_matrix[key][1], width=image_matrix[key][2], preserveAspectRatio=True)
 
 	can.showPage()
 	can.save()
 	packet.seek(0)
 	new_pdf = PdfFileReader(packet)
-	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/individual_receipt.pdf", "rb"))
+	existing_pdf = PdfFileReader(open(f"dmsivy.herokuapp.com/static/pdf/individual_receipt.pdf", "rb"))
 	output = PdfFileWriter()
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
