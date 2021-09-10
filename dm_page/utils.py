@@ -118,9 +118,9 @@ def create_individual_receipt(receipt, donation, file_name):
 				continue
 			can.drawString(t[2],t[3], value[index])
 
-	for key,value in images.items():
-		img = ImageReader(f'{BASE_DIR}{value}')
-		can.drawImage(img, image_matrix[key][0], image_matrix[key][1], width=image_matrix[key][2], preserveAspectRatio=True)
+	for image in Image.objects.all():
+		img = ImageReader(image.image)
+		can.drawImage(img, image_matrix[image.name][0], image_matrix[image.name][1], width=image_matrix[image.name][2], preserveAspectRatio=True)
 
 	can.showPage()
 	can.save()

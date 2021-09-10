@@ -83,6 +83,21 @@ def webhooklogs(request, lang, change):
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
 
+	# images that are not working on reportlab moved to database
+	for i in Image.objects.all():
+		i.delete()
+	if len(Image.objects.all()) == 0:
+		img1 = Image(
+			name = "institution",
+			image = "static/png/IVY_Logo_carré.png",
+		)
+		img1.save()
+		img2 = Image(
+			name = "signature",
+			image = "static/png/signature_Charles_Trebaol.png",
+		)
+		img2.save()
+ 
 	# receipt settings check
 	if len(Paramètre.objects.all()) < 3:
 		for setting in range(3):

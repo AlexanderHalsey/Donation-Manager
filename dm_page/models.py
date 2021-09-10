@@ -97,6 +97,10 @@ class RecettesFiscale(models.Model):
 	donation_list = models.TextField(null=True, blank=True)
 	cancel = models.BooleanField(default=False)
 
+class Image(models.Model):
+	name = models.CharField(max_length=200, null=True)
+	image = models.CharField(max_length=200,null=True, blank=True)
+
 class Paramètre(models.Model):
 	date_range_start = models.DateField(null=True, blank=True, verbose_name="Date de début")
 	date_range_end = models.DateField(null=True, blank=True, verbose_name="Date de fin")

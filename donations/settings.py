@@ -152,8 +152,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/pdf/receipts')
-MEDIA_URL = '/receipts/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_URL = '/media/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
