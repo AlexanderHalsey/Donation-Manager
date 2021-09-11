@@ -56,7 +56,7 @@ def file_storage_check():
 					receipt.save()
 
 def create_individual_receipt(receipt, donation, file_name):
-	path = f"{BASE_DIR}/static/pdf/receipts/"
+	path = f"{BASE_DIR}/staticfiles/pdf/receipts/"
 	# Create pdf
 	address = eval(donation.contact.profile.primary_address)
 	if len(address) == 5:
