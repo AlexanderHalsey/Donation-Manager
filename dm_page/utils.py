@@ -47,12 +47,11 @@ def file_storage_check():
 	for receipt in RecettesFiscale.objects.all():
 		if receipt.cancel == True and receipt.file_name[-10:] != "Annulé.pdf":
 			for i in eval(receipt.donation_list):
-				donation = Donation.objects.get(id=i) 
-				if donation.pdf == True:
-					donation.pdf = False
-					donation.save()
-					receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}")
-					receipt.save()
+				donation = Donation.objects.get(id=i)
+				donation.pdf = False
+				donation.save()
+			receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}")
+			receipt.save()
 
 def create_individual_receipt(receipt, donation, file_name):
 	path = f"{BASE_DIR}/static/pdf/receipts/"
@@ -62,7 +61,7 @@ def create_individual_receipt(receipt, donation, file_name):
 		address = address[:2]+[address[2]+", "+address[3]]+[address[4]]
 	text_variables = {
 		"institut_address": ["Institut Vajra Yogini pour l'Epanouissement de la Sagesse", "LIEU DIT CLAUZADE", "81500 MARZENS"],
-		"donation_id": [str(receipt.id)],
+		"receipt_id": [str(receipt.id)],
 		"organisation_object": ["Object:", "Exercise du culte bouddhiste", "Association Culturelle régie par la loi du 9 décembre 1905 du 16 mars 1906. Ce reçu donne droit à une déduction fiscale conformément à l'arrête préfectoral du Tarn du 30 décemebre 2003."],
 		"contact": [donation.contact.profile.name], 
 		"contact_address": address,
@@ -88,7 +87,7 @@ def create_individual_receipt(receipt, donation, file_name):
 
 	text_matrix = {
 		"institut_address": [(0, 0, 143, 700), (1, 0, 143, 680), (1, 0, 143, 665)], 
-		"donation_id": [(0, 2, 470, 782)], 
+		"receipt_id": [(0, 2, 470, 782)], 
 		"organisation_object": [(0, 0, 38, 615), (1, 0, 88, 615), (1, 0, 32, 590)], 
 		"contact": [(0, 0, 200, 500)], 
 		"contact_address": [(1, 0, 200, 480), (1, 0, 200, 465), (1, 0, 200, 450), (1, 0, 200, 435)], 
@@ -135,7 +134,87 @@ def create_individual_receipt(receipt, donation, file_name):
 	outputStream.close()
 	return
 
-def create_annual_receipt(text, images, contact, donations, path):
+def create_annual_receipt(receipt, contact, donations, date_range, file_name):
+	path = f"{BASE_DIR}/static/pdf/receipts/"
+	# Create pdf
+	address = eval(contact.profile.primary_address)
+	if len(address) == 5:
+		address = address[:2]+[address[2]+", "+address[3]]+[address[4]]
+	text_variables = {
+		"institut_address": ["Institut Vajra Yogini pour l'Epanouissement de la Sagesse", "LIEU DIT CLAUZADE", "81500 MARZENS"],
+		"receipt_id": [str(receipt.id)],
+		"organisation_object": ["Object:", "Exercise du culte bouddhiste", "Association Culturelle régie par la loi du 9 décembre 1905 du 16 mars 1906. Ce reçu donne droit à une déduction fiscale conformément à l'arrête préfectoral du Tarn du 30 décemebre 2003."],
+		"contact": [contact.profile.name], 
+		"contact_address": address,
+		"date_start": ["/".join(str(date_range[0]).split("-")[::-1])],
+		"date_end": ["/".join(str(date_range[1]).split("-")[::-1])],
+		"total_amount": ["€ "+ str(sum([d.amount for d in donations]))],
+		"other_donation_variables": [num2words.num2words(sum([d.amount for d in donations]), lang="fr").capitalize() + " euros", "Espèces", "Déclaration de don manuel", "Numéraire"], 
+		"institut_village": ["MARZENS"],
+		"date_today": ["/".join(str(datetime.date.today()).split("-")[::-1])],
+		"president": ["Charles Trébaol"],
+	}
+	images = {
+		"institution": "/static/png/IVY_Logo_carré.png",
+		"signature": "/static/png/signature_Charles_Trebaol.png",
+	}
+	packet = io.BytesIO()
+	can = canvas.Canvas(packet, pagesize=A4)
+
+	pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
+	pdfmetrics.registerFont(TTFont('Arial Bold', 'Arial Bold.ttf'))
+	pdfmetrics.registerFont(TTFont('Arial Italic', 'Arial Italic.ttf'))
+	fonts = ["Arial Bold", "Arial", "Arial Italic"]
+	sizes = [12, 16, 18]
+
+	text_matrix = {
+		"institut_address": [(0, 0, 143, 700), (1, 0, 143, 680), (1, 0, 143, 665)], 
+		"receipt_id": [(0, 2, 470, 782)], 
+		"organisation_object": [(0, 0, 38, 615), (1, 0, 88, 615), (1, 0, 32, 590)], 
+		"contact": [(0, 0, 200, 500)], 
+		"contact_address": [(1, 0, 200, 480), (1, 0, 200, 465), (1, 0, 200, 450), (1, 0, 200, 435)], 
+		"date_start": [(1, 0, 363, 400)], 
+		"date_end": [(1, 0, 363, 400)], 
+		"total_amount": [(0, 1, 252, 370)], 
+		"other_donation_variables": [(2, 0, 206, 337), (2, 0, 182, 322), (2, 0, 151, 307), (2, 0, 152, 293)], 
+		"institut_village": [(1, 0, 43, 193)], 
+		"date_today": [(1, 0, 124, 193)], 
+		"president": [(0, 0, 302, 158)],
+	}
+
+	image_matrix = {
+		"institution": (45, 565, 80),
+		"signature": (310, -55, 100),
+	}
+
+	for key,value in text_variables.items():
+		for index in range(len(value)):
+			t = text_matrix[key][index]
+			can.setFont(fonts[t[0]], sizes[t[1]])
+			if key=="organisation_object" and index==2:
+				textobject = can.beginText(t[2], t[3])
+				wrapped_text = "\n".join(wrap(value[index], 100))
+				textobject.textLines(wrapped_text)
+				can.drawText(textobject)
+				continue
+			can.drawString(t[2],t[3], value[index])
+
+	for image in Image.objects.all():
+		img = ImageReader(image.image)
+		can.drawImage(img, image_matrix[image.name][0], image_matrix[image.name][1], width=image_matrix[image.name][2], preserveAspectRatio=True)
+
+	can.showPage()
+	can.save()
+	packet.seek(0)
+	new_pdf = PdfFileReader(packet)
+	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/annual_receipt.pdf", "rb"))
+	output = PdfFileWriter()
+	page = existing_pdf.getPage(0)
+	page.mergePage(new_pdf.getPage(0))
+	output.addPage(page)
+	outputStream = open(path + file_name, "wb")
+	output.write(outputStream)
+	outputStream.close()
 	return
 
 def cancel_pdf_receipt(path):

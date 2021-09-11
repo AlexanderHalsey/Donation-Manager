@@ -175,6 +175,15 @@
   <div class="card-body">
     <div class="row justify-content-end" style="position:relative;">
       <div class="col-2 my-2" style="position: absolute; bottom:0; left:0;">
+        <div class="row p-1">
+          <form method="GET" action="">
+            <div class="row p-1">
+            <div class="col">
+              <button class="btn btn-dark" type="submit" name="annual_receipt" value="ok">Annual Receipt test</button>
+            </div>
+          </div>
+          </form>
+        </div>
         <p><span style="background-color: #e5b3c5; padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.redReceipt}}</p>
       </div>
       <div class="col-10 p-3">
@@ -243,8 +252,16 @@
                       <span class="p-2"><strong>{{language.forms.receiptLabelType}}</strong></span>
                       <select name="receipt_type" class="form-select" aria-label="Default select example">
                         <option value="-----" selected>-----</option>
+                        {% if language.forms.receiptType.annual == initial_filter_values.receipt_type %}
+                        <option value="{{language.forms.receiptType.annual}}" selected>{{language.forms.receiptType.annual}}</option>
+                        {% else %}
                         <option value="{{language.forms.receiptType.annual}}">{{language.forms.receiptType.annual}}</option>
+                        {% endif %}
+                        {% if  language.forms.receiptType.individual == initial_filter_values.receipt_type %}
+                        <option value="{{language.forms.receiptType.individual}}" selected>{{language.forms.receiptType.individual}}</option>
+                        {% else %}
                         <option value="{{language.forms.receiptType.individual}}">{{language.forms.receiptType.individual}}</option>
+                        {% endif %}
                       </select>
                     </div>
                   </div>
@@ -281,6 +298,7 @@
               <th>{{language.table.dateCreated}}</th>
               <th>{{language.table.receiptType}}</th>
               <th>{{language.table.fileName}}</th>
+              <th>{{language.table.sendEmail}}</th>
               <th>{{language.table.viewDownload}}</th>
             </tr>
           </thead>
@@ -300,6 +318,7 @@
               {% endif %}
               {% endfor %}
               <td>{{donation_receipt.file_name}}</td>
+              <td></td>
               <td>
                 <form method="GET">
                   {% csrf_token %}

@@ -83,6 +83,32 @@ def webhooklogs(request, lang, change):
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
 
+	# update receipts
+	file_storage_check()
+
+	# annual_receipt tests for Ava Martin
+	# if date_trigger.toordinal() <= datetime.date.today().toordinal():
+	if request.GET.get('annual_receipt') == "ok":
+		contact = Contact.objects.get(profile__name="Ava Martin")
+		date_range = [datetime.date(2019,1,1), datetime.date.today()] 
+		annual_donations = Donation.objects.filter(contact=contact).filter(eligible=True).filter(pdf=False) # .filter(date_donated__gte = date_range[0]).filter(date_donated__lte = date_range[1])
+		if len(annual_donations) > 0:
+			receipt = RecettesFiscale()
+			receipt.save()
+			receipt.contact = contact
+			receipt.date_created = datetime.date.today()
+			receipt.receipt_type = ('A','Annual')
+			receipt.file_name = f"{receipt.id}_{contact.profile.name}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
+			receipt.donation_list = [d.id for d in annual_donations]
+			receipt.cancel = False
+			receipt.save()
+			create_annual_receipt(receipt, contact, annual_donations, date_range, receipt.file_name)
+			for donation in annual_donations:
+				donation.pdf = True
+				donation.save()
+
+
+
 	# images that are not working on reportlab moved to database
 	for i in Image.objects.all():
 		i.delete()
@@ -124,9 +150,6 @@ def dashboard(request, lang, change=None):
 	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}')
-
-	# update receipts
-	file_storage_check()
 
 	# intial form_values
 	form_values = {
@@ -588,6 +611,7 @@ def pdf_receipts(request, lang, change=None):
 		choice = request.GET.get("receipt_type").replace("e","a")
 		choice = str((choice[0],choice))
 		donation_receipts = donation_receipts.filter(receipt_type = choice)
+		initial_filter_values["receipt_type"] = request.GET.get("receipt_type")
 
 	# view_pdf, download_pdf
 	if request.GET.get("view_pdf"):
@@ -611,6 +635,7 @@ def pdf_receipts(request, lang, change=None):
 	except:
 		file_name = ""
 
+	print(initial_filter_values)
 	context = {
 		'tags': tags,
 		'donations': donations,
