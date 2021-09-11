@@ -88,6 +88,13 @@
             <div class="col-md-7">
               <select id="id_donation_type" name="donation_type" class="form-select {{form_values.errorlist.donation_type}}" aria-label="Default select example" required>
                 <option value="-----" selected>-----</option>
+                {% for id, type in form.fields.donation_type.choices %}
+                {% if form.fields.donation_type.initial == donation_type %}
+                <option value="{{type}}" selected>{{ type }}</option>
+                {% else %}
+                <option value="{{type}}">{{type}}</option>
+                {% endif %}
+                {% endfor %}
               </select>
               <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div>
             </div>

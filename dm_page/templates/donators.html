@@ -11,16 +11,33 @@
   );
 
   window.addEventListener('load',
-    function() {
-      var datePlaceholder = "{{language.forms.datePlaceholder}}";
-      var dates_donated_lte = document.getElementsByName("date_donated_lte");
-      var dates_donated_gte = document.getElementsByName("date_donated_gte");
-      for (let i=0; i < dates_donated_lte.length; i++) {
-        dates_donated_lte[i].placeholder = datePlaceholder;
-        dates_donated_gte[i].placeholder = datePlaceholder;
+      function() {
+        var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
+        var datePlaceholder = "{{language.forms.datePlaceholder}}";
+        var contacts = document.getElementsByName("contact");
+        var dates_donated = document.getElementsByName("date_donated");
+        var dates_donated_lte = document.getElementsByName("date_donated_lte");
+        var dates_donated_gte = document.getElementsByName("date_donated_gte");
+        for (let i=0; i < dates_donated.length; i++) {
+          dates_donated[i].placeholder = datePlaceholder;
+        }
+        for (let i=0; i < dates_donated_lte.length; i++) {
+          dates_donated_lte[i].placeholder = datePlaceholder;
+          dates_donated_gte[i].placeholder = datePlaceholder;
+        }
+        for (let i=0; i < contacts.length; i++) {
+          contacts[i].placeholder = contactPlaceholder;
+        }
       }
+    );
+
+  {% if form_values.errors %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("create").click();
     }
   );
+  {% endif %}
 
   window.addEventListener('submit',
     function(){
@@ -30,6 +47,7 @@
       }
     }
   );
+
   window.addEventListener('submit',
     function(){
       let collapse = document.getElementsByName('collapse');
@@ -79,8 +97,13 @@
         }
       );
     }
-  } );
+  });
+
+  $('.flexdatalist').flexdatalist({
+      minLength: 1
+    });
 </script>
+
 <hr>
 <div class="row">
   <div class="col-sm-4">

@@ -11,33 +11,41 @@
   );
 
   window.addEventListener('load',
-    function() {
-      var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
-      var datePlaceholder = "{{language.forms.datePlaceholder}}";
-      var contacts = document.getElementsByName("contact");
-      var dates_donated_lte = document.getElementsByName("date_donated_lte");
-      var dates_donated_gte = document.getElementsByName("date_donated_gte");
-      var receipt_name = document.getElementsByName("file_name");
-      for (let i=0; i < receipt_name.length; i++) {
-        receipt_name[i].placeholder = contactPlaceholder;
+      function() {
+        var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
+        var datePlaceholder = "{{language.forms.datePlaceholder}}";
+        var contacts = document.getElementsByName("contact");
+        var dates_donated = document.getElementsByName("date_donated");
+        var dates_donated_lte = document.getElementsByName("date_donated_lte");
+        var dates_donated_gte = document.getElementsByName("date_donated_gte");
+        for (let i=0; i < dates_donated.length; i++) {
+          dates_donated[i].placeholder = datePlaceholder;
+        }
+        for (let i=0; i < dates_donated_lte.length; i++) {
+          dates_donated_lte[i].placeholder = datePlaceholder;
+          dates_donated_gte[i].placeholder = datePlaceholder;
+        }
+        for (let i=0; i < contacts.length; i++) {
+          contacts[i].placeholder = contactPlaceholder;
+        }
       }
-      for (let i=0; i < dates_donated_lte.length; i++) {
-        dates_donated_lte[i].placeholder = datePlaceholder;
-        dates_donated_gte[i].placeholder = datePlaceholder;
-      }
-      for (let i=0; i < contacts.length; i++) {
-        contacts[i].placeholder = contactPlaceholder;
-      }
-    }
-  );
+    );
 
-  {% if show_modal_pdf %}
+  {% if form_values.errors %}
   window.addEventListener('load',
     function(){
-      document.getElementById("pdf_view").click();
+      document.getElementById("create").click();
     }
   );
   {% endif %}
+
+  {% if show_modal_pdf %}
+    window.addEventListener('load',
+      function(){
+        document.getElementById("pdf_view").click();
+      }
+    );
+    {% endif %}
 
   window.addEventListener('submit',
     function(){
@@ -47,6 +55,7 @@
       }
     }
   );
+
   window.addEventListener('submit',
     function(){
       let collapse = document.getElementsByName('collapse');
@@ -64,12 +73,12 @@
   );
 
   window.addEventListener('submit',
-    function(){
-      if (document.getElementById('canceled').checked) {
-        document.getElementById('canceled').setAttribute('value', 'true');
+      function(){
+        if (document.getElementById('canceled').checked) {
+          document.getElementById('canceled').setAttribute('value', 'true');
+        }
       }
-    }
-  );
+    );
 
   $(document).ready( function () {
     var lang = "{{language.language}}";
@@ -104,11 +113,13 @@
         }
       );
     }
-  } );
+  });
+
   $('.flexdatalist').flexdatalist({
     minLength: 1
   });
 </script>
+
 <div class="row">
   <div class="col-sm-4">
     <div class="card" style="background-color: FloralWhite;">
@@ -219,7 +230,12 @@
                   <div class="col-4">
                     <div class="input-group mb-3">
                       <span class="p-2"><strong>{{language.forms.receiptLabelName}}</strong></span>
-                      <input name="file_name" class="float-left form-control" list="datalistO" value="{{ initial_filter_values.file_name }}" autocomplete="off">
+                      <input name="file_name" class="float-left form-control" list="datalist2" value="{{ initial_filter_values.file_name }}" autocomplete="off">
+                      <datalist id="datalist2">
+                        {% for receipt in donation_receipts %}
+                        <option value="{{ receipt.file_name }}"></option>
+                        {% endfor %}
+                      </datalist>
                     </div>
                   </div>
                   <div class="col-4">

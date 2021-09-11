@@ -11,49 +11,100 @@
   );
 
   window.addEventListener('load',
-    function() {
-      var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
-      var datePlaceholder = "{{language.forms.datePlaceholder}}";
-      var contacts = document.getElementsByName("contact");
-      var dates_donated = document.getElementsByName("date_donated");
-      var dates_donated_lte = document.getElementsByName("date_donated_lte");
-      var dates_donated_gte = document.getElementsByName("date_donated_gte");
-      for (let i=0; i < dates_donated.length; i++) {
-        dates_donated[i].placeholder = datePlaceholder;
+      function() {
+        var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
+        var datePlaceholder = "{{language.forms.datePlaceholder}}";
+        var contacts = document.getElementsByName("contact");
+        var dates_donated = document.getElementsByName("date_donated");
+        var dates_donated_lte = document.getElementsByName("date_donated_lte");
+        var dates_donated_gte = document.getElementsByName("date_donated_gte");
+        for (let i=0; i < dates_donated.length; i++) {
+          dates_donated[i].placeholder = datePlaceholder;
+        }
+        for (let i=0; i < dates_donated_lte.length; i++) {
+          dates_donated_lte[i].placeholder = datePlaceholder;
+          dates_donated_gte[i].placeholder = datePlaceholder;
+        }
+        for (let i=0; i < contacts.length; i++) {
+          contacts[i].placeholder = contactPlaceholder;
+        }
       }
-      for (let i=0; i < dates_donated_lte.length; i++) {
-        dates_donated_lte[i].placeholder = datePlaceholder;
-        dates_donated_gte[i].placeholder = datePlaceholder;
+    );
+
+  {% if form_values.errors %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("create").click();
+    }
+  );
+  {% endif %}
+
+  {% if form_values.update %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("update").click();
+    }
+  );
+  {% endif %}
+
+  {% if form_values.delete %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("delete").click();
+    }
+  );
+  {% endif %}
+
+  {% if show_modal_pdf %}
+    window.addEventListener('load',
+      function(){
+        document.getElementById("pdf_view").click();
       }
-      for (let i=0; i < contacts.length; i++) {
-        contacts[i].placeholder = contactPlaceholder;
+    );
+    {% endif %}
+
+  window.addEventListener('submit',
+    function(){
+      let scroll = document.getElementsByName('scroll');
+      for (let i = 0; i < scroll.length; i++) {
+        scroll[i].setAttribute('value', window.scrollY.toString());
       }
     }
   );
 
-  window.addEventListener('load', function() {
-    var orgs = document.getElementById("id_organisation");
-      var dTypes = document.getElementById("id_donation_type");
-      if (orgs[orgs.selectedIndex].value == '-----') {
-        dTypes.disabled = true;
-      } else {
-        dTypes.disabled = false;
-        var  orgName = orgs[orgs.selectedIndex].value;
-        var dTypeNames = eval('{{ donation_types|safe }}');
-        dTypeNames = dTypeNames.filter(function([o,n],i){
-            if (orgName == o) return n;
-        });
-        dTypes.options.length = 0;
-        dTypes.options[0] = new Option("-----", "-----");
-        for (let i=0; i < dTypeNames.length; i++) {
-          if (dTypeNames[i][0] == orgName) {
-            dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
-          }
-        } 
-        var selected = "{{initial_filter_values.donation_type}}";
-        dTypes.value = selected;  
+  window.addEventListener('submit',
+    function(){
+      let collapse = document.getElementsByName('collapse');
+      if (document.getElementById('c').getAttribute('aria-expanded') == 'true') {
+        for (let i = 0; i < collapse.length; i++) {
+          collapse[i].setAttribute('value', 'collapse show');
+        }
       }
-  });
+      else {
+        for (let i = 0; i < collapse.length; i++) {
+          collapse[i].setAttribute('value', 'collapse');
+        }
+      }
+    }
+  );
+
+  window.addEventListener('submit',
+      function(){
+        if (document.getElementById('disabled').checked) {
+          document.getElementById('disabled').setAttribute('value', 'true');
+        }
+      }
+    );
+
+  window.addEventListener('submit',
+      function(){
+        if (document.getElementById('canceled').checked) {
+          document.getElementById('canceled').setAttribute('value', 'true');
+        }
+      }
+    );
+
+
 
   window.addEventListener('load', function() {
     document.getElementById("id_organisation").onchange = function () {
@@ -63,7 +114,7 @@
         dTypes.disabled = true;
         dTypes.options.length = 0;
         dTypes.value = "-----";
-        console.log(dTypes);
+        return null;
       } else {
         dTypes.disabled = false;
         var  orgNames = orgs.getElementsByTagName("option");
@@ -76,32 +127,33 @@
           }
         }
         console.log(dTypes);
+        return dTypes;
       }
     }
   });
-
+ 
   window.addEventListener('load', function() {
     var orgs = document.getElementById("filter_organisation");
-      var dTypes = document.getElementById("filter_donation_type");
-      if (orgs[orgs.selectedIndex].value == '-----') {
-        dTypes.disabled = true;
-      } else {
-        dTypes.disabled = false;
-        var  orgName = orgs[orgs.selectedIndex].value;
-        var dTypeNames = eval('{{ donation_types|safe }}');
-        dTypeNames = dTypeNames.filter(function([o,n],i){
-            if (orgName == o) return n;
-        });
-        dTypes.options.length = 0;
-        dTypes.options[0] = new Option("-----", "-----");
-        for (let i=0; i < dTypeNames.length; i++) {
-          if (dTypeNames[i][0] == orgName) {
-            dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
-          }
-        } 
-        var selected = "{{initial_filter_values.donation_type}}";
-        dTypes.value = selected;  
-      }
+    var dTypes = document.getElementById("filter_donation_type");
+    if (orgs[orgs.selectedIndex].value == '-----') {
+      dTypes.disabled = true;
+    } else {
+      dTypes.disabled = false;
+      var  orgName = orgs[orgs.selectedIndex].value;
+      var dTypeNames = eval('{{ donation_types|safe }}');
+      dTypeNames = dTypeNames.filter(function([o,n],i){
+          if (orgName == o) return n;
+      });
+      dTypes.options.length = 0;
+      dTypes.options[0] = new Option("-----", "-----");
+      for (let i=0; i < dTypeNames.length; i++) {
+        if (dTypeNames[i][0] == orgName) {
+          dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
+        }
+      } 
+      var selected = "{{initial_filter_values.donation_type}}";
+      dTypes.value = selected;  
+    }
   });
 
   window.addEventListener('load', function() {
@@ -130,61 +182,6 @@
     }
   });
 
-  {% if form_values.errors %}
-  window.addEventListener('load',
-    function(){
-      document.getElementById("create").click();
-    }
-  );
-  {% endif %}
-
-
-  {% if form_values.update %}
-  window.addEventListener('load',
-    function(){
-      document.getElementById("update").click();
-    }
-  );
-  {% endif %}
-
-  {% if form_values.delete %}
-  window.addEventListener('load',
-    function(){
-      document.getElementById("delete").click();
-    }
-  );
-  {% endif %}
-
-  window.addEventListener('submit',
-    function(){
-      let scroll = document.getElementsByName('scroll');
-      for (let i = 0; i < scroll.length; i++) {
-        scroll[i].setAttribute('value', window.scrollY.toString());
-      }
-    }
-  );
-  window.addEventListener('submit',
-    function(){
-      let collapse = document.getElementsByName('collapse');
-      if (document.getElementById('c').getAttribute('aria-expanded') == 'true') {
-        for (let i = 0; i < collapse.length; i++) {
-          collapse[i].setAttribute('value', 'collapse show');
-        }
-      }
-      else {
-        for (let i = 0; i < collapse.length; i++) {
-          collapse[i].setAttribute('value', 'collapse');
-        }
-      }
-    }
-  );
-  window.addEventListener('submit',
-    function(){
-      if (document.getElementById('disabled').checked) {
-        document.getElementById('disabled').setAttribute('value', 'true');
-      }
-    }
-  );
   $(document).ready( function () {
     var lang = "{{language.language}}";
     if (lang == 'en') {
@@ -219,10 +216,12 @@
       );
     }
   } );
+
   $('.flexdatalist').flexdatalist({
-    minLength: 1
-  });
+      minLength: 1
+    });
 </script>
+
 <div class="row">
   <div class="col-sm-4">
     <div class="card" style="background-color: FloralWhite;">
