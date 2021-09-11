@@ -39,7 +39,6 @@ def language_text(lang="fr"):
 		l = "english"
 	if lang == "fr":
 		l = "french"
-	print(BASE_DIR)
 	with open(f"{BASE_DIR}/static/language/{l}.json", "r") as f:
 		payload = json.load(f)
 		return payload
@@ -56,7 +55,7 @@ def file_storage_check():
 					receipt.save()
 
 def create_individual_receipt(receipt, donation, file_name):
-	path = f"/pdf/receipts/"
+	path = f"{BASE_DIR}/static/pdf/receipts/"
 	# Create pdf
 	address = eval(donation.contact.profile.primary_address)
 	if len(address) == 5:
