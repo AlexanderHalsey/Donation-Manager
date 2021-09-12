@@ -47,6 +47,15 @@
   );
   {% endif %}
 
+  {% if form_values.confirm_receipt %}
+  console.log("ok i ended here good")
+  window.addEventListener('load',
+    function(){
+      document.getElementById("confirm").click();
+    }
+  );
+  {% endif %}
+
   {% if form_values.delete %}
   window.addEventListener('load',
     function(){
@@ -89,22 +98,30 @@
   );
 
   window.addEventListener('submit',
-      function(){
-        if (document.getElementById('disabled').checked) {
-          document.getElementById('disabled').setAttribute('value', 'true');
-        }
+    function(){
+      if (document.getElementById('disabled').checked) {
+        document.getElementById('disabled').setAttribute('value', 'true');
       }
-    );
+    }
+  );
 
   window.addEventListener('submit',
-      function(){
-        if (document.getElementById('canceled').checked) {
-          document.getElementById('canceled').setAttribute('value', 'true');
-        }
+    function(){
+      if (document.getElementById('canceled').checked) {
+        document.getElementById('canceled').setAttribute('value', 'true');
       }
-    );
+    }
+  );
 
-
+  window.addEventListener('submit',
+    function(){
+      if (document.getElementById('send_email').checked) {
+        document.getElementById('send_email').setAttribute('value', 'true');
+      } else {
+        document.getElementById('send_email').setAttribute('value', 'false');
+      }
+    }
+  );
 
   window.addEventListener('load', function() {
     document.getElementById("id_organisation").onchange = function () {
@@ -385,6 +402,8 @@
     </div>
     <button hidden="hidden" id="delete" data-bs-toggle="modal" data-bs-target="#disable_donation"></button>
     {% include 'disable_donation.html' %}
+    <button hidden="hidden" id="confirm" data-bs-toggle="modal" data-bs-target="#confirm_donation"></button>
+    {% include 'confirm_donation.html' %}
   </div>
 </div>
 {% endblock %}

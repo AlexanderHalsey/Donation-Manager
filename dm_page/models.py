@@ -96,6 +96,8 @@ class RecettesFiscale(models.Model):
 	file_name = models.CharField(max_length=200, null=True, blank=True)
 	donation_list = models.TextField(null=True, blank=True)
 	cancel = models.BooleanField(default=False)
+	email_active = models.BooleanField(default=False)
+	email_cancel = models.BooleanField(default=False)
 
 class Image(models.Model):
 	name = models.CharField(max_length=200, null=True)

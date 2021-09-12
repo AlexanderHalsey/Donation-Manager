@@ -1,4 +1,4 @@
-<form action="" method="POST" autocomplete="off">
+<form method="POST" action="" autocomplete="off">
   {% csrf_token %}
   <div class="modal fade" role="dialog" data-bs-backdrop="static" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -52,22 +52,6 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label for="id_payment_mode" class="col-md-4 col-form-label text-end"><strong>{{language.forms.paymentModeLabelName}}</strong></label>
-            <div class="col-md-7">
-              <select id="id_payment_mode" name="payment_mode" class="form-select {{form_values.errorlist.payment_mode}}" aria-label="Default select example" required>
-                <option value="-----" selected>-----</option>
-              {% for id, mode in form.fields.payment_mode.choices %}
-                {% if form.fields.payment_mode.initial == mode %}
-                <option value="{{ mode }}" selected>{{ mode }}</option>
-                {% else %}
-                <option value="{{ mode }}">{{ mode }}</option>
-                {% endif %}
-              {% endfor %}
-              </select>
-              <div class="invalid-feedback">{{language.forms.invalidFeedback.paymentMode}}</div>
-            </div>
-          </div>
-          <div class="row mb-3">
             <label for="id_organisation" class="col-md-4 col-form-label text-end"><strong>{{language.forms.organisationLabelName}}</strong></label>
             <div class="col-md-7">
               <select id="id_organisation" name="organisation" class="form-select {{form_values.errorlist.organisation}}" aria-label="Default select example" value="form.fields.organisation.initial" required>
@@ -97,6 +81,22 @@
                 {% endfor %}
               </select>
               <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="id_payment_mode" class="col-md-4 col-form-label text-end"><strong>{{language.forms.paymentModeLabelName}}</strong></label>
+            <div class="col-md-7">
+              <select id="id_payment_mode" name="payment_mode" class="form-select {{form_values.errorlist.payment_mode}}" aria-label="Default select example" required>
+                <option value="-----" selected>-----</option>
+              {% for id, mode in form.fields.payment_mode.choices %}
+                {% if form.fields.payment_mode.initial == mode %}
+                <option value="{{ mode }}" selected>{{ mode }}</option>
+                {% else %}
+                <option value="{{ mode }}">{{ mode }}</option>
+                {% endif %}
+              {% endfor %}
+              </select>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.paymentMode}}</div>
             </div>
           </div>
         </div>

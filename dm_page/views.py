@@ -86,29 +86,6 @@ def dashboard(request, lang, change=None):
 	# update receipts
 	file_storage_check()
 
-	# annual_receipt tests for Ava Martin
-	# if date_trigger.toordinal() <= datetime.date.today().toordinal():
-	if request.GET.get('annual_receipt') == "ok":
-		contact = Contact.objects.get(profile__name="Ava Martin")
-		date_range = [datetime.date(2019,1,1), datetime.date.today()] 
-		annual_donations = Donation.objects.filter(contact=contact).filter(eligible=True).filter(pdf=False) # .filter(date_donated__gte = date_range[0]).filter(date_donated__lte = date_range[1])
-		if len(annual_donations) > 0:
-			receipt = RecettesFiscale()
-			receipt.save()
-			receipt.contact = contact
-			receipt.date_created = datetime.date.today()
-			receipt.receipt_type = ('A','Annual')
-			receipt.file_name = f"{receipt.id}_{contact.profile.name}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
-			receipt.donation_list = [d.id for d in annual_donations]
-			receipt.cancel = False
-			receipt.save()
-			create_annual_receipt(receipt, contact, annual_donations, date_range, receipt.file_name)
-			for donation in annual_donations:
-				donation.pdf = True
-				donation.save()
-
-
-
 	# images that are not working on reportlab moved to database
 	for i in Image.objects.all():
 		i.delete()
@@ -158,6 +135,7 @@ def dashboard(request, lang, change=None):
 		"button": language_text(lang=lang)["buttons"]["submit"],
 		"update": False,
 		"delete": False,
+		"confirn_receipt": False,
 		"type": "create",
 		"i": None,
 		"errors": False,
@@ -212,8 +190,30 @@ def dashboard(request, lang, change=None):
 
 			return redirect(f"/{lang}/")
 
+		if request.POST["Submit"] == "confirm":
+			donation = Donation.objects.get(id=int(request.POST["id"]))
+			donation.pdf = True
+			donation.save()
+			receipt = RecettesFiscale()
+			receipt.save()
+			receipt.contact = donation.contact
+			receipt.date_created = datetime.date.today()
+			receipt.receipt_type = ('I','Individual')
+			receipt.file_name = f"{receipt.id}_{donation.contact.profile.name}_{str(donation.date_donated)}_Individuel_{donation.id}.pdf"
+			receipt.donation_list = [donation.id]
+			receipt.cancel = False
+			create_individual_receipt(receipt, donation,receipt.file_name)
+			if request.POST["email"] == 'true':
+				email_status = send_email(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}", receipt.id)
+				if email_status == "SENT":
+					receipt.email_active = True
+			receipt.save()
+			return redirect("/")
+
 		form = DonationForm(request.POST)
+
 		if form.is_valid():
+
 			donation = Donation(
 				contact = Contact.objects.get(
 					profile__name = form.cleaned_data["contact"]
@@ -285,7 +285,7 @@ def dashboard(request, lang, change=None):
 			if key == "delete":
 				form_values["i"] = value
 				form_values["delete"] = True
-			elif key == "update":
+			elif key == "update" or key == "create_receipt":
 				# pre-populated donation_form for update
 				form.fields["contact"].initial = donation.contact.profile.name
 				form.fields["date_donated"].initial = "" if donation.date_donated == None else "/".join(str(donation.date_donated).split("-")[::-1])
@@ -294,30 +294,28 @@ def dashboard(request, lang, change=None):
 				form.fields["payment_mode"].initial = "" if donation.payment_mode == None else donation.payment_mode.payment_mode
 				form.fields["organisation"].initial = "" if donation.organisation == None else donation.organisation.profile.name
 				form.fields["donation_type"].initial = "" if donation.donation_type == None else donation.donation_type.name
-				# donation_form - update 
-				form_values = {
-					"title": language_text(lang=lang)["forms"]["donationTitle"]["update"],
-					"colour": "success",
-					"button": language_text(lang=lang)["buttons"]["update"],
-					"update": True,
-					"delete": False,
-					"type": "update",
-					"i": value,
-				}
-			else:
-				donation.pdf = True
-				donation.save()
-				receipt = RecettesFiscale()
-				receipt.save()
-				receipt.contact = donation.contact
-				receipt.date_created = datetime.date.today()
-				receipt.receipt_type = ('I','Individual')
-				receipt.file_name = f"{receipt.id}_{donation.contact.profile.name}_{str(donation.date_donated)}_Individuel_{donation.id}.pdf"
-				receipt.donation_list = [donation.id]
-				receipt.cancel = False
-				receipt.save()
-				create_individual_receipt(receipt, donation,receipt.file_name)
-				return redirect("/")
+				if key == "update":
+					# donation_form - update 
+					form_values = {
+						"title": language_text(lang=lang)["forms"]["donationTitle"]["update"],
+						"colour": "success",
+						"button": language_text(lang=lang)["buttons"]["update"],
+						"update": True,
+						"delete": False,
+						"confirm_receipt": False,
+						"type": "update",
+						"i": value,
+					}
+				else:
+					form_values = {
+						"title": language_text(lang=lang)["forms"]["donationTitle"]["confirm"],
+						"colour": "success",
+						"button": language_text(lang=lang)["buttons"]["confirm"],
+						"update": False,
+						"delete": False,
+						"confirm_receipt": True,
+						"i": value,
+					}
 
 			scroll = int(request.GET["scroll"] or 0)
 			collapse = request.GET["collapse"]
@@ -556,6 +554,27 @@ def pdf_receipts(request, lang, change=None):
 
 	# update receipts
 	file_storage_check()
+
+	# annual_receipt tests for Ava Martin
+	# if date_trigger.toordinal() <= datetime.date.today().toordinal():
+	if request.GET.get('annual_receipt') == "ok":
+		contact = Contact.objects.get(profile__name="Ava Martin")
+		date_range = [datetime.date(2019,1,1), datetime.date.today()] 
+		annual_donations = Donation.objects.filter(contact=contact).filter(eligible=True).filter(pdf=False) # .filter(date_donated__gte = date_range[0]).filter(date_donated__lte = date_range[1])
+		if len(annual_donations) > 0:
+			receipt = RecettesFiscale()
+			receipt.save()
+			receipt.contact = contact
+			receipt.date_created = datetime.date.today()
+			receipt.receipt_type = ('A','Annual')
+			receipt.file_name = f"{receipt.id}_{contact.profile.name}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
+			receipt.donation_list = [d.id for d in annual_donations]
+			receipt.cancel = False
+			receipt.save()
+			create_annual_receipt(receipt, contact, annual_donations, date_range, receipt.file_name)
+			for donation in annual_donations:
+				donation.pdf = True
+				donation.save()
 
 	# initial filter values
 	initial_filter_values = {

@@ -26,7 +26,7 @@ import xlwt
 import csv
 
 # emails
-from donations.settings import EMAIL_ADDRESS, PASSWORD, SEND_TO, SMTP, PORT
+from donations.settings import EMAIL_ADDRESS, PASSWORD, SEND_TO, SMTP_DOMAIN, SMTP_PORT
 import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
@@ -243,30 +243,34 @@ def cancel_pdf_receipt(path):
 	os.remove(f"{path}")
 	return new_path.split("/receipts/")[1]
 
-def send_email(pdf_path, donation_id):
-	smtp_object = smtplib.SMTP(SMTP,PORT)
-	smtp_object.ehlo()
-	smtp_object.starttls()
-	smtp_object.ehlo()
-	smtp_object.login(EMAIL_ADDRESS, PASSWORD)
-	message = MIMEMultipart()
-	message["From"] = EMAIL_ADDRESS
-	message["To"] = SEND_TO
-	message["Subject"] = "Receipt"
-	body = f"Dear Sir Madam,\n\nThis is an email confirmation of your donation with order n° {donation_id}.\n\nPlease find attached your receipt.\n\n\n\nKind Regards,\n\nInstitut Vajra Yogini\n\n\n"
-	message.attach(MIMEText(body, "plain"))
-	with open(pdf_path, "rb") as attachment:
-		part = MIMEBase("application", "octet-stream")
-		part.set_payload(attachment.read())
-		encoders.encode_base64(part)
-		part.add_header(
-			"Content-Disposition",
-			f"attachment; filename={pdf_path.split('/receipts/')[1]}",
-		)
-		message.attach(part)
-	text = message.as_string()
-	smtp_object.sendmail(EMAIL_ADDRESS, SEND_TO, text)
-	smtp_object.quit()
+def send_email(pdf_path, receipt_id):
+	try:
+		smtp_object = smtplib.SMTP(SMTP_DOMAIN,SMTP_PORT)
+		smtp_object.ehlo()
+		smtp_object.starttls()
+		smtp_object.ehlo()
+		smtp_object.login(EMAIL_ADDRESS, PASSWORD)
+		message = MIMEMultipart()
+		message["From"] = EMAIL_ADDRESS
+		message["To"] = SEND_TO
+		message["Subject"] = "Receipt"
+		body = f"Dear Sir Madam,\n\nThis is an email confirmation of your donation with order n° {receipt_id}.\n\nPlease find attached your receipt.\n\n\n\nKind Regards,\n\nInstitut Vajra Yogini\n\n\n"
+		message.attach(MIMEText(body, "plain"))
+		with open(pdf_path, "rb") as attachment:
+			part = MIMEBase("application", "octet-stream")
+			part.set_payload(attachment.read())
+			encoders.encode_base64(part)
+			part.add_header(
+				"Content-Disposition",
+				f"attachment; filename={pdf_path.split('/receipts/')[1]}",
+			)
+			message.attach(part)
+		text = message.as_string()
+		smtp_object.sendmail(EMAIL_ADDRESS, SEND_TO, text)
+		smtp_object.quit()
+		return "SENT"
+	except:
+		return "ERROR"
 
 def export_xls(view, data, columns, file_name_extension):
 	response = HttpResponse()
