@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 
-from donations.settings import BASE_DIR, DMS_WEBHOOK_TOKEN
+from donations.settings import BASE_DIR, DMS_WEBHOOK_TOKEN, SEND_TO
 from .models import *
 from .utils import *
 from .receive_webhook import process_webhook_payload
@@ -204,7 +204,13 @@ def dashboard(request, lang, change=None):
 			receipt.cancel = False
 			create_individual_receipt(receipt, donation,receipt.file_name)
 			if request.POST["email"] == 'true':
-				email_status = send_email(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}", receipt.id)
+				body = 'Dear Sir Madam,\n\n'\
+				f'This is an email confirmation of your donation with order n° {receipt.id}.\n'\
+				'Please find attached your receipt.\n\n\n'\
+				'Kind Regards,\n'\
+				'Institut Vajra Yogini\n\n'
+				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
+				email_status = send_email(path, SEND_TO, body)
 				if email_status == "SENT":
 					receipt.email_active = True
 			receipt.save()
@@ -521,6 +527,7 @@ def donators(request, lang, change=None):
 		"id": contact.id,
 		"tags": contact.tags,
 		"name": contact.profile.name,
+		"total_donations": len(donations.filter(contact=contact)),
 		"total_donated": sum([donation.amount for donation in donations.filter(contact=contact)]),
 	} for contact in contacts]
 	contacts = list(filter(lambda x: x["total_donated"]>0, contacts))
@@ -585,6 +592,22 @@ def pdf_receipts(request, lang, change=None):
 		"receipt_type": "",
 		"canceled": False,
 	}
+
+	if request.method == "POST":
+		if request.POST["Submit"] not in ("", None):
+			receipt = RecettesFiscale.objects.get(id=request.POST["Submit"])
+			send_to = request.POST["email"]
+			body = request.POST["message"] + "\n\n"
+			path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
+			email_status = send_email(path, send_to, body)
+			if email_status == "SENT":
+				print(path.split(".pdf")[0][-6:])
+				if path.split(".pdf")[0][-6:] == "Annulé":
+					receipt.email_cancel == True
+				else:
+					receipt.email_active = True
+				receipt.save()
+			return redirect(f'{lang}/pdf_receipts/')
 
 	tags = Tag.objects.all()
 	donations = Donation.objects.filter(disabled = False).order_by("-date_donated")
@@ -654,7 +677,13 @@ def pdf_receipts(request, lang, change=None):
 	except:
 		file_name = ""
 
-	print(initial_filter_values)
+	email_content = {"true": False, "id": "", "email": "", "file": ""}
+	if request.GET.get("send_email") not in ("", None):
+		email_content["true"] = True
+		email_content["id"] = RecettesFiscale.objects.get(id=request.GET.get("send_email")).id
+		email_content["email"] = RecettesFiscale.objects.get(id=request.GET.get("send_email")).contact.profile.email
+		email_content["file"] = RecettesFiscale.objects.get(id=request.GET.get("send_email")).file_name
+
 	context = {
 		'tags': tags,
 		'donations': donations,
@@ -669,6 +698,7 @@ def pdf_receipts(request, lang, change=None):
 		'show_modal_pdf': show_modal_pdf,
 		'file_name': file_name,
 		'scroll': scroll,
+		'email_content': email_content,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'pdf_receipts.html', context)

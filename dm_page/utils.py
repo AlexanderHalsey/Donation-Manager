@@ -243,7 +243,7 @@ def cancel_pdf_receipt(path):
 	os.remove(f"{path}")
 	return new_path.split("/receipts/")[1]
 
-def send_email(pdf_path, receipt_id):
+def send_email(pdf_path, send_to, body):
 	try:
 		smtp_object = smtplib.SMTP(SMTP_DOMAIN,SMTP_PORT)
 		smtp_object.ehlo()
@@ -252,9 +252,8 @@ def send_email(pdf_path, receipt_id):
 		smtp_object.login(EMAIL_ADDRESS, PASSWORD)
 		message = MIMEMultipart()
 		message["From"] = EMAIL_ADDRESS
-		message["To"] = SEND_TO
+		message["To"] = send_to
 		message["Subject"] = "Receipt"
-		body = f"Dear Sir Madam,\n\nThis is an email confirmation of your donation with order n° {receipt_id}.\n\nPlease find attached your receipt.\n\n\n\nKind Regards,\n\nInstitut Vajra Yogini\n\n\n"
 		message.attach(MIMEText(body, "plain"))
 		with open(pdf_path, "rb") as attachment:
 			part = MIMEBase("application", "octet-stream")

@@ -10,6 +10,31 @@
     }
   );
 
+  window.addEventListener('submit',
+    function(){
+      let scroll = document.getElementsByName('scroll');
+      for (let i = 0; i < scroll.length; i++) {
+        scroll[i].setAttribute('value', window.scrollY.toString());
+      }
+    }
+  );
+
+  window.addEventListener('submit',
+    function(){
+      let collapse = document.getElementsByName('collapse');
+      if (document.getElementById('c').getAttribute('aria-expanded') == 'true') {
+        for (let i = 0; i < collapse.length; i++) {
+          collapse[i].setAttribute('value', 'collapse show');
+        }
+      }
+      else {
+        for (let i = 0; i < collapse.length; i++) {
+          collapse[i].setAttribute('value', 'collapse');
+        }
+      }
+    }
+  );
+
   window.addEventListener('load',
       function() {
         var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
@@ -40,37 +65,20 @@
   {% endif %}
 
   {% if show_modal_pdf %}
-    window.addEventListener('load',
-      function(){
-        document.getElementById("pdf_view").click();
-      }
-    );
-    {% endif %}
-
-  window.addEventListener('submit',
+  window.addEventListener('load',
     function(){
-      let scroll = document.getElementsByName('scroll');
-      for (let i = 0; i < scroll.length; i++) {
-        scroll[i].setAttribute('value', window.scrollY.toString());
-      }
+      document.getElementById("pdf_view").click();
     }
   );
+  {% endif %}
 
-  window.addEventListener('submit',
+  {% if email_content.true %}
+  window.addEventListener('load',
     function(){
-      let collapse = document.getElementsByName('collapse');
-      if (document.getElementById('c').getAttribute('aria-expanded') == 'true') {
-        for (let i = 0; i < collapse.length; i++) {
-          collapse[i].setAttribute('value', 'collapse show');
-        }
-      }
-      else {
-        for (let i = 0; i < collapse.length; i++) {
-          collapse[i].setAttribute('value', 'collapse');
-        }
-      }
+      document.getElementById("sendEmail").click();
     }
   );
+  {% endif %}
 
   window.addEventListener('submit',
       function(){
@@ -319,20 +327,22 @@
               {% endfor %}
               <td>{{donation_receipt.file_name}}</td>
               <td>
-                <form method="GET">
+                {% if not donation_receipt.cancel and donation_receipt.email_active or donation_receipt.cancel and donation_receipt.email_cancel %}
+                <span style="font-size: 0.8em; margin-left:87px;"><img src="{% static 'icons/tick-button.png' %}" class="img-fluid" width="21" height="21" alt="tick" style="border-radius: 50%;"></span>
+                {% else %}
+                <form method="GET" action="">
                   {% csrf_token %}
-                  {% if not donation_receipt.cancel and donation_receipt.email_active %}
-                  <span style="font-size: 0.8em; margin-left:87px;"><img src="{% static 'icons/tick-button.png' %}" class="img-fluid" width="21" height="21" alt="tick" style="border-radius: 50%;"></span>
-                  {% else %}
-                  <button name="send_email" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:30px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/send-email.png' %}" class="img-fluid" width="21" height="21" alt="send-email"></button>
+                  <button name="send_email" value="{{donation_receipt.id}}" type="submit" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" style="font-size: 0.8em; margin-left:30px;"><img src="{% static 'icons/send-email.png' %}" class="img-fluid" width="21" height="21" alt="send-email"></button>
                   <span style="font-size: 0.8em; margin-left:30px; border-radius: 50%;"><img src="{% static 'icons/x-button.jpg' %}" class="img-fluid" width="21" height="21" alt="x" style="border-radius: 50%;"></span>
-                  {% endif %}
+                  <input type="hidden" name="scroll" value="">
+                  <input type="hidden" name="collapse" value="">
                 </form>
+                {% endif %}
               </td>
               <td>
                 <form method="GET">
                   {% csrf_token %}
-                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:40px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
+                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:40px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
                   <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:60px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
@@ -344,6 +354,8 @@
         </table>
       </div>
     </div>
+    <button hidden="hidden" id="sendEmail" type="button" data-bs-toggle="modal" data-bs-target="#sendEmailModal"></button>
+    {% include 'send_email.html' %}
     <button hidden="hidden" id="pdf_view" type="button" data-bs-toggle="modal" data-bs-target="#view_pdf"></button>
     {% include 'pdf_modal_view.html' %}
   </div>

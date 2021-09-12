@@ -243,7 +243,8 @@
               <th>{{language.table.id}}</th>
               <th>{{language.table.contact}}</th>
               <th>{{language.table.tags}}</th>
-              <th>{{language.table.totalSumDonated}}</th>
+              <th style="font-size: 90%;">{{language.table.totalNumberDonated}}</th>
+              <th style="font-size: 80%;">{{language.table.totalSumDonated}}</th>
             </tr>
           </thead>
           <tbody>
@@ -260,7 +261,8 @@
                 <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
                 {% endfor %}
               </td>
-              <td>{{ contact.total_donated }}</td>
+              <td>{{ contact.total_donations }}</td>
+              <td class="text-end">€ {{ contact.total_donated }}</td>
             </tr>
             {% endfor %}
           </tbody>

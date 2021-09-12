@@ -1,0 +1,33 @@
+{% load static %}
+<form method="POST" action="">
+  {% csrf_token %}
+  <div class="modal fade" id="sendEmailModal" role="dialog" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{language.forms.email.title}}</h5>
+          <a href="{% url 'pdf-receipts' lang=language.language %}" class="btn-sm btn-secondary" style="text-decoration: none;">✖</a>
+        </div>
+        <div class="modal-body">
+          <div class="form-group p-1">
+            <label for="recipient-name" class="col-form-label">{{language.forms.email.recipient}}</label>
+            <input type="text" name="email" class="form-control" id="recipient-name" value="{{email_content.email}}">
+          </div>
+          <div class="form-group p-1">
+            <label for="message-text" class="col-form-label">{{language.forms.email.message}}</label>
+            <textarea name="message" class="form-control" id="message-text" style="min-height: 200px;" value="{{email_content.message}}"></textarea>
+          </div>
+          <div class="row p-2">
+            <div style="display: inline; float: left;">
+              <img src="{% static 'icons/pdf.png' %}" class="img-fluid" width="21" height="21" alt="pdf">&nbsp;&nbsp;&nbsp;{{send_email.file}}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{language.buttons.cancel}}</button>
+          <button type="submit" class="btn btn-primary" name="Submit" value="{{email_content.id}}">{{language.buttons.send}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
