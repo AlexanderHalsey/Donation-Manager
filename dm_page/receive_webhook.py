@@ -1,5 +1,6 @@
 from django.db.transaction import atomic
 from .models import Profile, Contact, Organisation, Donation
+from django.http import HttpResponse
 
 @atomic
 def process_webhook_payload(payload):
