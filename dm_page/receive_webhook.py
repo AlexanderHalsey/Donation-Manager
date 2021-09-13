@@ -27,13 +27,11 @@ def process_webhook_payload(payload):
 						p.title = data["title"]
 						p.name = data["name"]
 						p.language = data["language"]
-						messages.append("Phase 2")
 						p.labels = str([(["SD_Label",label["id"],label["name"]]) for label in data["labels"]])
 						p.email = data["email"]
 						p.alternative_email = data["alternativeEmail"]
 						p.website = data["website"]
 						p.fax_number = data["faxNumber"]
-						messages.append("Phase 3")
 						p.primary_address = str([address for key, address in data["primaryAddress"].items()])
 						p.billing_address_active = data["billingAddressActive"]
 						p.billing_address = str([address for key, address in data["billingAddress"].items()])
@@ -41,28 +39,31 @@ def process_webhook_payload(payload):
 						p.information = data["information"]
 						p.is_blocked = data["isBlocked"]
 						p.blocked_reason = data["blockedReason"]
-						messages.append("Phase 4")
 						p.bank_account_data = str([d for key, d in data["bankAccountData"].items()])
 						p.tax_number = data["taxNumber"]
 						p.vat_id = data["vatId"]
 						p.customer_number = data["customerNumber"]
 						p.additional_fields = str([field for key, field in data["additionalFields"].items()])
 						p.save()
-						messages.append(("profile create no problem."))
+						messages.append(("profile created no problem."))
 						object_type == data["objectType"]
+						messages.append("objectType")
 						if object_type == "PERSON":
 							c = Contact()
 							c.profile = p
 							c.first_name = data["firstName"]
 							c.last_name = data["lastName"]
+							message.append("Phase1")
 							c.additional_title = data["additionalTitle"]
 							c.date_of_birth = data["dateOfBirth"]
 							c.profession = data["profession"]
 							c.salutation_type = data["salutationType"] 
+							message.append("Phase2")
 							c.private_phone_number = data["privatePhoneNumber"]
 							c.alternative_phone_number = data["alternativePhoneNumber"]
 							c.work_phone_number = data["workPhoneNumber"]
 							c.preferred_address = data["preferredAddress"]
+							message.append("Phase3")
 							c.preferred_email = data["preferredEmail"]
 							c.preferred_phone_number = data["preferredPhoneNumber"]
 							c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
