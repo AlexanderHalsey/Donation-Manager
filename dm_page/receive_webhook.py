@@ -46,7 +46,7 @@ def process_webhook_payload(payload):
 						p.save()
 						messages.append("Profile created succesfully.")
 						object_type = data["objectType"]
-						messages.append(objectType)
+						messages.append(object_type)
 						if object_type == "PERSON":
 							c = Contact()
 							c.profile = p
