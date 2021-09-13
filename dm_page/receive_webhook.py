@@ -76,10 +76,8 @@ def process_webhook_payload(payload):
 				try:
 					p = Profile.objects.get(seminar_desk_id = data["id"])
 					messages.append("Profile object found at create.")
-					return
+					return messages
 				except:
-					pass
-				finally:
 					messages.append("new profile being created.")
 					p = Profile()
 					object_type = data["objectType"]
@@ -102,7 +100,7 @@ def process_webhook_payload(payload):
 				messages.append("DELETED profile found for merge.")
 			except:
 				messages.append("DELETED profile not found for merge.")
-				return
+				return messages
 			# donations found for old profile
 			donations_to_be_appended = Donation.objects.filter(contact__profile = p_del)
 			# new profile / contact
@@ -111,7 +109,7 @@ def process_webhook_payload(payload):
 				messages.append("MERGED profile found for merge.")
 			except:
 				messages.append("MERGED profile not found for merge.")
-				return
+				return messages
 			data = data[merged]
 			object_type = data["objectType"]
 			c = Contact.objects.get(profile = p)
