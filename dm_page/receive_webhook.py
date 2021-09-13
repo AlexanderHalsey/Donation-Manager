@@ -71,13 +71,12 @@ def process_webhook_payload(payload):
 							o.profile = p
 							o.additional_name = data["additionalName"]
 							o.save()
-
 				message = ""
-					for m in messages:
-						message += (m + "\n")
-					message += "Message received okay."
-					return message 
-				return messages
+				for m in messages:
+					message += (m + "\n")
+				message += "Message received okay."
+				return message 
+
 			else:
 				try:
 					p = Profile.objects.get(seminar_desk_id = data["id"])
@@ -95,6 +94,7 @@ def process_webhook_payload(payload):
 					elif object_type == "ORGANIZATION":
 						o = Organisation()
 						messages.append("new organisation being created.")
+
 		if action == "merge":
 			if data[0]["mergeStatus"] == "MERGED":
 				merged = 0
@@ -117,6 +117,7 @@ def process_webhook_payload(payload):
 				don.contact = c
 				don.save()
 			messages.append("merged profile with all the donations.")
+
 		if action == "update":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			messages.append("profile found for update.")
@@ -127,6 +128,7 @@ def process_webhook_payload(payload):
 			elif object_type == "ORGANIZATION":
 				o = Organisation.objects.get(profile = p)
 				messages.append("organisation found for update.")
+
 		if action == "delete":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			messages.append("profile found for delete.")
