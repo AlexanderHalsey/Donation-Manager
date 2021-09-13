@@ -359,7 +359,7 @@
               {% if donation.contact.profile.disabled %}
               <td>{{ donation.contact.profile.name }}</td>
               {% else %}
-              <td><a href="{% url 'contact' lang=language.language pk=donation.contact.profile.id %}" >{{ donation.contact.profile.name }}</a></td>
+              <td><a href="{% url 'contact' lang=language.language pk=donation.contact.id %}" >{{ donation.contact.profile.name }}</a></td>
               {% endif %}
               <td>{{ donation.date_donated }}</td>
               <td class="text-end">€ {{ donation.amount }}</td>
