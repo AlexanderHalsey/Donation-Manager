@@ -18,7 +18,7 @@ def process_webhook_payload(payload):
 					except:
 						pass
 					finally:
-						messages.append(f"{data['name']} created.")
+						messages.append(f"Creating {data['name']}.")
 						p = Profile()
 						p.seminar_desk_id = data["id"]
 						p.salutation = data["salutation"]
@@ -44,6 +44,7 @@ def process_webhook_payload(payload):
 						p.customer_number = data["customerNumber"]
 						p.additional_fields = str([field for key, field in data["additionalFields"].items()])
 						p.save()
+						message("profile create no problem.")
 						object_type == data["objectType"]
 						if object_type == "PERSON":
 							c = Contact()
@@ -63,6 +64,7 @@ def process_webhook_payload(payload):
 							c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
 							c.is_facilitator = data["isFacilitator"]
 							c.save()
+							message("contact created.")
 						elif object_type == "ORGANIZATION":
 							o.profile = p
 							o.additional_name = data["additionalName"]
@@ -122,7 +124,7 @@ def process_webhook_payload(payload):
 			messages.append("profile found for delete.")
 			p.disabled = True
 			p.save()
-			return
+			return messages
 
 		p.seminar_desk_id = data["id"]
 		p.salutation = data["salutation"]
