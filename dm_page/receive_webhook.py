@@ -9,6 +9,7 @@ def process_webhook_payload(payload):
 	try:
 		if action == "create":
 			if len(data) > 1:
+				messages.append("something is definitely wrong here")
 				for i in range(len(data)):
 					try:
 						p = Profile.objects.get(seminar_desk_id = data[i]["id"])
