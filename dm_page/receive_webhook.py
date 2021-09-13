@@ -73,7 +73,7 @@ def process_webhook_payload(payload):
 							o.profile = p
 							o.additional_name = data["additionalName"]
 							o.save()
-				return
+				return messages
 			else:
 				try:
 					p = Profile.objects.get(seminar_desk_id = data["id"])
