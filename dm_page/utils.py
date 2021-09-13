@@ -166,7 +166,7 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 
 	text_matrix = {
 		"institut_address": [(0, 0, 143, 695), (1, 0, 143, 675), (1, 0, 143, 660)], 
-		"receipt_id": [(0, 2, 475, 774)], 
+		"receipt_id": [(0, 2, 475, 773)], 
 		"organisation_object": [(0, 0, 51, 610), (1, 0, 101, 610), (1, 0, 51, 590), (1, 0, 51, 575), (1, 0, 51, 560)], 
 		"contact": [(0, 0, 200, 500)], 
 		"contact_address": [(1, 0, 200, 480), (1, 0, 200, 465), (1, 0, 200, 450), (1, 0, 200, 435)], 
@@ -245,7 +245,7 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 	packet3 = io.BytesIO()
 	can3 = canvas.Canvas(packet3, pagesize=A4)
 	can3.setFont(fonts[1], sizes[0])
-	can3.drawString(137, 734-additional, text_variables["date_today"][0])
+	can3.drawString(137, 733-additional, text_variables["date_today"][0])
 	can3.showPage()
 	can3.save()
 	packet3.seek(0)

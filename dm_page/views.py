@@ -17,6 +17,7 @@ from .forms import DonationForm
 import json
 import datetime
 import os
+from secrets import compare_digest
 # from pathlib import Path
 
 # Create your views here.
@@ -598,7 +599,7 @@ def pdf_receipts(request, lang, change=None):
 		"date_donated_lte": "",
 		"file_name": "",
 		"receipt_type": "",
-		"canceled": False,
+		"canceled": True,
 	}
 
 	if request.method == "POST":
@@ -625,11 +626,12 @@ def pdf_receipts(request, lang, change=None):
 	total_donated = sum([d.amount for d in donations])
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
-	if request.GET.get("canceled") == 'true':
-		initial_filter_values["canceled"] = True
-		donation_receipts = RecettesFiscale.objects.all()
-	else:
+	print(request.GET.get("canceled"))
+	if request.GET.get("canceled") == 'false':
+		initial_filter_values["canceled"] = False
 		donation_receipts = RecettesFiscale.objects.filter(cancel=False)
+	else:
+		donation_receipts = RecettesFiscale.objects.all()
 	donation_types = []
 	for donation_receipt in donation_receipts:
 		try:

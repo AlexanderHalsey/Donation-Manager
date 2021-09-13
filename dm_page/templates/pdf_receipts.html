@@ -82,9 +82,10 @@
 
   window.addEventListener('submit',
       function(){
-        if (document.getElementById('canceled').checked) {
-          document.getElementById('canceled').setAttribute('value', 'true');
-        }
+        if (document.getElementById('canceled').checked == false) {
+          console.log("This isn't working")
+          document.getElementById('canceled').setAttribute('value', 'false');
+        } 
       }
     );
 
@@ -275,10 +276,10 @@
                   </div>
                   <div class="col-2">
                     <div class="input-group mb-3">
-                      {% if initial_filter_values.canceled %}
-                      <input class="form-check-input mt-2 ms-1" id="canceled" type="checkbox" name="canceled" value="" checked>
+                      {% if not initial_filter_values.canceled %}
+                      <input class="form-check-input mt-2 ms-1" id="canceled" type="checkbox" name="canceled" value="false">
                       {% else %}
-                      <input class="form-check-input mt-2 ms-1" id="canceled" type="checkbox" name="canceled" value="">
+                      <input class="form-check-input mt-2 ms-1" id="canceled" type="checkbox" name="canceled" value="true" checked>
                       {% endif %}
                       <span class="ms-2"><strong>{{language.forms.canceledLabelName}}</strong></span>
                     </div>
