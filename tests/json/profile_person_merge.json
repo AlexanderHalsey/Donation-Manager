@@ -10,6 +10,7 @@
       "payload": [
         {
         "id": 6215,
+        "mergeStatus": "DELETED",
         "objectType": "PERSON",
         "salutation": "Herr",
         "title": "Dr.",
@@ -36,7 +37,7 @@
         "primaryAddress": {
           "careOf": "Room 123",
           "streetAddress": "Apart XYZ",
-          "streetAddres2": "",
+          "streetAddress2": "",
           "zipCode": "4321",
           "city": "City XYZ",
           "province": "Province XYZ",
@@ -46,7 +47,7 @@
         "billingAddress": {
           "careOf": "",
           "streetAddress": "",
-          "streetAddres2": "",
+          "streetAddress2": "",
           "zipCode": "",
           "city": "",
           "province": "",
@@ -105,6 +106,7 @@
       },
       {
         "id": 6216,
+        "mergeStatus": "MERGED",
         "objectType": "PERSON",
         "salutation": "Herr",
         "title": "Dr.",
@@ -131,7 +133,7 @@
         "primaryAddress": {
           "careOf": "Room 123",
           "streetAddress": "Apart XYZ",
-          "streetAddres2": "",
+          "streetAddress2": "",
           "zipCode": "4321",
           "city": "City XYZ",
           "province": "Province XYZ",
@@ -141,7 +143,7 @@
         "billingAddress": {
           "careOf": "",
           "streetAddress": "",
-          "streetAddres2": "",
+          "streetAddress2": "",
           "zipCode": "",
           "city": "",
           "province": "",

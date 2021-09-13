@@ -22,7 +22,7 @@
         "primaryAddress": {
           "careOf": null,
           "streetAddress": null,
-          "streetAddres2": null,
+          "streetAddress2": null,
           "zipCode": null,
           "city": null,
           "province": null,
@@ -32,7 +32,7 @@
         "billingAddress": {
           "careOf": null,
           "streetAddress": null,
-          "streetAddres2": null,
+          "streetAddress2": null,
           "zipCode": null,
           "city": null,
           "province": null,

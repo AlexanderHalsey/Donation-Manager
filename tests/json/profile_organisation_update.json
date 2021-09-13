@@ -35,7 +35,7 @@
         "primaryAddress": {
           "careOf": "",
           "streetAddress": "",
-          "streetAddres2": "",
+          "streetAddress2": "",
           "zipCode": "",
           "city": "",
           "province": "",
@@ -45,7 +45,7 @@
         "billingAddress": {
           "careOf": "",
           "streetAddress": "",
-          "streetAddres2": "",
+          "streetAddress2": "",
           "zipCode": "",
           "city": "",
           "province": "",
