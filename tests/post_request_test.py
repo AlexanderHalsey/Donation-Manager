@@ -5,7 +5,8 @@ import json
 headers = CaseInsensitiveDict()
 headers["Accept"] = "application/json"
 headers["Content-Type"] = "application/json"
-headers["Dms-Webhook-Token"] = "6f85048b984cdf9a3204ac23c4eb7e2f0cc03a5ec01b4113c77f7b6867d9"
+headers["Username"] = "dmsivy"
+headers["Password"] = "6f85048b984cdf9a3204ac23c4eb7e2f0cc03a5ec01b4113c77f7b6867d9"
 
 path = "/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json/"
 

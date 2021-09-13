@@ -28,6 +28,7 @@ def process_webhook_payload(payload):
 			p = Profile.objects.get(seminar_desk_id = data[0]["id"])
 			messages.append("old profile found for merge.")
 			data = data[1]
+			
 			# To be continued ...
 			#try:
 				# if new data already exists in system

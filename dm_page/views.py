@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 
-from donations.settings import BASE_DIR, DMS_WEBHOOK_TOKEN, SEND_TO
+from donations.settings import BASE_DIR, DMS_WEBHOOK_PASSWORD, DMS_WEBHOOK_USERNAME, SEND_TO
 from .models import *
 from .utils import *
 from .receive_webhook import process_webhook_payload
@@ -50,13 +50,19 @@ def logoutUser(request, lang):
 @require_POST
 @non_atomic_requests
 def dms_webhook(request):
-	# Verify token
-	given_token = request.headers.get("Dms-Webhook-Token", "")
-	if not compare_digest(given_token, DMS_WEBHOOK_TOKEN):
+	# Verify username and password
+	username = request.headers.get("Username", "")
+	password = request.headers.get("Password", "")
+	if not compare_digest(username, DMS_WEBHOOK_USERNAME):
 		return HttpResponseForbidden(
-				"Incorrect token in Dms-Webhook-Token header.",
-				content_type = "text/plain",
-			)
+			"Incorrect password in Dms-Webhook-Username header.",
+			content_type = "text/plain",
+		)
+	if not compare_digest(password, DMS_WEBHOOK_PASSWORD):
+		return HttpResponseForbidden(
+			"Incorrect password in Dms-Webhook-Password header.",
+			content_type = "text/plain",
+		)
 	WebhookLogs.objects.filter(
 			received_at__lte = timezone.now() - datetime.timedelta(days=7)
 		).delete()

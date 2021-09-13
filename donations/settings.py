@@ -24,12 +24,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+
 EMAIL_ADDRESS=os.getenv('EMAIL_ADDRESS')
 PASSWORD=os.getenv('PASSWORD')
 SEND_TO=os.getenv('SEND_TO')
-DMS_WEBHOOK_TOKEN = os.getenv('DMS_WEBHOOK_TOKEN')
 SMTP_PORT = os.getenv('SMTP_PORT')
 SMTP_DOMAIN = os.getenv('SMTP_DOMAIN')
+
+DMS_WEBHOOK_USERNAME = os.getenv('DMS_WEBHOOK_USERNAME')
+DMS_WEBHOOK_PASSWORD = os.getenv('DMS_WEBHOOK_TOKEN')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.getenv('DEBUG_VALUE') == 'True')
