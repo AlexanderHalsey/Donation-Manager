@@ -1,16 +1,13 @@
 from django.db.transaction import atomic
 from .models import Profile, Contact, Organisation, Donation
-from django.http import HttpResponse
 
 @atomic
 def process_webhook_payload(payload):
 	action = payload["notifications"][0]["action"].split("profile.")[1]
 	data = payload["notifications"][0]["payload"]
-	return HttpResponse(action, data)
 	messages = []
 	try:
 		if action == "create":
-			return HttpResponse(len(payload["notifications"]))
 			if len(payload["notifications"]) > 1:
 				for i in range(len(payload["notifications"])):
 					data = payload["notifications"][i]["payload"]
