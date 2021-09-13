@@ -5,11 +5,11 @@ from .models import Profile, Contact, Organisation, Donation
 def process_webhook_payload(payload):
 	action = payload["notifications"][0]["action"].split("profile.")[1]
 	data = payload["notifications"][0]["payload"]
+	messages.
 	messages = []
 	try:
 		if action == "create":
-			if len(data) > 1:
-				messages.append("something is definitely wrong here")
+			if type(data) == list:
 				for i in range(len(data)):
 					try:
 						p = Profile.objects.get(seminar_desk_id = data[i]["id"])
