@@ -44,6 +44,7 @@ def process_webhook_payload(payload):
 						p.customer_number = data["customerNumber"]
 						p.additional_fields = str([field for key, field in data["additionalFields"].items()])
 						p.save()
+						messages.append("Profile created succesfully.")
 						object_type = data["objectType"]
 						messages.append(objectType)
 						if object_type == "PERSON":
