@@ -45,7 +45,7 @@ def process_webhook_payload(payload):
 						p.additional_fields = str([field for key, field in data["additionalFields"].items()])
 						p.save()
 						object_type = data["objectType"]
-						messages.append("objectType")
+						messages.append(objectType)
 						if object_type == "PERSON":
 							c = Contact()
 							c.profile = p
