@@ -59,14 +59,12 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Username header. {username}{DMS_WEBHOOK_USERNAME}",
 			content_type = "text/plain",
 		)
-	try:
-		if not compare_digest(password, DMS_WEBHOOK_PASSWORD):
-			return HttpResponseForbidden(
-				f"Incorrect password in Dms-Webhook-Password header.",
-				content_type = "text/plain",
-			)
-	except:
-		return HttpResponseForbidden(f"{password}: {type(password)}\t {DMS_WEBHOOK_PASSWORD}: {type(DMS_WEBHOOK_PASSWORD)}")
+	if not compare_digest(password, DMS_WEBHOOK_PASSWORD):
+		return HttpResponseForbidden(
+			f"Incorrect password in Dms-Webhook-Password header.",
+			content_type = "text/plain",
+		)
+		
 	WebhookLogs.objects.filter(
 			received_at__lte = timezone.now() - datetime.timedelta(days=7)
 		).delete()

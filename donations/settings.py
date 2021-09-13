@@ -32,7 +32,7 @@ SMTP_PORT = os.getenv('SMTP_PORT')
 SMTP_DOMAIN = os.getenv('SMTP_DOMAIN')
 
 DMS_WEBHOOK_USERNAME = os.getenv('DMS_WEBHOOK_USERNAME')
-DMS_WEBHOOK_PASSWORD = os.getenv('DMS_WEBHOOK_TOKEN')
+DMS_WEBHOOK_PASSWORD = os.getenv('DMS_WEBHOOK_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.getenv('DEBUG_VALUE') == 'True')
