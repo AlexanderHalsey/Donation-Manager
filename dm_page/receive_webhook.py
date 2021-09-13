@@ -19,7 +19,7 @@ def process_webhook_payload(payload):
 					except:
 						pass
 					finally:
-						messages.append(f"{data["name"]} created.")
+						messages.append(f"{data['name']} created.")
 						p = Profile()
 						p.seminar_desk_id = data["id"]
 						p.salutation = data["salutation"]
