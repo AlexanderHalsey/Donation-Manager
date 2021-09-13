@@ -110,6 +110,9 @@ def process_webhook_payload(payload):
 			try:
 				p = Profile.objects.get(seminar_desk_id = data[merged]["id"])
 				messages.append("MERGED profile found for merge.")
+			except:
+				messages.append("MERGED profile not found for merge.")
+				return
 			data = data[merged]
 			object_type = data["objectType"]
 			c = Contact.objects.get(profile = p)
