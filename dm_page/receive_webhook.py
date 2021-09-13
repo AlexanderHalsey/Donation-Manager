@@ -21,7 +21,6 @@ def process_webhook_payload(payload):
 						messages.append(f"Creating {data['name']}.")
 						p = Profile()
 						p.seminar_desk_id = data["id"]
-						messages.append("Phase 1")
 						p.salutation = data["salutation"]
 						p.object_type = data["objectType"]
 						p.title = data["title"]
@@ -45,8 +44,7 @@ def process_webhook_payload(payload):
 						p.customer_number = data["customerNumber"]
 						p.additional_fields = str([field for key, field in data["additionalFields"].items()])
 						p.save()
-						messages.append(("profile created no problem."))
-						object_type == data["objectType"]
+						object_type = data["objectType"]
 						messages.append("objectType")
 						if object_type == "PERSON":
 							c = Contact()
