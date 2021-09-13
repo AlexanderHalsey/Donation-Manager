@@ -8,6 +8,7 @@ def process_webhook_payload(payload):
 	messages = []
 	try:
 		if action == "create":
+			print(len(payload["notifications"]))
 			if len(payload["notifications"]) > 1:
 				for i in range(len(payload["notifications"])):
 					data = payload["notifications"][i]["payload"]
