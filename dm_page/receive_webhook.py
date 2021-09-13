@@ -16,8 +16,6 @@ def process_webhook_payload(payload):
 						messages.append(f"{p.name} exists in database.")
 						continue
 					except:
-						pass
-					finally:
 						messages.append(f"Creating {data['name']}.")
 						p = Profile()
 						p.seminar_desk_id = data["id"]
@@ -73,6 +71,12 @@ def process_webhook_payload(payload):
 							o.profile = p
 							o.additional_name = data["additionalName"]
 							o.save()
+
+				message = ""
+					for m in messages:
+						message += (m + "\n")
+					message += "Message received okay."
+					return message 
 				return messages
 			else:
 				try:
