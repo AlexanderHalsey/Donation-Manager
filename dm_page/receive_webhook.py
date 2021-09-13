@@ -5,7 +5,6 @@ from .models import Profile, Contact, Organisation, Donation
 def process_webhook_payload(payload):
 	action = payload["notifications"][0]["action"].split("profile.")[1]
 	data = payload["notifications"][0]["payload"]
-	messages.
 	messages = []
 	try:
 		if action == "create":
