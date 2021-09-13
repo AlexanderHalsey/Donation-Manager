@@ -203,7 +203,7 @@ def dashboard(request, lang, change=None):
 			receipt.donation_list = [donation.id]
 			receipt.cancel = False
 			create_individual_receipt(receipt, donation,receipt.file_name)
-			if request.POST["email"] == 'true':
+			if request.POST.get("email") == 'true':
 				body = 'Dear Sir Madam,\n\n'\
 				f'This is an email confirmation of your donation with order n° {receipt.id}.\n'\
 				'Please find attached your receipt.\n\n\n'\
@@ -565,23 +565,25 @@ def pdf_receipts(request, lang, change=None):
 	# annual_receipt tests for Ava Martin
 	# if date_trigger.toordinal() <= datetime.date.today().toordinal():
 	if request.GET.get('annual_receipt') == "ok":
-		contact = Contact.objects.get(profile__name="Ava Martin")
-		date_range = [datetime.date(2019,1,1), datetime.date.today()] 
-		annual_donations = Donation.objects.filter(contact=contact).filter(eligible=True).filter(pdf=False) # .filter(date_donated__gte = date_range[0]).filter(date_donated__lte = date_range[1])
-		if len(annual_donations) > 0:
-			receipt = RecettesFiscale()
-			receipt.save()
-			receipt.contact = contact
-			receipt.date_created = datetime.date.today()
-			receipt.receipt_type = ('A','Annual')
-			receipt.file_name = f"{receipt.id}_{contact.profile.name}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
-			receipt.donation_list = [d.id for d in annual_donations]
-			receipt.cancel = False
-			receipt.save()
-			create_annual_receipt(receipt, contact, annual_donations, date_range, receipt.file_name)
-			for donation in annual_donations:
-				donation.pdf = True
-				donation.save()
+		date_range = [datetime.date(2019,1,1), datetime.date.today()]
+		for x in range(1,11):
+			contact = Contact.objects.get(id=x) 
+			annual_donations = Donation.objects.filter(contact=contact).filter(eligible=True).filter(pdf=False).order_by("date_donated") # .filter(date_donated__gte = date_range[0]).filter(date_donated__lte = date_range[1])
+			if len(annual_donations) > 0:
+				receipt = RecettesFiscale()
+				receipt.save()
+				receipt.contact = contact
+				receipt.date_created = datetime.date.today()
+				receipt.receipt_type = ('A','Annual')
+				receipt.file_name = f"{receipt.id}_{contact.profile.name}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
+				receipt.donation_list = [d.id for d in annual_donations]
+				receipt.cancel = False
+				receipt.save()
+				create_annual_receipt(receipt, contact, annual_donations, date_range, receipt.file_name)
+				for donation in annual_donations:
+					donation.pdf = True
+					donation.save()
+				break
 
 	# initial filter values
 	initial_filter_values = {
@@ -603,7 +605,7 @@ def pdf_receipts(request, lang, change=None):
 			if email_status == "SENT":
 				print(path.split(".pdf")[0][-6:])
 				if path.split(".pdf")[0][-6:] == "Annulé":
-					receipt.email_cancel == True
+					receipt.email_cancel = True
 				else:
 					receipt.email_active = True
 				receipt.save()

@@ -143,20 +143,17 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 	text_variables = {
 		"institut_address": ["Institut Vajra Yogini pour l'Epanouissement de la Sagesse", "LIEU DIT CLAUZADE", "81500 MARZENS"],
 		"receipt_id": [str(receipt.id)],
-		"organisation_object": ["Object:", "Exercise du culte bouddhiste", "Association Culturelle régie par la loi du 9 décembre 1905 du 16 mars 1906. Ce reçu donne droit à une déduction fiscale conformément à l'arrête préfectoral du Tarn du 30 décemebre 2003."],
+		"organisation_object": ["Object:", "Exercise du culte bouddhiste", "Association Culturelle régie par la loi du 9 décembre 1905 du 16 mars 1906. Ce reçu donne", "droit à une déduction fiscale conformément à l'arrête préfectoral du Tarn du 30 décemebre",  "2003."],
 		"contact": [contact.profile.name], 
 		"contact_address": address,
 		"date_start": ["/".join(str(date_range[0]).split("-")[::-1])],
 		"date_end": ["/".join(str(date_range[1]).split("-")[::-1])],
 		"total_amount": ["€ "+ str(sum([d.amount for d in donations]))],
-		"other_donation_variables": [num2words.num2words(sum([d.amount for d in donations]), lang="fr").capitalize() + " euros", "Espèces", "Déclaration de don manuel", "Numéraire"], 
-		"institut_village": ["MARZENS"],
+		"in_letters": [num2words.num2words(sum([d.amount for d in donations]), lang="fr").capitalize() + " euros"], 
 		"date_today": ["/".join(str(datetime.date.today()).split("-")[::-1])],
-		"president": ["Charles Trébaol"],
-	}
+			}
 	images = {
 		"institution": "/static/png/IVY_Logo_carré.png",
-		"signature": "/static/png/signature_Charles_Trebaol.png",
 	}
 	packet = io.BytesIO()
 	can = canvas.Canvas(packet, pagesize=A4)
@@ -165,30 +162,24 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 	pdfmetrics.registerFont(TTFont('Arial Bold', 'Arial Bold.ttf'))
 	pdfmetrics.registerFont(TTFont('Arial Italic', 'Arial Italic.ttf'))
 	fonts = ["Arial Bold", "Arial", "Arial Italic"]
-	sizes = [12, 16, 18]
+	sizes = [12, 16, 18, 10, 11]
 
 	text_matrix = {
-		"institut_address": [(0, 0, 143, 700), (1, 0, 143, 680), (1, 0, 143, 665)], 
-		"receipt_id": [(0, 2, 470, 782)], 
-		"organisation_object": [(0, 0, 38, 615), (1, 0, 88, 615), (1, 0, 32, 590)], 
+		"institut_address": [(0, 0, 143, 695), (1, 0, 143, 675), (1, 0, 143, 660)], 
+		"receipt_id": [(0, 2, 475, 774)], 
+		"organisation_object": [(0, 0, 51, 610), (1, 0, 101, 610), (1, 0, 51, 590), (1, 0, 51, 575), (1, 0, 51, 560)], 
 		"contact": [(0, 0, 200, 500)], 
 		"contact_address": [(1, 0, 200, 480), (1, 0, 200, 465), (1, 0, 200, 450), (1, 0, 200, 435)], 
-		"date_start": [(1, 0, 363, 400)], 
-		"date_end": [(1, 0, 363, 400)], 
-		"total_amount": [(0, 1, 252, 370)], 
-		"other_donation_variables": [(2, 0, 206, 337), (2, 0, 182, 322), (2, 0, 151, 307), (2, 0, 152, 293)], 
-		"institut_village": [(1, 0, 43, 193)], 
-		"date_today": [(1, 0, 124, 193)], 
-		"president": [(0, 0, 302, 158)],
-	}
-
-	image_matrix = {
-		"institution": (45, 565, 80),
-		"signature": (310, -55, 100),
+		"date_start": [(1, 0, 434, 379)], 
+		"date_end": [(1, 0, 74, 352)], 
+		"total_amount": [(0, 1, 286, 353)], 
+		"in_letters": [(2, 0, 222, 324)],
 	}
 
 	for key,value in text_variables.items():
 		for index in range(len(value)):
+			if key == "date_today":
+				continue
 			t = text_matrix[key][index]
 			can.setFont(fonts[t[0]], sizes[t[1]])
 			if key=="organisation_object" and index==2:
@@ -199,19 +190,76 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 				continue
 			can.drawString(t[2],t[3], value[index])
 
-	for image in Image.objects.all():
-		img = ImageReader(image.image)
-		can.drawImage(img, image_matrix[image.name][0], image_matrix[image.name][1], width=image_matrix[image.name][2], preserveAspectRatio=True)
+	image =  Image.objects.get(name="institution")
+	img = ImageReader(image.image)
+	can.drawImage(img, 49, 555, width=80, preserveAspectRatio=True)
 
+	can.grid([69, 154, 232, 367, 438, 515],[274]+[246-(y*18) for y in range(len(donations[:9])+1)])
+	can.setFont(fonts[0], sizes[4])
+	can.drawString(79, 256, "Date du Don")
+	can.drawString(168, 262, "Mode de")
+	can.drawString(166, 250, "Versement")
+	can.drawString(268, 256, "Forme du Don")
+	can.drawString(378, 262, "Nature du")
+	can.drawString(392, 250, "Don")
+	can.drawString(454, 256, "Quantité")
+
+	can.setFont(fonts[2], sizes[3])
+	for index, donation in enumerate(donations):
+		if index == 9:
+			break
+		can.drawString(79, 235-(index*18), " / ".join(str(donation.date_donated).split("-")[::-1]))
+		can.drawString(168, 235-(index*18), "Espèces")
+		can.drawString(239, 235-(index*18), "Déclaration de don manuel")
+		can.drawString(377, 235-(index*18), "Numéraire")
+		can.drawString(450, 235-(index*18), "€ " + str(donation.amount))
 	can.showPage()
 	can.save()
 	packet.seek(0)
 	new_pdf = PdfFileReader(packet)
+
+	packet2 = io.BytesIO()
+	can2 = canvas.Canvas(packet2, pagesize=A4)
+	if len(donations) > 9:
+		can2.grid([69, 154, 232, 367, 438, 515],[778-(y*18) for y in range(len(donations[9:])+1)])
+		can2.setFont(fonts[2], sizes[3])
+		for index, donation in enumerate(donations[9:]):
+			can2.drawString(79, 767-(index*18), " / ".join(str(donation.date_donated).split("-")[::-1]))
+			can2.drawString(168, 767-(index*18), "Espèces")
+			can2.drawString(239, 767-(index*18), "Déclaration de don manuel")
+			can2.drawString(377, 767-(index*18), "Numéraire")
+			can2.drawString(450, 767-(index*18), "€ " + str(donation.amount))
+	img2 = ImageReader(str(BASE_DIR)+"/static/png/end_of.png")
+	if len(donations) > 9:
+		additional = (len(donations[9:]))*18
+		if additional != 0:
+			additional += 50
+	else:
+		additional = 0
+	can2.drawImage(img2, 43, 492-additional, width=506, preserveAspectRatio=True)
+	can2.showPage()
+	can2.save()
+	packet2.seek(0)
+	new_pdf2 = PdfFileReader(packet2)
+
+	packet3 = io.BytesIO()
+	can3 = canvas.Canvas(packet3, pagesize=A4)
+	can3.setFont(fonts[1], sizes[0])
+	can3.drawString(137, 734-additional, text_variables["date_today"][0])
+	can3.showPage()
+	can3.save()
+	packet3.seek(0)
+	new_pdf3 = PdfFileReader(packet3)
+
 	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/annual_receipt.pdf", "rb"))
 	output = PdfFileWriter()
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
+	page2 = existing_pdf.getPage(1)
+	page2.mergePage(new_pdf2.getPage(0))
+	page2.mergePage(new_pdf3.getPage(0))
 	output.addPage(page)
+	output.addPage(page2)
 	outputStream = open(path + file_name, "wb")
 	output.write(outputStream)
 	outputStream.close()
@@ -230,9 +278,10 @@ def cancel_pdf_receipt(path):
 	new_pdf = PdfFileReader(packet)
 	existing_pdf = PdfFileReader(open(f"{path}", "rb"))
 	output = PdfFileWriter()
-	page = existing_pdf.getPage(0)
-	page.mergePage(new_pdf.getPage(0))
-	output.addPage(page)
+	for i in range(existing_pdf.getNumPages()):
+		page = existing_pdf.getPage(i)
+		page.mergePage(new_pdf.getPage(0))
+		output.addPage(page)
 	new_path = path.split("/receipts/")[1].split(".pdf")
 	new_path.insert(1, "_Annulé.pdf")
 	new_path = "".join(new_path)
@@ -265,7 +314,7 @@ def send_email(pdf_path, send_to, body):
 			)
 			message.attach(part)
 		text = message.as_string()
-		smtp_object.sendmail(EMAIL_ADDRESS, SEND_TO, text)
+		smtp_object.sendmail(EMAIL_ADDRESS, send_to, text)
 		smtp_object.quit()
 		return "SENT"
 	except:
