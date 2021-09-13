@@ -52,17 +52,17 @@ def process_webhook_payload(payload):
 							c.profile = p
 							c.first_name = data["firstName"]
 							c.last_name = data["lastName"]
-							message.append("Phase1")
+							messages.append("Phase1")
 							c.additional_title = data["additionalTitle"]
 							c.date_of_birth = data["dateOfBirth"]
 							c.profession = data["profession"]
 							c.salutation_type = data["salutationType"] 
-							message.append("Phase2")
+							messages.append("Phase2")
 							c.private_phone_number = data["privatePhoneNumber"]
 							c.alternative_phone_number = data["alternativePhoneNumber"]
 							c.work_phone_number = data["workPhoneNumber"]
 							c.preferred_address = data["preferredAddress"]
-							message.append("Phase3")
+							messages.append("Phase3")
 							c.preferred_email = data["preferredEmail"]
 							c.preferred_phone_number = data["preferredPhoneNumber"]
 							c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
