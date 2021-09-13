@@ -44,29 +44,25 @@ def process_webhook_payload(payload):
 						p.save()
 						messages.append("Profile created succesfully.")
 						object_type = data["objectType"]
-						messages.append(object_type)
 						if object_type == "PERSON":
 							c = Contact()
 							c.profile = p
 							c.first_name = data["firstName"]
 							c.last_name = data["lastName"]
-							messages.append("Phase1")
 							c.additional_title = data["additionalTitle"]
 							c.date_of_birth = data["dateOfBirth"]
 							c.profession = data["profession"]
 							c.salutation_type = data["salutationType"] 
-							messages.append("Phase2")
 							c.private_phone_number = data["privatePhoneNumber"]
 							c.alternative_phone_number = data["alternativePhoneNumber"]
 							c.work_phone_number = data["workPhoneNumber"]
 							c.preferred_address = data["preferredAddress"]
-							messages.append("Phase3")
 							c.preferred_email = data["preferredEmail"]
 							c.preferred_phone_number = data["preferredPhoneNumber"]
 							c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
 							c.is_facilitator = data["isFacilitator"]
 							c.save()
-							messages.append(("contact created."))
+							messages.append(("Contact contact successfuly."))
 						elif object_type == "ORGANIZATION":
 							o.profile = p
 							o.additional_name = data["additionalName"]
@@ -102,12 +98,18 @@ def process_webhook_payload(payload):
 			else:
 				merged = 1
 				deleted = 0
-			p_del = Profile.objects.get(seminar_desk_id = data[deleted]["id"])
-			messages.append("old profile found for merge.")
+			try:
+				p_del = Profile.objects.get(seminar_desk_id = data[deleted]["id"])
+				messages.append("DELETED profile found for merge.")
+			except:
+				messages.append("DELETED profile not found for merge.")
+				return
 			# donations found for old profile
 			donations_to_be_appended = Donation.objects.filter(contact__profile = p_del)
 			# new profile / contact
-			p = Profile.objects.get(seminar_desk_id = data[merged]["id"])
+			try:
+				p = Profile.objects.get(seminar_desk_id = data[merged]["id"])
+				messages.append("MERGED profile found for merge.")
 			data = data[merged]
 			object_type = data["objectType"]
 			c = Contact.objects.get(profile = p)
@@ -116,7 +118,7 @@ def process_webhook_payload(payload):
 			for don in donations_to_be_appended:
 				don.contact = c
 				don.save()
-			messages.append("merged profile with all the donations.")
+			messages.append("Merged profile with all the donations.")
 
 		if action == "update":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
@@ -142,7 +144,6 @@ def process_webhook_payload(payload):
 		p.title = data["title"]
 		p.name = data["name"]
 		p.language = data["language"]
-		messages.append("non iterable fields completed ok")
 		p.labels = str([(["SD_Label",label["id"],label["name"]]) for label in data["labels"]])
 		p.email = data["email"]
 		p.alternative_email = data["alternativeEmail"]
@@ -160,8 +161,8 @@ def process_webhook_payload(payload):
 		p.vat_id = data["vatId"]
 		p.customer_number = data["customerNumber"]
 		p.additional_fields = str([field for key, field in data["additionalFields"].items()])
-		messages.append("iterable fields completed ok")
 		p.save()
+		messages.append("Profile created successfuly.")
 
 		if object_type == "PERSON":
 			c.profile = p
@@ -180,11 +181,13 @@ def process_webhook_payload(payload):
 			c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
 			c.is_facilitator = data["isFacilitator"]
 			c.save()
+			messages.append("Contact created successfuly.")
 
 		elif object_type == "ORGANIZATION":
 			o.profile = p
 			o.additional_name = data["additionalName"]
 			o.save()
+			messages.append("Organisation created successfuly.")
 
 		message = ""
 		for m in messages:
