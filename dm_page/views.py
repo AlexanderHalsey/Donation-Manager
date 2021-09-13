@@ -56,12 +56,12 @@ def dms_webhook(request):
 	password = request.headers.get("Password", "")
 	if not compare_digest(username, DMS_WEBHOOK_USERNAME):
 		return HttpResponseForbidden(
-			"Incorrect password in Dms-Webhook-Username header.",
+			f"Incorrect password in Dms-Webhook-Username header. {username}{DMS_WEBHOOK_USERNAME}",
 			content_type = "text/plain",
 		)
 	if not compare_digest(password, DMS_WEBHOOK_PASSWORD):
 		return HttpResponseForbidden(
-			"Incorrect password in Dms-Webhook-Password header.",
+			f"Incorrect password in Dms-Webhook-Password header. {password}{DMS_WEBHOOK_PASSWORD}",
 			content_type = "text/plain",
 		)
 	WebhookLogs.objects.filter(
