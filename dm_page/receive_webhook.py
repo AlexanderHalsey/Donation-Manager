@@ -21,16 +21,19 @@ def process_webhook_payload(payload):
 						messages.append(f"Creating {data['name']}.")
 						p = Profile()
 						p.seminar_desk_id = data["id"]
+						messages.append("Phase 1")
 						p.salutation = data["salutation"]
 						p.object_type = data["objectType"]
 						p.title = data["title"]
 						p.name = data["name"]
 						p.language = data["language"]
+						messages.append("Phase 2")
 						p.labels = str([(["SD_Label",label["id"],label["name"]]) for label in data["labels"]])
 						p.email = data["email"]
 						p.alternative_email = data["alternativeEmail"]
 						p.website = data["website"]
 						p.fax_number = data["faxNumber"]
+						messages.append("Phase 3")
 						p.primary_address = str([address for key, address in data["primaryAddress"].items()])
 						p.billing_address_active = data["billingAddressActive"]
 						p.billing_address = str([address for key, address in data["billingAddress"].items()])
@@ -38,13 +41,14 @@ def process_webhook_payload(payload):
 						p.information = data["information"]
 						p.is_blocked = data["isBlocked"]
 						p.blocked_reason = data["blockedReason"]
+						messages.append("Phase 4")
 						p.bank_account_data = str([d for key, d in data["bankAccountData"].items()])
 						p.tax_number = data["taxNumber"]
 						p.vat_id = data["vatId"]
 						p.customer_number = data["customerNumber"]
 						p.additional_fields = str([field for key, field in data["additionalFields"].items()])
 						p.save()
-						message("profile create no problem.")
+						messages.append(("profile create no problem."))
 						object_type == data["objectType"]
 						if object_type == "PERSON":
 							c = Contact()
@@ -64,7 +68,7 @@ def process_webhook_payload(payload):
 							c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
 							c.is_facilitator = data["isFacilitator"]
 							c.save()
-							message("contact created.")
+							messages.append(("contact created."))
 						elif object_type == "ORGANIZATION":
 							o.profile = p
 							o.additional_name = data["additionalName"]
