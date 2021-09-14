@@ -415,7 +415,7 @@ def dashboard(request, lang, change=None):
 	return render(request, 'dashboard.html', context)
 
 @login_required(login_url='/fr/login')
-def contact(request, pk, lang, change=None):
+def contact(request, pk=None, lang, change=None):
 
 	# language change whilst mainting current url
 	if change != None:
@@ -425,7 +425,7 @@ def contact(request, pk, lang, change=None):
 	contact = Contact.objects.get(profile__seminar_desk_id=pk)
 	address = eval(contact.profile.primary_address)
 	tags = contact.tags.all()
-	donations = Donation.objects.filter(contact__profile__name=contact.profile.name)
+	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id)
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
 
@@ -523,7 +523,7 @@ def donators(request, lang, change=None):
 	# contacts
 	contacts = Contact.objects.all()
 	contacts = [{
-		"id": contact.id,
+		"id": contact.seminar_desk_id,
 		"tags": contact.tags,
 		"name": contact.profile.name,
 		"total_donations": len(donations.filter(contact=contact)),
