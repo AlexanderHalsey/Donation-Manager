@@ -254,7 +254,7 @@
               {% if contact.profile.disabled %}
               <td>{{ contact.name }}</td>
               {% else %}
-              <td><a href="{% url 'contact' lang=language.language pk=contact.profile.seminar_desk_id %}" >{{ contact.name }}</a></td>
+              <td><a href="{% url 'contact' lang=language.language pk=contact.id %}" >{{ contact.name }}</a></td>
               {% endif %}
               <td>
                 {% for tag in donation.contact.tags.all %}
