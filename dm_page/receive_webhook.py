@@ -139,7 +139,7 @@ def process_webhook_payload(payload):
 			linked_dons = Donation.objects.filter(contact__profile = p)
 			p.delete()
 			for don in linked_dons:
-				don.contact = profile.name
+				don.contact = profile_name
 				don.save()
 			return messages
 
