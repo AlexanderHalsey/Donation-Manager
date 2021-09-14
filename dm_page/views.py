@@ -74,6 +74,7 @@ def dms_webhook(request):
 			payload = payload,
 		)
 	messages = process_webhook_payload(payload)
+	print(messages)
 	return HttpResponse(messages, content_type="text/plain")
 
 @login_required(login_url="/fr/login")
@@ -181,7 +182,7 @@ def dashboard(request, lang, change=None):
 			donation.eligible = True
 			donation.save()
 		else:
-			donation.eligibile = False
+			donation.eligible = False
 			donation.save()
 
 	# front-end functionality
@@ -605,7 +606,6 @@ def pdf_receipts(request, lang, change=None):
 			path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
 			email_status = send_email(path, send_to, body)
 			if email_status == "SENT":
-				print(path.split(".pdf")[0][-6:])
 				if path.split(".pdf")[0][-6:] == "Annulé":
 					receipt.email_cancel = True
 				else:
@@ -621,7 +621,6 @@ def pdf_receipts(request, lang, change=None):
 	total_donated = sum([d.amount for d in donations])
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
-	print(request.GET.get("canceled"))
 	if request.GET.get("canceled") == 'false':
 		initial_filter_values["canceled"] = False
 		donation_receipts = RecettesFiscale.objects.filter(cancel=False)
