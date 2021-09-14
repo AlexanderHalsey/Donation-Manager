@@ -415,7 +415,7 @@ def dashboard(request, lang, change=None):
 	return render(request, 'dashboard.html', context)
 
 @login_required(login_url='/fr/login')
-def contact(request, pk=None, lang, change=None):
+def contact(request, pk, lang, change=None):
 
 	# language change whilst mainting current url
 	if change != None:
