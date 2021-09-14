@@ -103,7 +103,6 @@ def process_webhook_payload(payload):
 				return messages
 			# donations found for old profile
 			donations_to_be_appended = Donation.objects.filter(contact__profile = p_del)
-			p_del.delete()
 			# new profile / contact
 			try:
 				p = Profile.objects.get(seminar_desk_id = data[merged]["id"])
@@ -119,6 +118,7 @@ def process_webhook_payload(payload):
 			for don in donations_to_be_appended:
 				don.contact = c
 				don.save()
+			p_del.delete()
 			messages.append("Merged profile with all the donations.")
 
 		if action == "update":

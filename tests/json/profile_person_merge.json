@@ -9,7 +9,7 @@
       "action": "profile.merge",
       "payload": [
         {
-        "id": 6217,
+        "id": 6216,
         "mergeStatus": "DELETED",
         "objectType": "PERSON",
         "salutation": "Herr",
@@ -105,12 +105,12 @@
         "isFacilitator": false
       },
       {
-        "id": 6218,
+        "id": 6217,
         "mergeStatus": "MERGED",
         "objectType": "PERSON",
         "salutation": "Herr",
         "title": "Dr.",
-        "name": "Person 20210806",
+        "name": "Person 20210805",
         "language": "en",
         "labels": [
           {
@@ -186,7 +186,7 @@
           "hhh": ""
         },
         "firstName": "Person",
-        "lastName": "20210806",
+        "lastName": "20210805",
         "additionalTitle": "Title 1",
         "dateOfBirth": "1990-01-02",
         "profession": "Consultant",
