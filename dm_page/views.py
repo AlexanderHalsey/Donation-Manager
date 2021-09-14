@@ -231,7 +231,7 @@ def dashboard(request, lang, change=None):
 			try:
 				donation.contact = Contact.objects.get(profile__name = form.cleaned_data["contact"])
 			except:
-				donation.contact = Contact.objects.get(filter = form.cleaned_data["contact"])[0]
+				donation.contact = Contact.objects.filter(profile__name = form.cleaned_data["contact"])[0]
 			finally:
 				donation.amount = int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])
 				donation.date_donated = form.cleaned_data["date_donated"]
