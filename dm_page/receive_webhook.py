@@ -9,6 +9,7 @@ def process_webhook_payload(payload):
 	try:
 		if action == "create":
 			if type(payload["notifications"]) == list:
+				messages.append("Notifications is indeed a list type")
 				for i in range(len(payload["notifications"])):
 					data = payload["notifications"][i]["payload"]
 					try:

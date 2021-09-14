@@ -64,15 +64,16 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Password header.",
 			content_type = "text/plain",
 		)
-		
-	WebhookLogs.objects.filter(
-			received_at__lte = timezone.now() - datetime.timedelta(days=7)
-		).delete()
 	payload = json.loads(request.body)
-	WebhookLogs.objects.create(
-			received_at = timezone.now(),
-			payload = payload,
-		)
+	if type(payload["notifications"]) != list:	
+		WebhookLogs.objects.filter(
+				received_at__lte = timezone.now() - datetime.timedelta(days=7)
+			).delete()
+		WebhookLogs.objects.create(
+				received_at = timezone.now(),
+				payload = payload,
+			)
+		
 	messages = process_webhook_payload(payload)
 	print(messages)
 	return HttpResponse(messages, content_type="text/plain")
