@@ -13,7 +13,7 @@ class DonationForm(forms.Form):
 
 	def __init__(self, *args, **kwargs):
 		super(DonationForm, self).__init__(*args, **kwargs)
-		self.fields['contact'].choices = [(str(contact), str(contact)) for contact in Contact.objects.filter(profile__disabled=False)]
+		self.fields['contact'].choices = [(str(contact), str(contact)) for contact in Contact.objects.all()]
 		self.fields['payment_mode'].choices = [(str(mode), str(mode)) for mode in PaymentMode.objects.all()]
 		self.fields['donation_type'].choices = [(str(t), str(t)) for t in DonationType.objects.all()]
 		self.fields['organisation'].choices = [(str(organisation), str(organisation)) for organisation in Organisation.objects.filter(profile__disabled=False)]
