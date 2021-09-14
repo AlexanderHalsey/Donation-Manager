@@ -57,13 +57,10 @@ def create_individual_receipt(receipt, donation, file_name):
 	path = f"{BASE_DIR}/static/pdf/receipts/"
 	# Create pdf
 	address = eval(donation.contact.profile.primary_address)
-	for i in range(len(address)):
-		if address[i] == "":
-			address.pop(i)
 	if len(address) == 5:
 		address = address[:2]+[address[2]+", "+address[3]]+[address[4]]
-	if len(address) == 6:
-		address = [address[0]+", "+address[1]]+[address[2]+", "+address[3]]+[address[4], address[5]]
+	if len(address) == 7:
+		address = [address[0]+(", " if address[0] != "" else "")+address[1]]+list(filter(lambda x: x, address[2]))+[address[3]+" "+address[4]]+[address[5]+(", " if address[6] != "" else "")+address[6]]
 	text_variables = {
 		"institut_address": ["Institut Vajra Yogini pour l'Epanouissement de la Sagesse", "LIEU DIT CLAUZADE", "81500 MARZENS"],
 		"receipt_id": [str(receipt.id)],

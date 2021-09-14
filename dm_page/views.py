@@ -180,6 +180,9 @@ def dashboard(request, lang, change=None):
 		if (donation.organisation.profile.name, donation.donation_type.name) in receipt_conditions:
 			donation.eligible = True
 			donation.save()
+		else:
+			donation.eligibile = False
+			donation.save()
 
 	# front-end functionality
 	scroll = 0 # to load with page scroll number so the page appears static on request
