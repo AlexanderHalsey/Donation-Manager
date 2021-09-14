@@ -77,7 +77,7 @@ def dms_webhook(request):
 	return HttpResponse(messages, content_type="text/plain")
 
 @login_required(login_url="/fr/login")
-def webhooklogs(request, lang, change):
+def webhooklogs(request, lang, change=None):
 	'''path = Path("/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json")
 	for file in path.iterdir():
 		payload = json.load(file)
@@ -228,13 +228,17 @@ def dashboard(request, lang, change=None):
 
 		if form.is_valid():
 			donation = Donation()
-			donation.contact = Contact.objects.get(profile__name = form.cleaned_data["contact"])
-			donation.amount = int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])
-			donation.date_donated = form.cleaned_data["date_donated"]
-			donation.payment_mode = PaymentMode.objects.get(payment_mode = form.cleaned_data["payment_mode"])
-			donation.organisation = Organisation.objects.get(profile__name = form.cleaned_data["organisation"])
-			donation.donation_type = DonationType.objects.get(name = form.cleaned_data["donation_type"])
-			donation.save()
+			try:
+				donation.contact = Contact.objects.get(profile__name = form.cleaned_data["contact"])
+			except:
+				donation.contact = Contact.objects.get(filter = form.cleaned_data["contact"])[0]
+			finally:
+				donation.amount = int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])
+				donation.date_donated = form.cleaned_data["date_donated"]
+				donation.payment_mode = PaymentMode.objects.get(payment_mode = form.cleaned_data["payment_mode"])
+				donation.organisation = Organisation.objects.get(profile__name = form.cleaned_data["organisation"])
+				donation.donation_type = DonationType.objects.get(name = form.cleaned_data["donation_type"])
+				donation.save()
 
 			if request.POST["Submit"] == "update":
 				disable_donation = Donation.objects.get(id=int(request.POST["id"]))
@@ -418,7 +422,7 @@ def contact(request, pk, lang, change=None):
 		return redirect(f'/{change}/contact/{pk}')
 
 	# context
-	contact = Contact.objects.get(id=pk)
+	contact = Contact.objects.get(profile__seminar_desk_id=pk)
 	address = eval(contact.profile.primary_address)
 	tags = contact.tags.all()
 	donations = Donation.objects.filter(contact__profile__name=contact.profile.name)

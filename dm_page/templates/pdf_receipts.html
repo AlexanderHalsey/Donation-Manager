@@ -319,7 +319,7 @@
             <tr>
             {% endif %}
               <td>{{donation_receipt.id}}</td>
-              <td>{{donation_receipt.contact.profile.name}}</td>
+              <td><a href="{% url 'contact' lang=language.language pk=contact.profile.seminar_desk_id %}">{{donation_receipt.contact.profile.name}}</a></td>
               <td>{{donation_receipt.date_created}}</td>
               {% for id, type in donation_types %}
               {% if id == donation_receipt.id %}
