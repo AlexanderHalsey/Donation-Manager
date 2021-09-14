@@ -523,7 +523,7 @@ def donators(request, lang, change=None):
 	# contacts
 	contacts = Contact.objects.all()
 	contacts = [{
-		"id": contact.seminar_desk_id,
+		"id": contact.profile.seminar_desk_id,
 		"tags": contact.tags,
 		"name": contact.profile.name,
 		"total_donations": len(donations.filter(contact=contact)),
