@@ -358,7 +358,7 @@
             {% endif %}
               <td>{{ donation.id }}</td>
               <td>{{donation.contact.profile.seminar_desk_id}}</td>
-              {% if donation.contact.profile.disabled %}
+              {% if donation.contact is None %}
               <td>{{ donation.contact.profile.name }}</td>
               {% else %}
               <td><a href="{% url 'contact' lang=language.language pk=donation.contact.profile.seminar_desk_id %}" >{{ donation.contact.profile.name }}</a></td>
