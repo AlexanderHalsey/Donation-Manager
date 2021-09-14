@@ -77,6 +77,7 @@ class DonationType(models.Model):
 
 class Donation(models.Model):
 	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
+	contact_name = models.CharField(max_length=200, null=True, blank=True)
 	date_donated = models.DateField(null=True)
 	amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
 	payment_mode = models.ForeignKey('PaymentMode', on_delete=models.SET_NULL, null=True, blank=True)
@@ -90,6 +91,7 @@ class Donation(models.Model):
 
 class RecettesFiscale(models.Model):
 	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
+	contact_name = models.CharField(max_length=200, null=True, blank=True)
 	date_created = models.DateField(auto_now_add=True, null=True)
 	receipt_type = models.CharField(max_length=200, choices=(('A','Annual'),('I','Individual'),))
 	file_name = models.CharField(max_length=200, null=True, blank=True)
