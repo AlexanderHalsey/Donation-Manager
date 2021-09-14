@@ -335,6 +335,7 @@
           <thead class="table-primary">
             <tr>
               <th>{{language.table.id}}</th>
+              <th>SeminarDesk ID</th>
               <th>{{language.table.contact}}</th>
               <th>{{language.table.dateDonated}}</th>
               <th>{{language.table.amount}}</th>
@@ -356,6 +357,7 @@
             <tr>
             {% endif %}
               <td>{{ donation.id }}</td>
+              <td>{{donation.contact.profile.seminar_desk_id}}</td>
               {% if donation.contact.profile.disabled %}
               <td>{{ donation.contact.profile.name }}</td>
               {% else %}
