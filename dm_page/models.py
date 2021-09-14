@@ -37,7 +37,6 @@ class Profile(models.Model):
 	vat_id = models.CharField(max_length= 200, default=None, null=True)
 	customer_number = models.CharField(max_length= 200, default=None, null=True)
 	additional_fields = models.TextField(default=None, null=True)
-	disabled = models.BooleanField(default=False)
 
 class Contact(models.Model):
 	tags = models.ManyToManyField('Tag')
