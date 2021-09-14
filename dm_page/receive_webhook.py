@@ -10,7 +10,7 @@ def process_webhook_payload(payload):
 		if action == "create":
 			if type(payload["notifications"]) == list:
 				for i in range(len(payload["notifications"])):
-					data = payload["notifications"]["payload"]
+					data = payload["notifications"][i]["payload"]
 					try:
 						p = Profile.objects.get(seminar_desk_id = data["id"])
 						messages.append(f"{p.name} exists in database.")
