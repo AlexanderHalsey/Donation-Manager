@@ -135,7 +135,12 @@ def process_webhook_payload(payload):
 		if action == "delete":
 			p = Profile.objects.get(seminar_desk_id = data["id"])
 			messages.append("profile found for delete.")
+			profile_name = p.name
+			linked_dons = Donation.objects.filter(contact__profile = p)
 			p.delete()
+			for don in linked_dons:
+				don.contact = profile.name
+				don.save()
 			return messages
 
 		p.seminar_desk_id = data["id"]
