@@ -228,17 +228,13 @@ def dashboard(request, lang, change=None):
 
 		if form.is_valid():
 			donation = Donation()
-			try:
-				donation.contact = Contact.objects.get(profile__name = form.cleaned_data["contact"])
-			except:
-				donation.contact = Contact.objects.filter(profile__name = form.cleaned_data["contact"])[0]
-			finally:
-				donation.amount = int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])
-				donation.date_donated = form.cleaned_data["date_donated"]
-				donation.payment_mode = PaymentMode.objects.get(payment_mode = form.cleaned_data["payment_mode"])
-				donation.organisation = Organisation.objects.get(profile__name = form.cleaned_data["organisation"])
-				donation.donation_type = DonationType.objects.get(name = form.cleaned_data["donation_type"])
-				donation.save()
+			donation.contact = Contact.objects.get(profile__name = form.cleaned_data["contact"])
+			donation.amount = int(form.cleaned_data["amount_euros"] or 0) + float(form.cleaned_data["amount_cents"])
+			donation.date_donated = form.cleaned_data["date_donated"]
+			donation.payment_mode = PaymentMode.objects.get(payment_mode = form.cleaned_data["payment_mode"])
+			donation.organisation = Organisation.objects.get(profile__name = form.cleaned_data["organisation"])
+			donation.donation_type = DonationType.objects.get(name = form.cleaned_data["donation_type"])
+			donation.save()
 
 			if request.POST["Submit"] == "update":
 				disable_donation = Donation.objects.get(id=int(request.POST["id"]))

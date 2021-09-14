@@ -103,6 +103,8 @@ def process_webhook_payload(payload):
 				return messages
 			# donations found for old profile
 			donations_to_be_appended = Donation.objects.filter(contact__profile = p_del)
+			p_del.disabled = True
+			p_del.save()
 			# new profile / contact
 			try:
 				p = Profile.objects.get(seminar_desk_id = data[merged]["id"])
