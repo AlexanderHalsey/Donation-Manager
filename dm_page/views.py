@@ -168,10 +168,10 @@ def dashboard(request, lang, change=None):
 	# context 
 	tags = Tag.objects.all()
 	if request.GET.get("disabled") == 'true':
-		donations = Donation.objects.all().order_by("-date_donated")
+		donations = Donation.objects.all().order_by("-id")
 		initial_filter_values["disabled"] = True
 	else:
-		donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
+		donations = Donation.objects.all().filter(disabled=False).order_by('-id')
 	donations_count = Donation.objects.filter(disabled=False).count()
 	total_donated = sum([d.amount for d in Donation.objects.filter(disabled=False)])
 
@@ -430,7 +430,7 @@ def contact(request, pk, lang, change=None):
 	contact = Contact.objects.get(profile__seminar_desk_id=pk)
 	address = eval(contact.profile.primary_address)
 	tags = contact.tags.all()
-	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id)
+	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id).filter(disabled=False)
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
 
@@ -468,6 +468,23 @@ def donators(request, lang, change=None):
 	# context 
 	tags = Tag.objects.all()
 	donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
+	contacts = list()
+	for donation in donations:
+		for obj in contacts:
+			if obj["id"] == donation.contact.profile.seminar_desk_id:
+				obj["total_donations"] += 1
+				obj["total_donated"] += donation.amount
+				break
+		else:
+			contacts.append({
+				"id": donation.contact.profile.seminar_desk_id,
+				"tags": donation.contact.tags,
+				"name": donation.contact.profile.name,
+				"total_donations": 1,
+				"total_donated": donation.amount
+			})
+	contacts = sorted(contacts, key=lambda x: x["id"])
+
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
 	pdf_path = None
@@ -524,17 +541,6 @@ def donators(request, lang, change=None):
 		# export_csv
 		if request.GET.get("Submit") == "export_csv":
 			return export_csv("Contacts", data, file_name_extension)
-
-	# contacts
-	contacts = Contact.objects.all()
-	contacts = [{
-		"id": contact.profile.seminar_desk_id,
-		"tags": contact.tags,
-		"name": contact.profile.name,
-		"total_donations": len(donations.filter(contact=contact)),
-		"total_donated": sum([donation.amount for donation in donations.filter(contact=contact)]),
-	} for contact in contacts]
-	contacts = list(filter(lambda x: x["total_donated"]>0, contacts))
 
 	# context after filter 	
 	donation_count_filter = donations.count()
@@ -615,7 +621,7 @@ def pdf_receipts(request, lang, change=None):
 			return redirect(f'{lang}/pdf_receipts/')
 
 	tags = Tag.objects.all()
-	donations = Donation.objects.filter(disabled = False).order_by("-date_donated")
+	donations = Donation.objects.filter(disabled = False)
 	contact_names = [contact.profile.name for contact in Contact.objects.all()]
 	
 	donations_count = donations.count()
@@ -624,7 +630,7 @@ def pdf_receipts(request, lang, change=None):
 	total_donated_filter = sum([d.amount for d in donations])
 	if request.GET.get("canceled") == 'false':
 		initial_filter_values["canceled"] = False
-		donation_receipts = ReçusFiscaux.objects.filter(cancel=False)
+		donation_receipts = ReçusFiscaux.objects.filter(cancel=False).order_by("-id")
 	else:
 		donation_receipts = ReçusFiscaux.objects.all()
 	donation_types = []

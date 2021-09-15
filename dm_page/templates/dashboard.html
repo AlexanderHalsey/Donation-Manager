@@ -204,6 +204,7 @@
       $('#donationTable').DataTable();
     } else if (lang == 'fr') {
       $('#donationTable').DataTable({
+        'order': [[0, "desc"]];
         'language':  {
             "emptyTable": "Aucune donnée disponible dans le tableau",
             "lengthMenu": "Afficher _MENU_ éléments",
@@ -368,6 +369,8 @@
               <td>{{ donation.organisation }}</td>
               <td>{{ donation.donation_type }}</td>
               {% if donation.pdf %}
+              <td></td>
+              {% elif donation.disabled %}
               <td></td>
               {% else %}
               <td>

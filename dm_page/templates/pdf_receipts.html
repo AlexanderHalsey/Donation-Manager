@@ -92,9 +92,12 @@
   $(document).ready( function () {
     var lang = "{{language.language}}";
     if (lang == 'en') {
-      $('#pdfTable').DataTable();
+      $('#pdfTable').DataTable({
+        'order': [[0, "desc"]]
+      });
     } else if (lang == 'fr') {
       $('#pdfTable').DataTable({
+        'order': [[0, "desc"]],
         'language':  {
             "emptyTable": "Aucune donnée disponible dans le tableau",
             "lengthMenu": "Afficher _MENU_ éléments",

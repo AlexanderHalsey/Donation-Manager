@@ -92,16 +92,6 @@ WSGI_APPLICATION = 'donations.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'DEMO_TEST',
-        'USER': 'postgres',
-        'PASSWORD': 'snFt~}9Z6pL{!+J7',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000000
 DATA_UPLOAD_MAX_MEMORY_SIZE = 500000000
@@ -123,6 +113,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
+    }
+}
 
 # Secure
 

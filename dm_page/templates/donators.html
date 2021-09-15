@@ -67,9 +67,12 @@
   $(document).ready( function () {
     var lang = "{{language.language}}";
     if (lang == 'en') {
-      $('#donatorTable').DataTable();
+      $('#donatorTable').DataTable({
+          'order': [[0, "desc"]]
+        });
     } else if (lang == 'fr') {
       $('#donatorTable').DataTable({
+        'order': [[0, "desc"]],
         'language':  {
             "emptyTable": "Aucune donnée disponible dans le tableau",
             "lengthMenu": "Afficher _MENU_ éléments",
