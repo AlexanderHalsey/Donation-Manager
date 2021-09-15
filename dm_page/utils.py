@@ -44,7 +44,7 @@ def language_text(lang="fr"):
 		return payload
 
 def file_storage_check():
-	for receipt in RecettesFiscale.objects.all():
+	for receipt in ReçusFiscaux.objects.all():
 		if receipt.cancel == True and receipt.file_name[-10:] != "Annulé.pdf":
 			for i in eval(receipt.donation_list):
 				donation = Donation.objects.get(id=i)

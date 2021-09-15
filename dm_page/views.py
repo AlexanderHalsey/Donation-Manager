@@ -207,7 +207,7 @@ def dashboard(request, lang, change=None):
 			donation = Donation.objects.get(id=int(request.POST["id"]))
 			donation.pdf = True
 			donation.save()
-			receipt = RecettesFiscale()
+			receipt = ReçusFiscaux()
 			receipt.save()
 			receipt.contact = donation.contact
 			receipt.date_created = datetime.date.today()
@@ -574,7 +574,7 @@ def pdf_receipts(request, lang, change=None):
 			contact = Contact.objects.get(id=x) 
 			annual_donations = Donation.objects.filter(contact=contact).filter(eligible=True).filter(pdf=False).order_by("date_donated") # .filter(date_donated__gte = date_range[0]).filter(date_donated__lte = date_range[1])
 			if len(annual_donations) > 0:
-				receipt = RecettesFiscale()
+				receipt = ReçusFiscaux()
 				receipt.save()
 				receipt.contact = contact
 				receipt.date_created = datetime.date.today()
@@ -601,7 +601,7 @@ def pdf_receipts(request, lang, change=None):
 
 	if request.method == "POST":
 		if request.POST["Submit"] not in ("", None):
-			receipt = RecettesFiscale.objects.get(id=request.POST["Submit"])
+			receipt = ReçusFiscaux.objects.get(id=request.POST["Submit"])
 			send_to = request.POST["email"]
 			body = request.POST["message"] + "\n\n"
 			path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
@@ -624,9 +624,9 @@ def pdf_receipts(request, lang, change=None):
 	total_donated_filter = sum([d.amount for d in donations])
 	if request.GET.get("canceled") == 'false':
 		initial_filter_values["canceled"] = False
-		donation_receipts = RecettesFiscale.objects.filter(cancel=False)
+		donation_receipts = ReçusFiscaux.objects.filter(cancel=False)
 	else:
-		donation_receipts = RecettesFiscale.objects.all()
+		donation_receipts = ReçusFiscaux.objects.all()
 	donation_types = []
 	for donation_receipt in donation_receipts:
 		try:
@@ -664,13 +664,13 @@ def pdf_receipts(request, lang, change=None):
 	if request.GET.get("view_pdf"):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
-		file_name = RecettesFiscale.objects.get(id=int(i)).file_name
+		file_name = ReçusFiscaux.objects.get(id=int(i)).file_name
 		file_name = f"/static/pdf/receipts/{file_name}"
 	else:
 		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
 		i = request.GET.get("download_pdf")
-		file_name = RecettesFiscale.objects.get(id=int(i)).file_name
+		file_name = ReçusFiscaux.objects.get(id=int(i)).file_name
 		full_path = f"{BASE_DIR}/static/pdf/receipts/{file_name}"
 		with open(full_path, 'rb') as pdf:
 			response = HttpResponse(pdf, content_type='application/pdf')
@@ -685,9 +685,9 @@ def pdf_receipts(request, lang, change=None):
 	email_content = {"true": False, "id": "", "email": "", "file": ""}
 	if request.GET.get("send_email") not in ("", None):
 		email_content["true"] = True
-		email_content["id"] = RecettesFiscale.objects.get(id=request.GET.get("send_email")).id
-		email_content["email"] = RecettesFiscale.objects.get(id=request.GET.get("send_email")).contact.profile.email
-		email_content["file"] = RecettesFiscale.objects.get(id=request.GET.get("send_email")).file_name
+		email_content["id"] = ReçusFiscaux.objects.get(id=request.GET.get("send_email")).id
+		email_content["email"] = ReçusFiscaux.objects.get(id=request.GET.get("send_email")).contact.profile.email
+		email_content["file"] = ReçusFiscaux.objects.get(id=request.GET.get("send_email")).file_name
 
 	context = {
 		'tags': tags,

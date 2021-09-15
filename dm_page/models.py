@@ -89,7 +89,7 @@ class Donation(models.Model):
 	def __str__(self):
 		return str(self.id) + "_" + self.contact.profile.name + "_" + str(self.date_donated)
 
-class RecettesFiscale(models.Model):
+class ReçusFiscaux(models.Model):
 	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
 	contact_name = models.CharField(max_length=200, null=True, blank=True)
 	date_created = models.DateField(auto_now_add=True, null=True)

@@ -1,5 +1,5 @@
 from django.db.transaction import atomic
-from .models import Profile, Contact, Organisation, Donation, RecettesFiscale
+from .models import Profile, Contact, Organisation, Donation, ReçusFiscaux
 
 @atomic
 def process_webhook_payload(payload):
@@ -139,7 +139,7 @@ def process_webhook_payload(payload):
 			messages.append("profile found for delete.")
 			profile_name = p.name
 			linked_dons = Donation.objects.filter(contact__profile = p)
-			linked_receipts = RecettesFiscale.objects.filter(contact__profile = p)
+			linked_receipts = ReçusFiscaux.objects.filter(contact__profile = p)
 			for don in linked_dons:
 				don.contact_name = profile_name
 				don.save()

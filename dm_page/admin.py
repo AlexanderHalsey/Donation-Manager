@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RecettesFiscale, Paramètre
+from .models import ReçusFiscaux, Paramètre
 
 class ModelAdminDonationReceipt(admin.ModelAdmin):
 	list_display = ('id','contact','file_name',)
@@ -48,5 +48,5 @@ class ModelAdminReceiptSettings(admin.ModelAdmin):
 			)
 
 # Register your models here.
-admin.site.register(RecettesFiscale, ModelAdminDonationReceipt)
+admin.site.register(ReçusFiscaux, ModelAdminDonationReceipt)
 admin.site.register(Paramètre, ModelAdminReceiptSettings)
