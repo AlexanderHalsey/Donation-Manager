@@ -123,7 +123,8 @@
     }
   );
 
-  window.addEventListener('load', function() {
+  $('#exampleModal').on('shown.bs.modal', function(e) {
+    console.log("ok im here");
     document.getElementById("id_organisation").onchange = function () {
       var orgs = document.getElementById("id_organisation");
       var dTypes = document.getElementById("id_donation_type");
@@ -131,7 +132,6 @@
         dTypes.disabled = true;
         dTypes.options.length = 0;
         dTypes.value = "-----";
-        return null;
       } else {
         dTypes.disabled = false;
         var  orgNames = orgs.getElementsByTagName("option");
@@ -144,7 +144,6 @@
           }
         }
         console.log(dTypes);
-        return dTypes;
       }
     }
   });
