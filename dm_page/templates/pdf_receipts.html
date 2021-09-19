@@ -36,25 +36,25 @@
   );
 
   window.addEventListener('load',
-      function() {
-        var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
-        var datePlaceholder = "{{language.forms.datePlaceholder}}";
-        var contacts = document.getElementsByName("contact");
-        var dates_donated = document.getElementsByName("date_donated");
-        var dates_donated_lte = document.getElementsByName("date_donated_lte");
-        var dates_donated_gte = document.getElementsByName("date_donated_gte");
-        for (let i=0; i < dates_donated.length; i++) {
-          dates_donated[i].placeholder = datePlaceholder;
-        }
-        for (let i=0; i < dates_donated_lte.length; i++) {
-          dates_donated_lte[i].placeholder = datePlaceholder;
-          dates_donated_gte[i].placeholder = datePlaceholder;
-        }
-        for (let i=0; i < contacts.length; i++) {
-          contacts[i].placeholder = contactPlaceholder;
-        }
+    function() {
+      var contactPlaceholder = "{{language.forms.contactPlaceholder}}";
+      var datePlaceholder = "{{language.forms.datePlaceholder}}";
+      var contacts = document.getElementsByName("contact");
+      var dates_donated = document.getElementsByName("date_donated");
+      var dates_donated_lte = document.getElementsByName("date_donated_lte");
+      var dates_donated_gte = document.getElementsByName("date_donated_gte");
+      for (let i=0; i < dates_donated.length; i++) {
+        dates_donated[i].placeholder = datePlaceholder;
       }
-    );
+      for (let i=0; i < dates_donated_lte.length; i++) {
+        dates_donated_lte[i].placeholder = datePlaceholder;
+        dates_donated_gte[i].placeholder = datePlaceholder;
+      }
+      for (let i=0; i < contacts.length; i++) {
+        contacts[i].placeholder = contactPlaceholder;
+      }
+    }
+  );
 
   {% if form_values.errors %}
   window.addEventListener('load',
@@ -81,13 +81,13 @@
   {% endif %}
 
   window.addEventListener('submit',
-      function(){
-        if (document.getElementById('canceled').checked == false) {
-          console.log("This isn't working")
-          document.getElementById('canceled').setAttribute('value', 'false');
-        } 
-      }
-    );
+    function(){
+      if (document.getElementById('canceled').checked == false) {
+        console.log("This isn't working")
+        document.getElementById('canceled').setAttribute('value', 'false');
+      } 
+    }
+  );
 
   $(document).ready( function () {
     var lang = "{{language.language}}";
@@ -130,6 +130,13 @@
   $('.flexdatalist').flexdatalist({
     minLength: 1
   });
+
+  window.addEventListener('load', function() {
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    });
+  })
 </script>
 
 <div class="row">
@@ -192,6 +199,7 @@
             <div class="row p-1">
             <div class="col">
               <button class="btn btn-dark" type="submit" name="annual_receipt" value="ok">Annual Receipt test</button>
+              <a class="btn btn-success" href="{% url 'confirm_annual' lang=language.language %}">Manual Page Test</a>
             </div>
           </div>
           </form>
@@ -350,13 +358,23 @@
                 {% endif %}
               </td>
               <td>
+                {% if donation_receipt.cancel %}
                 <form method="GET">
                   {% csrf_token %}
-                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:40px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
-                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left:60px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
+                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0 mx-4" type="submit" style="font-size: 0.8em; " value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
+                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0 mx-4" type="submit" style="font-size: 0.8em;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
+                  <input type="hidden" name="scroll" value="">
+                  <input type="hidden" name="collapse" value="">
+                  <a tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-container="body" title="{{language.titles.infoCanceled}}" data-bs-content="{{donation_receipt.cancel_description}}" name="info_pdf" class="btn btn-warning btn-sm btn-outline-info py-0 px-0 mx-4" style="font-size: 0.8em;"><img src="{% static 'icons/info_icon.png' %}" class="img-fluid" width="21" height="21" alt="info"></a>
+                </form>
+                {% else %}
+                <form method="GET">
+                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left: 50px" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
+                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left: 60px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
                 </form>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="referrer" content="strict-origin">
+		<meta name="robots" content="noindex,nofollow"/>
+
+		<!-- Bootstrap CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+
+		<!-- jQuery -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+
+		<!-- Popper JS -->
+		<script src="https://unpkg.com/@popperjs/core@2"></script>
+
+  		<!-- Bootstrap Datepicker CSS -->
+  		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  		<!-- Boostrap Datepicker JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+		<!-- French -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.fr.min.js" integrity="sha512-fx3aztaUjb4NyoD+Tso5g7R1l29bU3jnnTfNRKBiY9fdQOHzVhKJ10wEAgQ1zM/WXCzB9bnVryHD1M40775Tsw==" crossorigin="anonymous"referrerpolicy="no-referrer"></script>
+
+		<!-- PDFObject -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.5/pdfobject.js" integrity="sha512-eCQjXTTg9blbos6LwHpAHSEZode2HEduXmentxjV8+9pv3q1UwDU1bNu0qc2WpZZhltRMT9zgGl7EzuqnQY5yQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+		<!-- Flexdatalist CSS/JS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-flexdatalist/2.3.0/jquery.flexdatalist.min.js" integrity="sha512-JEX6Es4Dhu4vQWWA+vVBNJzwejdpqeGeii0sfiWJbBlAfFzkeAy6WOxPYA4HEVeCHwAPa+8pDZQt8rLKDDGHgw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-flexdatalist/2.3.0/jquery.flexdatalist.css" integrity="sha512-mVj7k7kIC4+FkO7xQ04Di4Q4vSg8BP3HA7Pzss2ib+EqufKS5GuJW1mGtVo70i9hHTgEv6UmxcPb6tddRdk89A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<!-- end Flexdatalist -->
+
+		<!-- Data Tables CSS -->
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css" integrity="sha384-kKpyGTkmY+nYEkRda6qauvrYqFNO4csWTLspXM3FCJ89NsU9FhPY5kebmiPqu8B6" crossorigin="anonymous">
+
+		<!-- Data Tables JS -->
+		<script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js" integrity="sha384-h9Hm5g3bPPTf1ge+R8GamzLHN6biulBpX9gRAw9anvbZ/VozYeDgvJpcBY8V3+aH" crossorigin="anonymous"></script>
+
+		<script>
+			$('.flexdatalist').flexdatalist({
+				minLength: 1
+			});
+			window.addEventListener('load', function() {
+				var contacts = eval('{{contact_names|safe}}'), add = document.getElementById('addContacts'), remove = document.getElementById('removeContacts'), select = document.getElementById('selectAllContacts'), submit = document.getElementById('confirm_annual_receipts');
+				select.onclick = function () {
+					if (select.checked == true) {
+						$(add).flexdatalist('reset');
+						$(add).flexdatalist('disabled', true);
+						$(remove).flexdatalist('disabled', false);
+						for (let i=0; i < contacts.length; i++) {
+							var elements = document.getElementsByName(contacts[i]);
+							for (let i=0; i < elements.length; i++) {
+								elements[i].hidden = false;
+							}
+						}
+						submit.hidden = false;
+					} else {
+						$(remove).flexdatalist('reset');
+						$(remove).flexdatalist('disabled', true);
+						$(add).flexdatalist('disabled', false);
+						for (let i=0; i < contacts.length; i++) {
+							var elements = document.getElementsByName(contacts[i]);
+							for (let i=0; i < elements.length; i++) {
+								elements[i].hidden = true;
+							}
+						}
+						submit.hidden = true;
+					}
+				};
+				add.change = function () {
+					var values = $(add).val().split(",");
+					if (values[0].length == 0) {
+						submit.hidden = true;
+					} else {
+						submit.hidden = false;
+					}
+					for (let i=0; i < contacts.length; i++) {
+						var elements = document.getElementsByName(contacts[i]);
+						if (values.includes(contacts[i])) {
+							for (let i=0; i < elements.length; i++) {
+								elements[i].hidden = false;
+							}
+						} else {
+							for (let i=0; i < elements.length; i++) {
+								elements[i].hidden = true;
+							}
+						}
+					}
+				};
+				remove.change = function () {
+					var values = $(remove).val().split(",");
+					if (values[0].length == 0) {
+						submit.hidden = true;
+					} else {
+						submit.hidden = false;
+					}
+					for (let i=0; i < contacts.length; i++) {
+						var elements = document.getElementsByName(contacts[i]);
+						if (values.includes(contacts[i])) {
+							for (let i=0; i < elements.length; i++) {
+								elements[i].hidden = true;
+							}
+						} else {
+							for (let i=0; i < elements.length; i++) {
+								elements[i].hidden = false;
+							}
+						}
+					}
+				};
+			})
+		</script>
+
+		<style>
+			.scrol {
+				height: 460px;
+				overflow-y: scroll;
+			}
+			.hello-msg{
+		    	font-size: 18px;
+		    	color: #fff;
+		    	margin-right: 20px;
+		  	}
+		</style>
+
+		<title>Donation Management System</title>
+
+	</head>
+
+	<body>
+	  {% include 'navbar.html' %}
+	  <div style="background-color: #eefde8;">
+	  	<br>
+	  	<div class="mx-4">
+			<div style="clear: both;">
+			  <h2 style="float: left;">&nbsp;&nbsp;Annual Receipts&nbsp;&nbsp;&nbsp;-</h2>
+			  <h5 class="my-2" style="float: left; margin-left: 15px;">This page displays the list of donations per donator for the date range of <strong>&nbsp;&nbsp;&nbsp;{{date_range.0}} - {{date_range.1}}</strong></h5>
+			</div>
+			<br>
+			<br>
+			<h7>&nbsp;&nbsp;&nbsp;If you would like to change the date range for the fiscal year, please go to <strong>&nbsp;&nbsp;&nbsp;Admin -> Settings -> Fiscal Year Date Range</strong></h7>
+		</div>
+		<br>
+
+		<div class="row mx-3">
+		  <div class="col-12">
+			<div class="card">
+				<form method="POST">
+				  {% csrf_token %}
+				  <div class="row">
+				  	<div class="col-3 mx-5 my-2">
+					  <label><strong>Please select a list of contacts to be considered for an annual receipt</strong><br>Alternatively click the "select all" button and remove contacts not to be considered.</label>
+					</div>
+					<div class="col-2 my-4 text-end">
+					  <input type="checkbox" name="checked" value="checked" id="selectAllContacts">
+					  <label>Select All</label>
+					</div>
+					<div class="col-6 my-3">
+					  <input id="addContacts" type='text' class='form-control flexdatalist' data-min-length="1" multiple='multiple' list="flexDataContacts" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
+				      <br>
+				      <input id="removeContacts" type='text' class='form-control flexdatalist' data-min-length="1" multiple='multiple' list="flexDataContacts" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
+				      <datalist id="flexDataContacts">
+				      	{% for contact, donations in contacts %}
+				      	<option value="{{contact}}">{{contact}}</option>
+				        {% endfor %}
+					  </datalist>
+				    </div>
+				  </div>
+				  <hr>
+				  <div id="receipt_tables" class="row mx-2 scrol">
+				      {% for contact, donations in contacts %}
+				  	    <label name="{{contact}}" class="my-1" hidden><strong>{{contact}}</strong></label>
+				  	    <br>
+				  	    <table name="{{contact}}" class="table table-sm table-bordered table-striped" hidden>
+				  	      <thead class="table-primary">
+				  	        <tr>
+				  	          <th>ID</th>
+				  	          <th>Date Donated</th>
+				  	          <th>Amount</th>
+				  	          <th>Organisation</th>
+				  	          <th>Donation Type</th>
+				  	          <th>Payment Mode</th>
+				  	          <th>Form of Donation</th>
+				  	          <th>Nature of Donation</th>
+				  	        </tr>
+				  	      </thead>
+				  	      <tbody>
+				  	      	{% for donation in donations %}
+				  	      	<tr>
+				  	      	  <td>{{donation.id}}</td>
+				  	          <td>{{donation.date_donated}}</td>
+				  	          <td>{{donation.amount}}</td>
+				  	          <td>{{donation.organisation}}</td>
+				  	          <td>{{donation.donation_type}}</td>
+				  	          <td>{{donation.payment_mode}}</td>
+				  	          <td>{{donation.forme_du_don_name}}</td>
+				  	          <td>{{donation.nature_du_don_name}}</td>
+				  	      	</tr>
+				  	      	{% endfor %}
+				  	      </tbody>
+				  	    </table>
+				  	    <br name="{{contact}}" hidden>
+				  	    <hr name="{{contact}}" hidden>
+				  	  {% endfor %}
+				  	  <br>
+				  	  <div class="row justify-content-end">
+				  	  	<div class="col-2">
+				  	  		<button id="confirm_annual_receipts" type="submit" name="Submit" class="btn btn-success ms-5" hidden>{{language.buttons.confirm}}</button>
+				  	  	</div>
+				  	  </div>
+				  </div>
+				  <br>
+				</form>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	  <footer>
+	  </footer>
+	</body>
+
+	<!-- Boostrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+</html>

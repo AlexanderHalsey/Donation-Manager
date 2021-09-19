@@ -25,12 +25,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-EMAIL_ADDRESS=os.getenv('EMAIL_ADDRESS')
-PASSWORD=os.getenv('PASSWORD')
-SEND_TO=os.getenv('SEND_TO')
-SMTP_PORT = os.getenv('SMTP_PORT')
-SMTP_DOMAIN = os.getenv('SMTP_DOMAIN')
-
 DMS_WEBHOOK_USERNAME = os.getenv('DMS_WEBHOOK_USERNAME')
 DMS_WEBHOOK_PASSWORD = os.getenv('DMS_WEBHOOK_PASSWORD')
 
@@ -153,7 +147,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, '')
 MEDIA_URL = '/media/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -172,6 +166,6 @@ CACHES = {
 
 django_heroku.settings(locals())
 
-CELERY_BROKER_URL = '' # HEROKU REDIS URI
+CELERY_BROKER_URL = 'redis://:pf555f9d6c6f67912335e37c09fe6d1342021095ce6503d81f661a17895371cd7@ec2-18-200-160-125.eu-west-1.compute.amazonaws.com:22720' # HEROKU REDIS URI
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'

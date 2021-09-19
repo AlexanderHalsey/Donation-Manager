@@ -99,6 +99,38 @@
               <div class="invalid-feedback">{{language.forms.invalidFeedback.paymentMode}}</div>
             </div>
           </div>
+          <div class="row mb-3">
+            <label for="id_forme_du_don" class="col-md-4 col-form-label text-end"><strong>{{language.forms.formeDuDonLabelName}}</strong></label>
+            <div class="col-md-7">
+              <select id="id_forme_du_don" name="forme_du_don" class="form-select {{form_values.errorlist.forme_du_don}}" aria-label="Default select example" required>
+                <option value="-----" selected>-----</option>
+              {% for id, forme in form.fields.forme_du_don.choices %}
+                {% if form.fields.forme_du_don.initial == forme %}
+                <option value="{{ forme }}" selected>{{ forme }}</option>
+                {% else %}
+                <option value="{{ forme }}">{{ forme }}</option>
+                {% endif %}
+              {% endfor %}
+              </select>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.formeDuDon}}</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="id_nature_du_don" class="col-md-4 col-form-label text-end"><strong>{{language.forms.natureDuDonLabelName}}</strong></label>
+            <div class="col-md-7">
+              <select id="id_nature_du_don" name="nature_du_don" class="form-select {{form_values.errorlist.nature_du_don}}" aria-label="Default select example" required>
+                <option value="-----" selected>-----</option>
+              {% for id, nature in form.fields.nature_du_don.choices %}
+                {% if form.fields.nature_du_don.initial == nature %}
+                <option value="{{ nature }}" selected>{{ nature }}</option>
+                {% else %}
+                <option value="{{ nature }}">{{ nature }}</option>
+                {% endif %}
+              {% endfor %}
+              </select>
+              <div class="invalid-feedback">{{language.forms.invalidFeedback.natureDuDon}}</div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <a href="{% url 'dashboard' lang=language.language %}" class="btn btn-secondary">{{language.buttons.cancel}}</a>

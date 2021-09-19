@@ -140,9 +140,6 @@ def process_webhook_payload(payload):
 			profile_name = p.name
 			linked_dons = Donation.objects.filter(contact__profile = p)
 			linked_receipts = ReçusFiscaux.objects.filter(contact__profile = p)
-			for don in linked_dons:
-				don.contact_name = profile_name
-				don.save()
 			for receipt in linked_receipts:
 				receipt.contact_name = profile_name
 				receipt.save()

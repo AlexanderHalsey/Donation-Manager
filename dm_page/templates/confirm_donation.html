@@ -9,45 +9,58 @@
         </div>
         <div class="modal-body">
           <div class="row mb-3">
-            <label class="col-md-4 text-end"><strong>{{language.forms.contactLabelName}}</strong></label>
+            <label class="col-md-5 text-end"><strong>{{language.forms.contactLabelName}}</strong></label>
             <div class="col-md-6 text-center">
               <label>{{form.fields.contact.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-md-4 text-end"><strong>{{language.forms.dateDonatedLabelName}}</strong></label>
+            <label class="col-md-5 text-end"><strong>{{language.forms.dateDonatedLabelName}}</strong></label>
             <div class="col-md-6 text-center">
               <label>{{form.fields.date_donated.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-md-4 text-end"><strong>{{language.forms.amountLabelName}}</strong></label>
+            <label class="col-md-5 text-end"><strong>{{language.forms.amountLabelName}}</strong></label>
             <div class="col-md-6 text-center">
-              <label>{{form.fields.amount.initial}}</label>
+              <label>€ {{form.fields.amount_euros.initial}}{{form.fields.amount_cents.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-md-4 text-end"><strong>{{language.forms.organisationLabelName}}</strong></label>
+            <label class="col-md-5 text-end"><strong>{{language.forms.organisationLabelName}}</strong></label>
             <div class="col-md-6 text-center">
               <label>{{form.fields.organisation.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-md-4 text-end"><strong>{{language.forms.donationTypeLabelName}}</strong></label>
+            <label class="col-md-5 text-end"><strong>{{language.forms.donationTypeLabelName}}</strong></label>
             <div class="col-md-6 text-center">
               <label>{{form.fields.donation_type.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-md-4 text-end"><strong>{{language.forms.paymentModeLabelName}}</strong></label>
+            <label class="col-md-5 text-end"><strong>{{language.forms.paymentModeLabelName}}</strong></label>
             <div class="col-md-6 text-center">
               <label>{{form.fields.payment_mode.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
+            <label class="col-md-5 text-end"><strong>{{language.forms.formeDuDonLabelName}}</strong></label>
+            <div class="col-md-6 text-center">
+              <label>{{form.fields.forme_du_don.initial}}</label>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="col-md-5 text-end"><strong>{{language.forms.natureDuDonLabelName}}</strong></label>
+            <div class="col-md-6 text-center">
+              <label>{{form.fields.nature_du_don.initial}}</label>
+            </div>
+          </div>
+          <div class="row mb-3">
             <label class="col-md-4 text-end"><strong>{{language.forms.sendEmailLabelName}}</strong></label>
-            <div class="col-md-6">
-              <input class="form-check-input" type="checkbox" value="" id="send_email" name="email" checked>
+            <div class="col-md-8">
+              <label>{{ form_values.email_address }}</label>
+              <input class="form-check-input mx-2" type="checkbox" value="" id="send_email" name="email" checked>
             </div>
           </div>
         </div>

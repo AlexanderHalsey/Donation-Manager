@@ -48,7 +48,6 @@
   {% endif %}
 
   {% if form_values.confirm_receipt %}
-  console.log("ok i ended here good")
   window.addEventListener('load',
     function(){
       document.getElementById("confirm").click();
@@ -123,13 +122,12 @@
     }
   );
 
-  $('#exampleModal').on('shown.bs.modal', function(e) {
-    console.log("ok im here");
+  window.addEventListener('load', function () {
     document.getElementById("id_organisation").onchange = function () {
       var orgs = document.getElementById("id_organisation");
       var dTypes = document.getElementById("id_donation_type");
       if (orgs[orgs.selectedIndex].value == '-----') {
-        dTypes.disabled = true;
+        $('#exampleModal').modal(dTypes.disabled, true);
         dTypes.options.length = 0;
         dTypes.value = "-----";
       } else {
@@ -143,7 +141,7 @@
             dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
           }
         }
-        console.log(dTypes);
+        $(dTypes).modal();
       }
     }
   });
@@ -322,7 +320,7 @@
         <div class="row justify-content-end">
           <div class="col-11 text-start">
             <div class="my-2">
-              <p><span class="ms-3" style="background-color: #e5b3c5;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.red}}<br><span class="ms-3" style="background-color: #f0ddaf;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.yellow}}<br><span class="ms-3" style="background-color: #a7d8b2;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.green}}</p>
+              <p><span class="ms-3" style="background-color: #e5b3c5;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.red}}<br><span class="ms-3" style="background-color: #f0ddaf;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.yellow}}<br><span class="ms-3" style="background-color: #a7d8b2;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.green}}<br><span class="ms-3" style="background-color: #bfcdf4;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.blue}}</p>
             </div>
           </div>
         </div>
@@ -351,6 +349,8 @@
             {% for donation in donations %}
             {% if donation.disabled %}
             <tr class="table-danger">
+            {% elif donation.locked %}
+            <tr class="table-primary">
             {% elif donation.pdf %}
             <tr class="table-success">
             {% elif donation.eligible %}
@@ -368,11 +368,17 @@
               <td>{{ donation.date_donated }}</td>
               <td class="text-end">€ {{ donation.amount }}</td>
               <td>{{ donation.payment_mode }}</td>
+              {% if donation.organisation is None %}
+              <td>{{ donation.organisation_name }}</td>
+              {% else %}
               <td>{{ donation.organisation }}</td>
+              {% endif %}
+              {% if donation.donation_type is None %}
+              <td>{{ donation.donation_type_name }}</td>
+              {% else %}
               <td>{{ donation.donation_type }}</td>
-              {% if donation.pdf %}
-              <td></td>
-              {% elif donation.disabled %}
+              {% endif %}
+              {% if donation.pdf or donation.locked or donation.disabled %}
               <td></td>
               {% else %}
               <td>

@@ -20,7 +20,7 @@
             <div class="input-group mb-3 justify-content-center">
               <span class="p-2"><strong>{{language.forms.contactLabelName}}</strong></span>
               <div class="col-md-9">
-                <input type='text' class='form-control flexdatalist' data-min-length='1' multiple='multiple' list='tag_contact_options' placeholder="Add a contact" name='contacts'>
+                <input type='text' class='form-control flexdatalist' data-min-length='1' multiple='multiple' list='tag_contact_options' placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
                 <datalist id="tag_contact_options">
                   {% for id, contact in form.fields.contact.choices %}
                     <option value="{{ contact }}">{{contact}}</option>
