@@ -1,5 +1,23 @@
 {% extends 'base.html' %}
 {% block page_content %}
+<script>
+  {% if receipt_trigger_notification %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("receipt_trigger_notification").click();
+    }
+  );
+  {% endif %}
+  
+  {% if email_notification %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("email_status_notification").click();
+    }
+  );
+  {% endif %}
+</script>
+
 <hr>
 <div class="row">
   <div class="col-sm-4">
@@ -49,6 +67,10 @@
         <h1 class="card-text">{{ total_donated }}</h1>
       </div>
     </div>
+    <button hidden="hidden" id="receipt_trigger_notification" data-bs-toggle="modal" data-bs-target="#receipt_trigger_notification_modal"></button>
+    {% include 'receipt_trigger_notification.html' %}
+    <button hidden="hidden" id="email_status_notification" data-bs-toggle="modal" data-bs-target="#email_status_notification_modal"></button>
+    {% include 'email_status_notification.html' %}
   </div>
 </div>
 {% endblock %}

@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+        'NAME': 'db.sqlite3',
     }
 }
 
@@ -159,13 +159,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'my_cache_table',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.getenv("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
 django_heroku.settings(locals())
 
-CELERY_BROKER_URL = 'redis://:pf555f9d6c6f67912335e37c09fe6d1342021095ce6503d81f661a17895371cd7@ec2-18-200-160-125.eu-west-1.compute.amazonaws.com:22720' # HEROKU REDIS URI
+CELERY_BROKER_URL = 'rediss://:pf555f9d6c6f67912335e37c09fe6d1342021095ce6503d81f661a17895371cd7@ec2-18-200-160-125.eu-west-1.compute.amazonaws.com:22720/0' # HEROKU REDIS URI
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'

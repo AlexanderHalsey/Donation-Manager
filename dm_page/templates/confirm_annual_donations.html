@@ -137,12 +137,12 @@
 	  	<br>
 	  	<div class="mx-4">
 			<div style="clear: both;">
-			  <h2 style="float: left;">&nbsp;&nbsp;Annual Receipts&nbsp;&nbsp;&nbsp;-</h2>
-			  <h5 class="my-2" style="float: left; margin-left: 15px;">This page displays the list of donations per donator for the date range of <strong>&nbsp;&nbsp;&nbsp;{{date_range.0}} - {{date_range.1}}</strong></h5>
+			  <h2 style="float: left;">&nbsp;{{language.confirmAnnualDonations.title}}&nbsp;&nbsp;-</h2>
+			  <h5 class="my-2" style="float: left; margin-left: 10px;">{{language.confirmAnnualDonations.description}}<strong>&nbsp;&nbsp;&nbsp;{{date_range.0}} - {{date_range.1}}</strong></h5>
 			</div>
 			<br>
 			<br>
-			<h7>&nbsp;&nbsp;&nbsp;If you would like to change the date range for the fiscal year, please go to <strong>&nbsp;&nbsp;&nbsp;Admin -> Settings -> Fiscal Year Date Range</strong></h7>
+			<h7>&nbsp;&nbsp;&nbsp;{{language.confirmAnnualDonations.changeRange}}<strong>&nbsp;&nbsp;&nbsp;{{language.confirmAnnualDonations.changeRangeBold}}</strong></h7>
 		</div>
 		<br>
 
@@ -153,18 +153,18 @@
 				  {% csrf_token %}
 				  <div class="row">
 				  	<div class="col-3 mx-5 my-2">
-					  <label><strong>Please select a list of contacts to be considered for an annual receipt</strong><br>Alternatively click the "select all" button and remove contacts not to be considered.</label>
+					  <label><strong>{{language.confirmAnnualDonations.selectContacts}}</strong><br>{{language.confirmAnnualDonations.selectContactsAdditional}}</label>
 					</div>
 					<div class="col-2 my-4 text-end">
 					  <input type="checkbox" name="checked" value="checked" id="selectAllContacts">
-					  <label>Select All</label>
+					  <label>{{language.confirmAnnualDonations.selectAllLabel}}</label>
 					</div>
 					<div class="col-6 my-3">
 					  <input id="addContacts" type='text' class='form-control flexdatalist' data-min-length="1" multiple='multiple' list="flexDataContacts" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
 				      <br>
 				      <input id="removeContacts" type='text' class='form-control flexdatalist' data-min-length="1" multiple='multiple' list="flexDataContacts" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
 				      <datalist id="flexDataContacts">
-				      	{% for contact, donations in contacts %}
+				      	{% for contact, email, donations in contacts %}
 				      	<option value="{{contact}}">{{contact}}</option>
 				        {% endfor %}
 					  </datalist>
@@ -172,20 +172,20 @@
 				  </div>
 				  <hr>
 				  <div id="receipt_tables" class="row mx-2 scrol">
-				      {% for contact, donations in contacts %}
-				  	    <label name="{{contact}}" class="my-1" hidden><strong>{{contact}}</strong></label>
+				      {% for contact, email, donations in contacts %}
+				  	    <label name="{{contact}}" class="my-1" hidden><strong>{{contact}}</strong>&nbsp;-&nbsp;{{email}}</label>
 				  	    <br>
 				  	    <table name="{{contact}}" class="table table-sm table-bordered table-striped" hidden>
 				  	      <thead class="table-primary">
 				  	        <tr>
-				  	          <th>ID</th>
-				  	          <th>Date Donated</th>
-				  	          <th>Amount</th>
-				  	          <th>Organisation</th>
-				  	          <th>Donation Type</th>
-				  	          <th>Payment Mode</th>
-				  	          <th>Form of Donation</th>
-				  	          <th>Nature of Donation</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.id}}</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.dateDonated}}</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.amount}}</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.organisation}}</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.donationType}}</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.paymentMode}}</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.formOfDonation}}</th>
+				  	          <th>{{language.confirmAnnualDonations.tables.natureOfDonation}}</th>
 				  	        </tr>
 				  	      </thead>
 				  	      <tbody>

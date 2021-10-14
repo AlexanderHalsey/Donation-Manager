@@ -31,6 +31,22 @@
       }
     );
 
+  {% if receipt_trigger_notification %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("receipt_trigger_notification").click();
+    }
+  );
+  {% endif %}
+
+  {% if email_notification %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("email_status_notification").click();
+    }
+  );
+  {% endif %}
+
   {% if form_values.errors %}
   window.addEventListener('load',
     function(){
@@ -117,9 +133,15 @@
         <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
         {% endfor %}
         <hr>
+        {% if language.language == "fr" %}
+        <button id="create_tag" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        {% else %}
         <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
         <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
         <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        {% endif %}
         {% include 'tag_form.html' %}
 	    </div>
     </div>
@@ -268,6 +290,10 @@
         </table>
       </div>
     </div>
+    <button hidden="hidden" id="receipt_trigger_notification" data-bs-toggle="modal" data-bs-target="#receipt_trigger_notification_modal"></button>
+    {% include 'receipt_trigger_notification.html' %}
+    <button hidden="hidden" id="email_status_notification" data-bs-toggle="modal" data-bs-target="#email_status_notification_modal"></button>
+    {% include 'email_status_notification.html' %}
   </div>
 </div>
 {% endblock %}

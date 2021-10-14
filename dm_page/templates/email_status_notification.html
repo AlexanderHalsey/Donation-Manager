@@ -1,0 +1,25 @@
+{% load static %}
+<form method="POST">
+	{% csrf_token %}	
+	<div class="modal fade" id="email_status_notification_modal" tabindex="-1" aria-labelledby="receipt_trigger_notification" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+	      <div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title">{{language.emailStatusNotification.title}}</h5>
+			</div>
+		  	<div class="modal-body text-center">
+		  		{% for notification in email_notification_list %}
+		  		{% if notification.1 %}
+		  		{{language.emailStatusNotification.emailSentTo}}&nbsp;&nbsp; {{notification.0}}<span style="font-size: 0.8em; margin-left:30px;"><img src="{% static 'icons/tick-button.png' %}" class="img-fluid" width="21" height="21" alt="tick" style="border-radius: 50%;"></span><br>
+		  		{% else %}
+		  		{{language.emailStatusNotification.emailNotSentTo}}&nbsp;&nbsp; {{notification.0}}<span style="font-size: 0.8em; margin-left:30px; border-radius: 50%;"><img src="{% static 'icons/x-button.jpg' %}" class="img-fluid" width="21" height="21" alt="x" style="border-radius: 50%;"></span><br>
+		  		{% endif %}
+		  		{% endfor %}
+		  	</div>
+		  	<div class="modal-footer">
+		  		<button name="Submit" class="btn btn-success ms-5" type="submit" value="email_confirmation_read">{{language.emailStatusNotification.accept}}</button>
+		  	</div>
+		  </div>
+		</div>
+	</div>
+</form>

@@ -4,6 +4,9 @@ from collections import defaultdict
 import datetime
 import io
 import json
+from time import sleep
+from donations.celery import app
+import os
 
 # pdf receipt
 from donations.settings import BASE_DIR
@@ -27,8 +30,9 @@ from email.mime.text import MIMEText
 def create_individual_receipt(receipt, donation, file_name):
 	receipt_settings = Paramètre.objects.get(id=4)
 	path = f"{BASE_DIR}/static/pdf/receipts/"
+	c = Contact.objects.get(id=donation["contact"])
 	# Create pdf
-	address = eval(donation.contact.profile.primary_address)
+	address = eval(c.profile.primary_address)
 	if len(address) == 5:
 		address = address[:2]+[address[2]+", "+address[3]]+[address[4]]
 	if len(address) == 7:
@@ -39,21 +43,21 @@ def create_individual_receipt(receipt, donation, file_name):
 			receipt_settings.institut_street_name, 
 			receipt_settings.institut_post_code + " " + receipt_settings.institut_town
 		],
-		"receipt_id": [str(receipt.id)],
+		"receipt_id": [str(receipt["id"])],
 		"organisation_object": [
 			"Object:", 
 			receipt_settings.object_title, 
 			receipt_settings.object_description
 		],
-		"contact": [donation.contact.profile.name], 
+		"contact": [c.profile.name], 
 		"contact_address": address,
-		"date_donated": ["/".join(str(donation.date_donated).split("-")[::-1])],
-		"amount": ["€ "+ str(donation.amount)],
+		"date_donated": ["/".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1])],
+		"amount": ["€ "+ str(donation["amount"])],
 		"other_donation_variables": [
-			num2words.num2words(int(donation.amount or 0), lang="fr").capitalize() + " euros", 
-			donation.payment_mode.payment_mode, 
-			donation.forme_du_don_name, 
-			donation.nature_du_don_name,
+			num2words.num2words("%.2f"%float(donation["amount"] or 0), lang="fr").capitalize() + " euros", 
+			PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode, 
+			donation["forme_du_don_name"], 
+			donation["nature_du_don_name"],
 		], 
 		"institut_village": [receipt_settings.institut_town],
 		"date_today": ["/".join(str(datetime.date.today()).split("-")[::-1])],
@@ -125,8 +129,9 @@ def create_individual_receipt(receipt, donation, file_name):
 def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 	receipt_settings = Paramètre.objects.get(id=4)
 	path = f"{BASE_DIR}/static/pdf/receipts/"
+	p = Profile.objects.get(id=contact["profile"])
 	# Create pdf
-	address = eval(contact.profile.primary_address)
+	address = eval(p.primary_address)
 	if len(address) == 5:
 		address = address[:2]+[address[2]+", "+address[3]]+[address[4]]
 	if len(address) == 7:
@@ -137,18 +142,18 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 			receipt_settings.institut_street_name, 
 			receipt_settings.institut_post_code + " " + receipt_settings.institut_town
 		],
-		"receipt_id": [str(receipt.id)],
+		"receipt_id": [str(receipt["id"])],
 		"organisation_object": [
 			"Object:", 
 			receipt_settings.object_title, 
 			receipt_settings.object_description
 		],
-		"contact": [contact.profile.name], 
+		"contact": [p.name], 
 		"contact_address": address,
-		"date_start": ["/".join(str(date_range[0]).split("-")[::-1])],
-		"date_end": ["/".join(str(date_range[1]).split("-")[::-1])],
-		"total_amount": ["€ "+ str(sum([d.amount for d in donations]))],
-		"in_letters": [num2words.num2words(sum([d.amount for d in donations]), lang="fr").capitalize() + " euros"], 
+		"date_start": ["/".join((str(date_range[0]).split("T")[0]).split("-")[::-1])],
+		"date_end": ["/".join((str(date_range[1]).split("T")[0]).split("-")[::-1])],
+		"total_amount": ["€ "+ str("%.2f"%sum([float(d["amount"]) for d in donations]))],
+		"in_letters": [num2words.num2words("%.2f"%sum([float(d["amount"]) for d in donations]), lang="fr").capitalize() + " euros"], 
 			}
 	images = {
 		"institution": receipt_settings.institut_image,
@@ -183,7 +188,7 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 			can.setFont(fonts[t[0]], sizes[t[1]])
 			if key=="organisation_object" and index==2:
 				textobject = can.beginText(t[2], t[3])
-				wrapped_text = "\n".join(wrap(value[index], 100))
+				wrapped_text = "\n".join(wrap(value[index], 90))
 				textobject.textLines(wrapped_text)
 				can.drawText(textobject)
 				continue
@@ -206,11 +211,11 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 	for index, donation in enumerate(donations):
 		if index == 9:
 			break
-		can.drawString(79, 235-(index*18), " / ".join(str(donation.date_donated).split("-")[::-1]))
-		can.drawString(156, 235-(index*18), donation.payment_mode.payment_mode)
-		can.drawString(239, 235-(index*18), donation.forme_du_don_name)
-		can.drawString(377, 235-(index*18), donation.nature_du_don_name)
-		can.drawString(460, 235-(index*18), "€ " + str(donation.amount))
+		can.drawString(79, 235-(index*18), " / ".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1]))
+		can.drawString(156, 235-(index*18), PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode)
+		can.drawString(239, 235-(index*18), donation["forme_du_don_name"])
+		can.drawString(377, 235-(index*18), donation["nature_du_don_name"])
+		can.drawString(460, 235-(index*18), "€ " + str(donation["amount"]))
 	can.showPage()
 	can.save()
 	packet.seek(0)
@@ -222,11 +227,11 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 		can2.grid([69, 154, 232, 367, 438, 515],[778-(y*18) for y in range(len(donations[9:])+1)])
 		can2.setFont(fonts[2], sizes[3])
 		for index, donation in enumerate(donations[9:]):
-			can2.drawString(79, 767-(index*18), " / ".join(str(donation.date_donated).split("-")[::-1]))
-			can2.drawString(168, 767-(index*18), donation.payment_mode_name)
-			can2.drawString(239, 767-(index*18), donation.forme_du_don_name)
-			can2.drawString(377, 767-(index*18), donation.nature_du_don_name)
-			can2.drawString(450, 767-(index*18), "€ " + str(donation.amount))
+			can2.drawString(79, 767-(index*18), " / ".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1]))
+			can2.drawString(168, 767-(index*18), PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode)
+			can2.drawString(239, 767-(index*18), donation["forme_du_don_name"])
+			can2.drawString(377, 767-(index*18), donation["nature_du_don_name"])
+			can2.drawString(450, 767-(index*18), "€ " + str(donation["amount"]))
 	img2 = ImageReader(str(BASE_DIR)+"/static/png/end_of.png")
 	if len(donations) > 9:
 		additional = (len(donations[9:]))*18
@@ -296,10 +301,11 @@ def cancel_pdf_receipt(path):
 	return new_path.split("/receipts/")[1]
 
 @shared_task
-def send_email(pdf_path, send_to, body, cc=None):
-	s = Paramètre.objects.get(id=5)
+def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 	try:
-		smtp_object = smtplib.SMTP(s.smtp_domain,s.smtp_port)
+		sleep(t*15)
+		s = Paramètre.objects.get(id=5)
+		smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
 		smtp_object.ehlo()
 		smtp_object.starttls()
 		smtp_object.ehlo()
@@ -310,7 +316,7 @@ def send_email(pdf_path, send_to, body, cc=None):
 		if cc not in ("", None):
 			message["Cc"] = cc
 		message["Subject"] = "Receipt"
-		message.attach(MIMEText(body, "plain"))
+		message.attach(MIMEText(body+"\n\n", "plain"))
 		with open(pdf_path, "rb") as attachment:
 			part = MIMEBase("application", "octet-stream")
 			part.set_payload(attachment.read())
@@ -323,6 +329,263 @@ def send_email(pdf_path, send_to, body, cc=None):
 		text = message.as_string()
 		smtp_object.sendmail(s.host_email, send_to, text)
 		smtp_object.quit()
+		receipt = ReçusFiscaux.objects.get(id=receipt_id)
+		if pdf_path.split(".pdf")[0][-6:] == "Annulé":
+			receipt.email_cancel = True
+		else:
+			receipt.email_active = True
+		receipt.save()
 		return "SENT"
 	except:
 		return "ERROR"
+
+@shared_task
+def email_confirmation(t, lst):
+	sleep(t*15+10)
+	notification = Paramètre.objects.get(id=5)
+	l = []
+	for contact_id, receipt_id in lst:
+		receipt = ReçusFiscaux.objects.get(id=receipt_id)
+		if receipt.email_active or receipt.email_cancel:
+			l.append((Contact.objects.get(id=contact_id).profile.email, True))
+		else:
+			l.append((Contact.objects.get(id=contact_id).profile.email, False))
+	notification.email_notification = True
+	notification.email_notification_list = l
+	notification.save()
+
+
+@shared_task
+@atomic
+def process_webhook_payload(payload):
+	action = payload["notifications"][0]["action"].split("profile.")[1]
+	data = payload["notifications"][0]["payload"]
+	messages = []
+	try:
+		if action == "create":
+			if type(payload["notifications"]) == list:
+				messages.append("Notifications is indeed a list type")
+				for i in range(len(payload["notifications"])):
+					data = payload["notifications"][i]["payload"]
+					try:
+						p = Profile.objects.get(seminar_desk_id = data["id"])
+						messages.append(f"{p.name} exists in database.")
+						continue
+					except:
+						messages.append(f"Creating {data['name']}.")
+						p = Profile()
+						p.seminar_desk_id = data["id"]
+						p.salutation = data["salutation"]
+						p.object_type = data["objectType"]
+						p.title = data["title"]
+						p.name = data["name"]
+						p.language = data["language"]
+						p.labels = str([(["SD_Label",label["id"],label["name"]]) for label in data["labels"]])
+						p.email = data["email"]
+						p.alternative_email = data["alternativeEmail"]
+						p.website = data["website"]
+						p.fax_number = data["faxNumber"]
+						p.primary_address = str([address for key, address in data["primaryAddress"].items()])
+						p.billing_address_active = data["billingAddressActive"]
+						p.billing_address = str([address for key, address in data["billingAddress"].items()])
+						p.remarks = data["remarks"]
+						p.information = data["information"]
+						p.is_blocked = data["isBlocked"]
+						p.blocked_reason = data["blockedReason"]
+						p.bank_account_data = str([d for key, d in data["bankAccountData"].items()])
+						p.tax_number = data["taxNumber"]
+						p.vat_id = data["vatId"]
+						p.customer_number = data["customerNumber"]
+						p.additional_fields = str([field for key, field in data["additionalFields"].items()])
+						p.save()
+						messages.append("Profile created succesfully.")
+						object_type = data["objectType"]
+						if object_type == "PERSON":
+							c = Contact()
+							c.profile = p
+							c.first_name = data["firstName"]
+							c.last_name = data["lastName"]
+							c.additional_title = data["additionalTitle"]
+							c.date_of_birth = data["dateOfBirth"]
+							c.profession = data["profession"]
+							c.salutation_type = data["salutationType"] 
+							c.private_phone_number = data["privatePhoneNumber"]
+							c.alternative_phone_number = data["alternativePhoneNumber"]
+							c.work_phone_number = data["workPhoneNumber"]
+							c.preferred_address = data["preferredAddress"]
+							c.preferred_email = data["preferredEmail"]
+							c.preferred_phone_number = data["preferredPhoneNumber"]
+							c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
+							c.is_facilitator = data["isFacilitator"]
+							c.save()
+							messages.append(("Contact contact successfuly."))
+						elif object_type == "ORGANIZATION":
+							o.profile = p
+							o.additional_name = data["additionalName"]
+							o.save()
+				message = ""
+				for m in messages:
+					message += (m + "\n")
+				message += "Message received okay."
+				return message 
+
+			else:
+				try:
+					p = Profile.objects.get(seminar_desk_id = data["id"])
+					messages.append("Profile object found at create.")
+					return messages
+				except:
+					messages.append("new profile being created.")
+					p = Profile()
+					object_type = data["objectType"]
+					if object_type == "PERSON":
+						c = Contact()
+						messages.append("new contact being created.")
+					elif object_type == "ORGANIZATION":
+						o = Organisation()
+						messages.append("new organisation being created.")
+
+		if action == "merge":
+			if data[0]["mergeStatus"] == "MERGED":
+				merged = 0
+				deleted = 1
+			else:
+				merged = 1
+				deleted = 0
+			try:
+				p_del = Profile.objects.get(seminar_desk_id = data[deleted]["id"])
+				messages.append("DELETED profile found for merge.")
+			except:
+				messages.append("DELETED profile not found for merge.")
+				return messages
+			# donations found for old profile
+			donations_to_be_appended = Donation.objects.filter(contact__profile = p_del)
+			# new profile / contact
+			try:
+				p = Profile.objects.get(seminar_desk_id = data[merged]["id"])
+				messages.append("MERGED profile found for merge.")
+			except:
+				messages.append("MERGED profile not found for merge.")
+				return messages
+			data = data[merged]
+			object_type = data["objectType"]
+			c = Contact.objects.get(profile = p)
+			messages.append("contact found for merge.")
+			# redirect donations to merged contact
+			for don in donations_to_be_appended:
+				don.contact = c
+				don.save()
+			p_del.delete()
+			messages.append("Merged profile with all the donations.")
+
+		if action == "update":
+			p = Profile.objects.get(seminar_desk_id = data["id"])
+			messages.append("profile found for update.")
+			object_type = data["objectType"]
+			if object_type == "PERSON":
+				c = Contact.objects.get(profile = p)
+				messages.append("contact found for update.")
+			elif object_type == "ORGANIZATION":
+				o = Organisation.objects.get(profile = p)
+				messages.append("organisation found for update.")
+
+		if action == "delete":
+			p = Profile.objects.get(seminar_desk_id = data["id"])
+			messages.append("profile found for delete.")
+			profile_name = p.name
+			linked_dons = Donation.objects.filter(contact__profile = p)
+			linked_receipts = ReçusFiscaux.objects.filter(contact__profile = p)
+			for receipt in linked_receipts:
+				receipt.contact_name = profile_name
+				receipt.save()
+			p.delete()
+			return messages
+
+		p.seminar_desk_id = data["id"]
+		p.salutation = data["salutation"]
+		p.object_type = data["objectType"]
+		p.title = data["title"]
+		p.name = data["name"]
+		p.language = data["language"]
+		p.labels = str([(["SD_Label",label["id"],label["name"]]) for label in data["labels"]])
+		p.email = data["email"]
+		p.alternative_email = data["alternativeEmail"]
+		p.website = data["website"]
+		p.fax_number = data["faxNumber"]
+		p.primary_address = str([address for key, address in data["primaryAddress"].items()])
+		p.billing_address_active = data["billingAddressActive"]
+		p.billing_address = str([address for key, address in data["billingAddress"].items()])
+		p.remarks = data["remarks"]
+		p.information = data["information"]
+		p.is_blocked = data["isBlocked"]
+		p.blocked_reason = data["blockedReason"]
+		p.bank_account_data = str([d for key, d in data["bankAccountData"].items()])
+		p.tax_number = data["taxNumber"]
+		p.vat_id = data["vatId"]
+		p.customer_number = data["customerNumber"]
+		p.additional_fields = str([field for key, field in data["additionalFields"].items()])
+		p.save()
+		messages.append("Profile created successfuly.")
+
+		if object_type == "PERSON":
+			c.profile = p
+			c.first_name = data["firstName"]
+			c.last_name = data["lastName"]
+			c.additional_title = data["additionalTitle"]
+			c.date_of_birth = data["dateOfBirth"]
+			c.profession = data["profession"]
+			c.salutation_type = data["salutationType"] 
+			c.private_phone_number = data["privatePhoneNumber"]
+			c.alternative_phone_number = data["alternativePhoneNumber"]
+			c.work_phone_number = data["workPhoneNumber"]
+			c.preferred_address = data["preferredAddress"]
+			c.preferred_email = data["preferredEmail"]
+			c.preferred_phone_number = data["preferredPhoneNumber"]
+			c.is_subscribed_to_newsletter = data["isSubscribedToNewsletter"]
+			c.is_facilitator = data["isFacilitator"]
+			c.save()
+			messages.append("Contact created successfuly.")
+
+		elif object_type == "ORGANIZATION":
+			o.profile = p
+			o.additional_name = data["additionalName"]
+			o.save()
+			messages.append("Organisation created successfuly.")
+
+		message = ""
+		for m in messages:
+			message += (m + "\n")
+		message += "Message received okay."
+		return message 
+	except:
+		messages.append("Something went wrong.")
+		message = ""
+		for m in messages:
+			message += (m + "\n")
+		return message
+
+
+@app.task(name="donations.receipt_trigger_notification")
+def annual_receipt_reminder():
+	notification = Paramètre.objects.get(id=2)
+	if notification.release_date.toordinal() <= datetime.date.today().toordinal():
+		date_range = (
+			Paramètre.objects.get(id=1).date_range_start, 
+			Paramètre.objects.get(id=1).date_range_end
+		)
+		donations = Donation.objects.filter(disabled=False)\
+			.filter(pdf=False)\
+			.filter(eligible=True)\
+			.filter(date_donated__gte=date_range[0])\
+			.filter(date_donated__lte=date_range[1])
+		if len(donations) > 0:
+			notification.release_notification = True
+			notification.save()
+		else:
+			notification.release_date = datetime.date.fromordinal(notification.release_date.toordinal() + 365)
+			notification.save()
+			rnge = Paramètre.objects.get(id=1)
+			rnge.date_range_start = datetime.date.fromordinal(rnge.date_range_start.toordinal() + 365)
+			rnge.date_range_end = datetime.date.fromordinal(rnge.date_range_end.toordinal() + 365)
+			rnge.save()
+>>>>>>> 8c5889d... locks and schedule

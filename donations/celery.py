@@ -15,9 +15,9 @@ app = Celery('donations')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
-	'add-every-minute': {
-		'task': 'tasks.add',
-		'schedule': crontab() # runs every minute,
+	'annual_receipts_check': {
+		'task': 'donations.receipt_trigger_notification',
+		'schedule': crontab() # runs every 2 minutes,
 	},
 }
 app.conf.timezone = 'UTC'

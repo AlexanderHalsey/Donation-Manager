@@ -1,0 +1,18 @@
+<form method="POST">
+	{% csrf_token %}	
+	<div class="modal fade" id="receipt_trigger_notification_modal" tabindex="-1" aria-labelledby="receipt_trigger_notification" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+	      <div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title">{{language.receiptTriggerNotification.title}}</h5>
+			</div>
+		  	<div class="modal-body">
+		  		{{language.receiptTriggerNotification.description}}<br><br>{{language.receiptTriggerNotification.description2}}<br><br><strong>{{language.receiptTriggerNotification.description2Bold}}<br><br></strong>{{language.receiptTriggerNotification.clickOnLink}}
+		  	</div>
+		  	<div class="modal-footer">
+		  		<button name="Submit" class="btn btn-success ms-5" type="submit" value="notification_read">{{language.receiptTriggerNotification.understood}}</button>
+		  	</div>
+		  </div>
+		</div>
+	</div>
+</form>

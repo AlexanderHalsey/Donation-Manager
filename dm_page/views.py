@@ -7,8 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils import timezone
+from django.core import serializers
+from django.forms.models import model_to_dict
 
-from donations.settings import BASE_DIR
+from donations.settings import BASE_DIR, DMS_WEBHOOK_USERNAME, DMS_WEBHOOK_PASSWORD
 from .models import *
 from .utils import *
 from .tasks import *
@@ -18,8 +20,10 @@ from .forms import DonationForm
 import json
 import datetime
 import os
+from itertools import chain
 from secrets import compare_digest
 # from pathlib import Path
+
 
 # Create your views here.
 def redir(request):
@@ -75,7 +79,7 @@ def dms_webhook(request):
 				payload = payload,
 			)
 		
-	messages = process_webhook_payload(payload)
+	messages = process_webhook_payload.delay(payload)
 	print(messages)
 	return HttpResponse(messages, content_type="text/plain")
 
@@ -94,12 +98,12 @@ def webhooklogs(request, lang, change=None):
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
 
-	# update receipts
-	file_storage_check()
-
 	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}')
+
+	# update receipts
+	file_storage_check()
 
 	# intial form_values
 	form_values = {
@@ -143,12 +147,12 @@ def dashboard(request, lang, change=None):
 	# Initialise settings
 	if len(Paramètre.objects.all()) < 5:
 		date_range_setting = Paramètre( # 1
-			date_range_start = datetime.date(2021, 1, 1),
-			date_range_end = datetime.date(2021, 12, 31),
+			date_range_start = datetime.date(2021, 6, 1),
+			date_range_end = datetime.date(2022, 12, 31),
 		)
 		date_range_setting.save()
 		date_release_setting = Paramètre( # 2
-			release_date = datetime.date(2022, 2, 1),
+			release_date = datetime.date(2021, 10, 8),
 			manual = "https://dmsivy.herokuapp.com/fr/recusannuels/",
 		)
 		date_release_setting.save()
@@ -169,11 +173,11 @@ def dashboard(request, lang, change=None):
 		)
 		receipt_setting.save()
 		email_setting = Paramètre( # 5
-			host_email = "alex.halsey@icloud.com",
-			host_password = "ovwiymnjotfiacvu",
+			host_email = "alex.halsey5@gmail.com",
+			host_password = "xeeirvvfpdrvqwri",
 			cc = None,
 			body = 'Dear Sir Madam,\n\n'\
-				f'This is an email confirmation of your donation with order n° %s.\n'\
+				f'This is an email confirmation of your donation with order n° receipt_id.\n'\
 				'Please find attached your receipt.\n\n\n'\
 				'Kind Regards,\n'\
 				'Institut Vajra Yogini\n\n',
@@ -186,6 +190,15 @@ def dashboard(request, lang, change=None):
 		nature = NatureDuDon(name="Numéraire", default_value=True)
 		nature.save()
 
+	# Locked Donations
+	locked = list(set(list(chain(*[eval(lock.donation_list) for lock in Locked.objects.all()]))))
+	for donation in unadulterated_donations.filter(id__in = locked):
+		donation.locked = True
+		donation.save()
+	for donation in unadulterated_donations.exclude(id__in = locked):
+		donation.locked = False
+		donation.save()
+	print([donation.locked for donation in donations])
 	# receipt eligibility
 	eligibility = Paramètre.objects.get(id=3)
 	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}"))) for i in range(1,11)]))
@@ -204,8 +217,22 @@ def dashboard(request, lang, change=None):
 	# forms
 	form = DonationForm()
 	if request.method == 'POST':
+		print(request.POST)
 
-		if request.POST["Submit"] == "delete":
+		if request.POST.get("Submit") == "notification_read":
+			notification = Paramètre.objects.get(id=2)
+			notification.release_notification = False
+			notification.save()
+			return redirect(f"/{lang}/")
+
+		if request.POST.get("Submit") == "email_confirmation_read":
+			notification = Paramètre.objects.get(id=5)
+			notification.email_notification = False
+			notification.email_notification_list = None
+			notification.save()
+			return redirect(f"/{lang}/")
+
+		if request.POST.get("Submit") == "delete":
 			disable_donation = Donation.objects.get(id=int(request.POST["id"]))
 			disable_donation.disabled = True
 			disable_donation.save()
@@ -213,7 +240,7 @@ def dashboard(request, lang, change=None):
 			return redirect(f"/{lang}/")
 
 		# confirm receipt
-		if request.POST["Submit"] == "confirm":
+		if request.POST.get("Submit") == "confirm":
 			donation = Donation.objects.get(id=int(request.POST["id"]))
 			donation.pdf = True
 			donation.save()
@@ -225,13 +252,14 @@ def dashboard(request, lang, change=None):
 			receipt.file_name = f"{receipt.id}_{donation.contact.profile.name}_{str(donation.date_donated)}_Individuel_{donation.id}.pdf"
 			receipt.donation_list = [donation.id]
 			receipt.cancel = False
-			create_individual_receipt(receipt, donation,receipt.file_name)
+
+			create_individual_receipt.delay(model_to_dict(receipt), model_to_dict(donation), receipt.file_name)
 			if request.POST.get("email") == 'true':
 				e = Paramètre.objects.get(id=5)
 				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
-				email_status = send_email(path, donation.contact.profile.email, e.body, cc=e.cc)
-				if email_status == "SENT":
-					receipt.email_active = True
+				body = e.body.replace("receipt_id", str(receipt.id))
+				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, 1, cc=e.cc)
+				email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			receipt.save()
 			return redirect("/")
 
@@ -418,6 +446,12 @@ def dashboard(request, lang, change=None):
 	total_donated_filter = sum([d.amount for d in donations])
 	donation_types = [(t.organisation.profile.name, t.name) for t in DonationType.objects.all()]
 	donation_types = json.dumps(donation_types)
+	receipt_trigger_notification = Paramètre.objects.get(id=2).release_notification
+	email_notification = Paramètre.objects.get(id=5).email_notification
+	if Paramètre.objects.get(id=5).email_notification_list not in ("", None):
+		email_notification_list = eval(Paramètre.objects.get(id=5).email_notification_list)
+	else:
+		email_notification_list = ""
 
 	context = {
 		'show_modal_pdf': show_modal_pdf,
@@ -435,6 +469,9 @@ def dashboard(request, lang, change=None):
 		'form_values': form_values,
 		'donation_types': donation_types,
 		'receipt_conditions': receipt_conditions,
+		'receipt_trigger_notification': receipt_trigger_notification,
+		'email_notification': email_notification,
+		'email_notification_list': email_notification_list,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'dashboard.html', context)
@@ -446,6 +483,19 @@ def contact(request, pk, lang, change=None):
 	if change != None:
 		return redirect(f'/{change}/contact/{pk}')
 
+	if request.POST.get("Submit") == "notification_read":
+		notification = Paramètre.objects.get(id=2)
+		notification.release_notification = False
+		notification.save()
+		return redirect(f"/{lang}/contact/{pk}/")
+
+	if request.POST.get("Submit") == "email_confirmation_read":
+		notification = Paramètre.objects.get(id=5)
+		notification.email_notification = False
+		notification.email_notification_list = None
+		notification.save()
+		return redirect(f"/{lang}/{pk}/")
+
 	# context
 	contact = Contact.objects.get(profile__seminar_desk_id=pk)
 	address = eval(contact.profile.primary_address)
@@ -453,6 +503,12 @@ def contact(request, pk, lang, change=None):
 	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id).filter(disabled=False)
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
+	receipt_trigger_notification = Paramètre.objects.get(id=2).release_notification
+	email_notification = Paramètre.objects.get(id=5).email_notification
+	if Paramètre.objects.get(id=5).email_notification_list not in ("", None):
+		email_notification_list = eval(Paramètre.objects.get(id=5).email_notification_list)
+	else:
+		email_notification_list = ""
 
 	context = {
 		'tags': tags,
@@ -461,6 +517,9 @@ def contact(request, pk, lang, change=None):
 		'donations': donations,
 		'donations_count': donations_count,
 		'total_donated': total_donated,
+		"receipt_trigger_notification": receipt_trigger_notification,
+		'email_notification': email_notification,
+		'email_notification_list': email_notification_list,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'contact.html', context)
@@ -471,6 +530,19 @@ def donators(request, lang, change=None):
 	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}/donators')
+
+	if request.POST.get("Submit") == "notification_read":
+		notification = Paramètre.objects.get(id=2)
+		notification.release_notification = False
+		notification.save()
+		return redirect(f"/{lang}/donators/")
+
+	if request.POST.get("Submit") == "email_confirmation_read":
+		notification = Paramètre.objects.get(id=5)
+		notification.email_notification = False
+		notification.email_notification_list = None
+		notification.save()
+		return redirect(f"/{lang}/donators/")
 
 	# initial filter values
 	initial_filter_values = {
@@ -565,6 +637,12 @@ def donators(request, lang, change=None):
 	# context after filter 	
 	donation_count_filter = donations.count()
 	total_donated_filter = sum([d.amount for d in donations])
+	receipt_trigger_notification = Paramètre.objects.get(id=2).release_notification
+	email_notification = Paramètre.objects.get(id=5).email_notification
+	if Paramètre.objects.get(id=5).email_notification_list not in ("", None):
+		email_notification_list = eval(Paramètre.objects.get(id=5).email_notification_list)
+	else:
+		email_notification_list = ""
 
 	context = {
 		'pdf_path': pdf_path,
@@ -579,6 +657,9 @@ def donators(request, lang, change=None):
 		'total_donated': total_donated,
 		'donation_count_filter': donation_count_filter,
 		'total_donated_filter': total_donated_filter,
+		'receipt_trigger_notification': receipt_trigger_notification,
+		'email_notification': email_notification,
+		'email_notification_list': email_notification_list,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'donators.html', context)
@@ -610,11 +691,28 @@ def pdf_receipts(request, lang, change=None):
 				receipt.donation_list = [d.id for d in annual_donations]
 				receipt.cancel = False
 				receipt.save()
-				create_annual_receipt(receipt, contact, annual_donations, date_range, receipt.file_name)
+				create_annual_receipt.delay(
+					model_to_dict(receipt), 
+					model_to_dict(contact), 
+					[model_to_dict(a) for a in annual_donations], 
+					date_range, 
+					receipt.file_name)
 				for donation in annual_donations:
 					donation.pdf = True
 					donation.save()
 				break
+	if request.POST.get("Submit") == "notification_read":
+		notification = Paramètre.objects.get(id=2)
+		notification.release_notification = False
+		notification.save()
+		return redirect(f"/{lang}/pdf_receipts/")
+
+	if request.POST.get("Submit") == "email_confirmation_read":
+		notification = Paramètre.objects.get(id=5)
+		notification.email_notification = False
+		notification.email_notification_list = None
+		notification.save()
+		return redirect(f"/{lang}/pdf_receipts/")
 
 	# initial filter values
 	initial_filter_values = {
@@ -632,7 +730,7 @@ def pdf_receipts(request, lang, change=None):
 		email_content["true"] = True
 		email_content["id"] = unadulterated_receipts.get(id=request.GET.get("send_email")).id
 		email_content["email"] = unadulterated_receipts.get(id=request.GET.get("send_email")).contact.profile.email
-		email_content["cc"] = Paramètre.objects.get(id=5).cc
+		email_content["cc"] = "" if Paramètre.objects.get(id=5).cc == None else  Paramètre.objects.get(id=5).cc
 		email_content["file"] = unadulterated_receipts.get(id=request.GET.get("send_email")).file_name
 
 	if request.method == "POST":
@@ -640,15 +738,11 @@ def pdf_receipts(request, lang, change=None):
 			receipt = ReçusFiscaux.objects.get(id=request.POST["Submit"])
 			send_to = request.POST["email"]
 			cc = request.POST["cc"]
+			print(cc)
 			body = request.POST["message"] + "\n\n"
 			path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
-			email_status = send_email(path, send_to, cc, body)
-			if email_status == "SENT":
-				if path.split(".pdf")[0][-6:] == "Annulé":
-					receipt.email_cancel = True
-				else:
-					receipt.email_active = True
-				receipt.save()
+			send_email.delay(receipt.id, path, send_to, body, 1, cc=cc)
+			email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			return redirect(f'{lang}/pdf_receipts/')
 
 	tags = Tag.objects.all()
@@ -716,6 +810,12 @@ def pdf_receipts(request, lang, change=None):
 		file_name
 	except:
 		file_name = ""
+	receipt_trigger_notification = Paramètre.objects.get(id=2).release_notification
+	email_notification = Paramètre.objects.get(id=5).email_notification
+	if Paramètre.objects.get(id=5).email_notification_list not in ("", None):
+		email_notification_list = eval(Paramètre.objects.get(id=5).email_notification_list)
+	else:
+		email_notification_list = ""
 
 	context = {
 		'tags': tags,
@@ -731,6 +831,9 @@ def pdf_receipts(request, lang, change=None):
 		'file_name': file_name,
 		'scroll': scroll,
 		'email_content': email_content,
+		'receipt_trigger_notification': receipt_trigger_notification,
+		'email_notification': email_notification,
+		'email_notification_list': email_notification_list,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'pdf_receipts.html', context)
@@ -743,7 +846,11 @@ def receipt(request, file):
 		response['Content-Disposition'] = f'attachment; filename="{file}"'
 	return response
 
+@login_required(login_url='/fr/login')
 def confirm_annual(request, lang, change=None):
+
+	if change != None:
+		return redirect(f'/{change}/recusannuels')
 
 	date_range = (
 		Paramètre.objects.get(id=1).date_range_start, 
@@ -759,6 +866,7 @@ def confirm_annual(request, lang, change=None):
 
 	if request.method == "POST":
 
+		# getting contacts and donations to be processed
 		if request.POST.get("checked") == "checked":
 			dtbp = donations
 			ctbp = request.POST.get("contacts").split(",")
@@ -768,10 +876,10 @@ def confirm_annual(request, lang, change=None):
 			ctbp = request.POST.get("contacts").split(",")
 			dtbp = donations.filter(contact__profile__name__in=ctbp) 
 
-		for contact in contacts:
-			print(contact)
+		# creating receipts and sending emails
+		email_statuses = []
+		for t, contact in enumerate(contacts):
 			annual_donations = dtbp.filter(contact__profile__name=contact)
-			print(annual_donations)
 			if len(annual_donations) > 0:
 				receipt = ReçusFiscaux()
 				receipt.save()
@@ -782,13 +890,26 @@ def confirm_annual(request, lang, change=None):
 				receipt.donation_list = [d.id for d in annual_donations]
 				receipt.cancel = False
 				receipt.save()
-				create_annual_receipt(receipt, receipt.contact, annual_donations, date_range, receipt.file_name)
+				create_annual_receipt.delay(
+					model_to_dict(receipt), 
+					model_to_dict(receipt.contact), 
+					[model_to_dict(a) for a in annual_donations], 
+					date_range, 
+					receipt.file_name,
+				)
 				for donation in annual_donations:
 					donation.pdf = True
 					donation.save()
+				e = Paramètre.objects.get(id=5)
+				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
+				body = e.body.replace("receipt_id", str(receipt.id))
+				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, t, cc=e.cc)
+				email_statuses.append((receipt.contact.id, receipt.id))
+		email_confirmation.delay(len(contacts), email_statuses)
+		return redirect(f"/{lang}/")
 
 	contact_names = json.dumps(contacts)
-	contacts = [(contact, donations.filter(contact__profile__name=contact)) for contact in contacts]
+	contacts = [(contact, Profile.objects.get(name=contact).email, donations.filter(contact__profile__name=contact)) for contact in contacts]
 	context = {
 		'date_range': date_range,
 		'contacts': contacts,

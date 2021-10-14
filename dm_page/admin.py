@@ -62,7 +62,7 @@ class SettingsForm(forms.ModelForm):
 		except:
 			pass
 		try:
-			self.fields['host_password'].widget = forms.PasswordInput(attrs={'placeholder':'********','autocomplete': 'off','data-toggle': 'password'})
+			self.fields['host_password'].widget = forms.PasswordInput(attrs={'placeholder':'********','autocomplete': 'off','data-toggle': 'password'}, value=Paramètre.objects.get(id=5).host_password)
 		except:
 			pass
 	class Meta:

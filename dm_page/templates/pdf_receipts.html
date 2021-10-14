@@ -56,6 +56,22 @@
     }
   );
 
+  {% if receipt_trigger_notification %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("receipt_trigger_notification").click();
+    }
+  );
+  {% endif %}
+
+  {% if email_notification %}
+  window.addEventListener('load',
+    function(){
+      document.getElementById("email_status_notification").click();
+    }
+  );
+  {% endif %}
+
   {% if form_values.errors %}
   window.addEventListener('load',
     function(){
@@ -148,9 +164,15 @@
         <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
         {% endfor %}
         <hr>
+        {% if language.language == "fr" %}
+        <button id="create_tag" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        {% else %}
         <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
         <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
         <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        {% endif %}
         {% include 'tag_form.html' %}
 	    </div>
     </div>
@@ -319,7 +341,11 @@
               <th>{{language.table.receiptType}}</th>
               <th>{{language.table.fileName}}</th>
               <th>{{language.table.sendEmail}}</th>
+              {% if language.language == "fr" %}
+              <th class="px-2" style="font-size: 13px;">{{language.table.viewDownload}}</th>
+              {% else %}
               <th>{{language.table.viewDownload}}</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -335,7 +361,7 @@
               {% else %}
               <td><a href="{% url 'contact' lang=language.language pk=donation_receipt.contact.profile.seminar_desk_id %}">{{donation_receipt.contact.profile.name}}</a></td>
               {% endif %}
-              <td>{{donation_receipt.date_created}}</td>
+              <td class="text-center">{{ donation_receipt.date_created|date:"Y / m / d" }}</td>
               {% for id, type in donation_types %}
               {% if id == donation_receipt.id %}
               <td>{{type}}</td>
@@ -358,23 +384,21 @@
                 {% endif %}
               </td>
               <td>
-                {% if donation_receipt.cancel %}
                 <form method="GET">
                   {% csrf_token %}
-                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0 mx-4" type="submit" style="font-size: 0.8em; " value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
-                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0 mx-4" type="submit" style="font-size: 0.8em;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
+                  {% if donation_receipt.cancel %}
+                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0 mx-3" type="submit" style="font-size: 0.8em; " value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
+                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0 mx-2" type="submit" style="font-size: 0.8em;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
+                  <a tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-container="body" title="{{language.titles.infoCanceled}}" data-bs-content="{{donation_receipt.cancel_description}}" name="info_pdf" class="btn btn-info btn-sm btn-outline-light py-0 px-0 mx-3" style="font-size: 0.8em;"><img src="{% static 'icons/info_icon.png' %}" class="img-fluid" width="21" height="21" alt="info"></a>
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
-                  <a tabindex="0" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-container="body" title="{{language.titles.infoCanceled}}" data-bs-content="{{donation_receipt.cancel_description}}" name="info_pdf" class="btn btn-warning btn-sm btn-outline-info py-0 px-0 mx-4" style="font-size: 0.8em;"><img src="{% static 'icons/info_icon.png' %}" class="img-fluid" width="21" height="21" alt="info"></a>
-                </form>
-                {% else %}
-                <form method="GET">
-                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0" type="submit" style="font-size: 0.8em; margin-left: 50px" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
-                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; margin-left: 60px;" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
+                  {% else %}
+                  <button name="view_pdf" class="btn btn-primary btn-sm btn-outline-warning py-0 px-0 mx-3" type="submit" style="font-size: 0.8em" value="{{ donation_receipt.id }}"><img src="{% static 'icons/view.png' %}" class="img-fluid" width="21" height="21" alt="view"></button>
+                  <button name="download_pdf" class="btn btn-light btn-sm btn-outline-dark py-0 px-0 mx-3" type="submit" style="font-size: 0.8em" value="{{ donation_receipt.id }}"><img src="{% static 'icons/download.png' %}" class="img-fluid" width="21" height="21" alt="download"></button>
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
+                  {% endif %}
                 </form>
-                {% endif %}
               </td>
             </tr>
             {% endfor %}
@@ -386,6 +410,10 @@
     {% include 'send_email.html' %}
     <button hidden="hidden" id="pdf_view" type="button" data-bs-toggle="modal" data-bs-target="#view_pdf"></button>
     {% include 'pdf_modal_view.html' %}
+    <button hidden="hidden" id="receipt_trigger_notification" data-bs-toggle="modal" data-bs-target="#receipt_trigger_notification_modal"></button>
+    {% include 'receipt_trigger_notification.html' %}
+    <button hidden="hidden" id="email_status_notification" data-bs-toggle="modal" data-bs-target="#email_status_notification_modal"></button>
+    {% include 'email_status_notification.html' %}
   </div>
 </div>
 {% endblock %}

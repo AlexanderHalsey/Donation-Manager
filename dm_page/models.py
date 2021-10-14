@@ -1,6 +1,5 @@
 from django.db import models
 from .colours import colours
-from itertools import chain
 
 # Create your models here.
 class Tag(models.Model):
@@ -122,48 +121,10 @@ class Locked(models.Model):
 	donation_types = models.ManyToManyField(DonationType, verbose_name="Types des Dons")
 	organisations = models.ManyToManyField(Organisation, verbose_name="Organisations")
 	donation_list = models.CharField(max_length=200, null=True, blank=True)
-	def save(self, *args, **kwargs):
-		super(Locked, self).save(*args, **kwargs)
-		if self.donation_list != None: # in other words the instance is being changed not created
-			uniq = set(list(chain(*[eval(previous_lock.donation_list) for previous_lock in Locked.objects.exclude(id=self.id)])))
-			print("Uniq: ", uniq)
-			to_remove_lock = list(set(eval(self.donation_list)).difference(uniq))
-			print("To Remove: ", to_remove_lock)
-			for i in to_remove_lock:
-				donation = Donation.objects.get(id=i)
-				donation.locked = False
-				donation.save()
-			self.donation_list = None
-		to_lock = Donation.objects.all()
-		if self.date_start != None:
-			to_lock = to_lock.filter(date_donated__gte=self.date_start)
-		if self.date_end != None:
-			to_lock = to_lock.filter(date_donated__lte=self.date_end)
-		if len(list(self.contacts.all())) != 0:
-			to_lock = to_lock.filter(contact__in=list(self.contacts.all()))
-		if len(list(self.organisations.all())) != 0:
-			to_lock = to_lock.filter(organisation__in=list(self.organisations.all()))
-		if len(list(self.donation_types.all())) != 0:
-			to_lock = to_lock.filter(donation_type__in=list(self.donation_types.all()))
-		self.donation_list = str(list([don.id for don in to_lock]))
-		print("Filtered List: ", self.donation_list)
-		for donation in to_lock:
-			donation.locked = True
-			donation.save()
-		super(Locked, self).save(*args, **kwargs)
-	def delete(self, *args, **kwargs):
-		uniq = set(list(chain(*[eval(previous_locks.donation_list) for previous_locks in Locked.objects.exclude(id=self.id)])))
-		print("Uniq: ", uniq)
-		to_remove_lock = list(set(eval(self.donation_list)).difference(uniq))
-		print("To Remove: ", to_remove_lock)
-		for i in to_remove_lock:
-			donation = Donation.objects.get(id=i)
-			donation.locked = False
-			donation.save()
-		super(Locked, self).delete(*args, **kwargs)
+	
 	class Meta:
-		verbose_name = "Verouillement"
-		verbose_name_plural = "Verouillement"
+		verbose_name = "Verouillage"
+		verbose_name_plural = "Verouillage"
 
 class Donation(models.Model):
 	contact = models.ForeignKey('Contact', on_delete=models.SET_NULL, null=True, blank=True)
@@ -206,6 +167,7 @@ class Paramètre(models.Model):
 	date_range_start = models.DateField(null=True, blank=True, verbose_name="Date de début")
 	date_range_end = models.DateField(null=True, blank=True, verbose_name="Date de fin")
 	release_date = models.DateField(null=True, blank=True, verbose_name="Date de Libération")
+	release_notification = models.BooleanField(default=False)
 	automatic = models.BooleanField(default=False, verbose_name="Automatique")
 	manual = models.URLField(max_length=200, null=True, blank=True, verbose_name="Lien")
 	organisation_1 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation1")
@@ -243,6 +205,8 @@ class Paramètre(models.Model):
 	body = models.TextField(max_length=200, null=True, blank=True)
 	smtp_domain = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Domain")
 	smtp_port = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Port")
+	email_notification = models.BooleanField(default=False)
+	email_notification_list = models.TextField(null=True, blank=True)
 	def __str__(self):
 		if self.id == 1:
 			return "Plage de dates pour l'Année Fiscale"
