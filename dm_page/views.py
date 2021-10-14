@@ -198,7 +198,7 @@ def dashboard(request, lang, change=None):
 	for donation in unadulterated_donations.exclude(id__in = locked):
 		donation.locked = False
 		donation.save()
-	print([donation.locked for donation in donations])
+	
 	# receipt eligibility
 	eligibility = Paramètre.objects.get(id=3)
 	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}"))) for i in range(1,11)]))
