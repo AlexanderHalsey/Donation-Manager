@@ -31,6 +31,7 @@ def create_individual_receipt(receipt, donation, file_name):
 	receipt_settings = Paramètre.objects.get(id=4)
 	path = f"{BASE_DIR}/static/pdf/receipts/"
 	c = Contact.objects.get(id=donation["contact"])
+	print("path: ", path)
 	# Create pdf
 	address = eval(c.profile.primary_address)
 	if len(address) == 5:
@@ -94,7 +95,6 @@ def create_individual_receipt(receipt, donation, file_name):
 		"institution": (45, 565, 80),
 		"signature": (310, -55, 100),
 	}
-
 	for key,value in text_variables.items():
 		for index in range(len(value)):
 			t = text_matrix[key][index]
@@ -110,19 +110,22 @@ def create_individual_receipt(receipt, donation, file_name):
 	for key, value in images.items():
 		img = ImageReader(value)
 		can.drawImage(img, image_matrix[key][0], image_matrix[key][1], width=image_matrix[key][2], preserveAspectRatio=True)
-
 	can.showPage()
 	can.save()
+	print("can created.")
 	packet.seek(0)
 	new_pdf = PdfFileReader(packet)
 	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/individual_receipt.pdf", "rb"))
+	print("existing template found.")
 	output = PdfFileWriter()
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
 	outputStream = open(path + file_name, "wb")
+	print("outputStream created")
 	output.write(outputStream)
 	outputStream.close()
+	print("outputStream saved.")
 	return
 
 @shared_task
@@ -356,7 +359,6 @@ def email_confirmation(t, lst):
 
 
 @shared_task
-@atomic
 def process_webhook_payload(payload):
 	action = payload["notifications"][0]["action"].split("profile.")[1]
 	data = payload["notifications"][0]["payload"]
