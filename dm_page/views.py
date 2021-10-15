@@ -69,9 +69,8 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Password header.",
 			content_type = "text/plain",
 		)
-	print("settings correct")
 	payload = json.loads(request.body)
-	if type(payload["notifications"]) != list:	
+	if type(payload["notifications"]) != list:	# if the payload isn't the send_all function:
 		WebhookLogs.objects.filter(
 				received_at__lte = timezone.now() - datetime.timedelta(days=7)
 			).delete()
@@ -81,7 +80,7 @@ def dms_webhook(request):
 			)
 	
 	process_webhook_payload.delay(payload)
-	return redirect("/fr")
+	return HttpResponse("payload will now be processed")
 
 @login_required(login_url="/fr/login")
 def webhooklogs(request, lang, change=None):
