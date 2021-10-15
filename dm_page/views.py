@@ -69,6 +69,7 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Password header.",
 			content_type = "text/plain",
 		)
+	print("settings correct")
 	payload = json.loads(request.body)
 	if type(payload["notifications"]) != list:	
 		WebhookLogs.objects.filter(
@@ -78,7 +79,7 @@ def dms_webhook(request):
 				received_at = timezone.now(),
 				payload = payload,
 			)
-		
+	
 	process_webhook_payload.delay(payload)
 	return redirect("/fr")
 
