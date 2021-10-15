@@ -1,2 +1,2 @@
 web: gunicorn donations.wsgi --log-file - 
-worker: celery worker --app=tasks.app
+worker: celery -A donations worker -B -Q celery -l info
