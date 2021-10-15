@@ -79,9 +79,8 @@ def dms_webhook(request):
 				payload = payload,
 			)
 		
-	messages = process_webhook_payload.delay(payload)
-	print(messages)
-	return HttpResponse(messages, content_type="text/plain")
+	process_webhook_payload.delay(payload)
+	return redirect("/fr")
 
 @login_required(login_url="/fr/login")
 def webhooklogs(request, lang, change=None):
@@ -198,7 +197,7 @@ def dashboard(request, lang, change=None):
 	for donation in unadulterated_donations.exclude(id__in = locked):
 		donation.locked = False
 		donation.save()
-	
+
 	# receipt eligibility
 	eligibility = Paramètre.objects.get(id=3)
 	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}"))) for i in range(1,11)]))
