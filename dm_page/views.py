@@ -57,7 +57,7 @@ def logoutUser(request, lang):
 @non_atomic_requests
 def dms_webhook(request):
 	# Verify username and password
-	print("first instance: ", request.body)
+	print("first instance: ")
 	username = request.headers.get("Username", "")
 	password = request.headers.get("Password", "")
 	if not compare_digest(username, DMS_WEBHOOK_USERNAME):
@@ -70,7 +70,7 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Password header.",
 			content_type = "text/plain",
 		)
-	print("second instance: ", request.body)
+	print("second instance: ")
 	return HttpResponse(request)
 	payload = json.loads(request.body)
 	if type(payload["notifications"]) != list:	# if the payload isn't the send_all function:
