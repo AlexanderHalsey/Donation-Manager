@@ -56,9 +56,8 @@ def logoutUser(request, lang):
 @require_POST
 @non_atomic_requests
 def dms_webhook(request):
-	print("hello :)")
-	print(request.POST)
 	# Verify username and password
+	print("first instance: ", request.body)
 	username = request.headers.get("Username", "")
 	password = request.headers.get("Password", "")
 	if not compare_digest(username, DMS_WEBHOOK_USERNAME):
@@ -71,7 +70,8 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Password header.",
 			content_type = "text/plain",
 		)
-	return HttpResponse("we got here ok")
+	print("second instance: ", request.body)
+	return HttpResponse(request)
 	payload = json.loads(request.body)
 	if type(payload["notifications"]) != list:	# if the payload isn't the send_all function:
 		WebhookLogs.objects.filter(
@@ -219,7 +219,6 @@ def dashboard(request, lang, change=None):
 	# forms
 	form = DonationForm()
 	if request.method == 'POST':
-		print(request.POST)
 
 		if request.POST.get("Submit") == "notification_read":
 			notification = Paramètre.objects.get(id=2)

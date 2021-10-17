@@ -13,7 +13,7 @@ path = "/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tes
 with open(path+"profile_person_send_all.json", "r") as jfile:
 	payload = json.load(jfile)
 	resp = requests.post(
-		'https://dmsivy.herokuapp.com/webhooks/7f6qy3IqT5L2x75mFoUkaEdrY9Kuutuu2dzbuxOwcfw/', 
+		'http://localhost:8000/webhooks/7f6qy3IqT5L2x75mFoUkaEdrY9Kuutuu2dzbuxOwcfw/', 
 		headers=headers, 
 		data=json.dumps(payload)
 	)
