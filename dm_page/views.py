@@ -69,6 +69,7 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Password header.",
 			content_type = "text/plain",
 		)
+	return HttpResponse("we got here ok")
 	payload = json.loads(request.body)
 	if type(payload["notifications"]) != list:	# if the payload isn't the send_all function:
 		WebhookLogs.objects.filter(
