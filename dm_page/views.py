@@ -56,6 +56,7 @@ def logoutUser(request, lang):
 @require_POST
 @non_atomic_requests
 def dms_webhook(request):
+	print(request.POST)
 	# Verify username and password
 	username = request.headers.get("Username", "")
 	password = request.headers.get("Password", "")
