@@ -57,7 +57,6 @@ def logoutUser(request, lang):
 @non_atomic_requests
 def dms_webhook(request):
 	# Verify username and password
-	print("first step")
 	username = request.headers.get("Username", "")
 	password = request.headers.get("Password", "")
 	if not compare_digest(username, DMS_WEBHOOK_USERNAME):
@@ -70,21 +69,16 @@ def dms_webhook(request):
 			f"Incorrect password in Dms-Webhook-Password header.",
 			content_type = "text/plain",
 		)
-	print("second step")
 	payload = json.loads(request.body)
-	print("third step")
-	if type(payload["notifications"]) != list:	# if the payload isn't the send_all function:
-		WebhookLogs.objects.filter(
-				received_at__lte = timezone.now() - datetime.timedelta(days=7)
-			).delete()
-		WebhookLogs.objects.create(
-				received_at = timezone.now(),
-				payload = payload,
-			)
-	print("fourth")
-	process_webhook_payload.delay(payload)
-	print("fifth")
-	return HttpResponse("payload will now be processed")
+	# if type(payload["notifications"]) != list:	# if the payload isn't the send_all function:
+	WebhookLogs.objects.filter(
+		received_at__lte = timezone.now() - datetime.timedelta(days=7)
+	).delete()
+	WebhookLogs.objects.create(
+		received_at = timezone.now(),
+		payload = payload,
+	)
+	return HttpResponse("payload to be processed")
 
 @login_required(login_url="/fr/login")
 def webhooklogs(request, lang, change=None):
@@ -107,6 +101,13 @@ def dashboard(request, lang, change=None):
 
 	# update receipts
 	file_storage_check()
+
+	# check if send_all function for contacts in seminar desk has been triggered
+	if WebhookLogs.objects.last() != None:
+		if type(WebhookLogs.objects.last().payload["notifications"]) == list: 
+			print("acknowledge me please")
+			process_webhook_payload.delay(WebhookLogs.objects.last().payload)
+			WebhookLogs.objects.last().delete()
 
 	# intial form_values
 	form_values = {
