@@ -54,7 +54,6 @@ def logoutUser(request, lang):
 
 @csrf_exempt
 @require_POST
-@non_atomic_requests
 def dms_webhook(request):
 	# Verify username and password
 	username = request.headers.get("Username", "")
@@ -93,7 +92,6 @@ def webhooklogs(request, lang, change=None):
 	return render(request, 'webhooklogs.html',{'logs': logs, 'language': language_text(lang=lang)})
 
 @login_required(login_url='/fr/login')
-@non_atomic_requests
 def dashboard(request, lang, change=None):
 
 	# language change whilst mainting current url
