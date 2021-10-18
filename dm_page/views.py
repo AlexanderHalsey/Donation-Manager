@@ -93,6 +93,7 @@ def webhooklogs(request, lang, change=None):
 	return render(request, 'webhooklogs.html',{'logs': logs, 'language': language_text(lang=lang)})
 
 @login_required(login_url='/fr/login')
+@non_atomic_requests
 def dashboard(request, lang, change=None):
 
 	# language change whilst mainting current url
@@ -103,13 +104,9 @@ def dashboard(request, lang, change=None):
 	file_storage_check()
 
 	# check if send_all function for contacts in seminar desk has been triggered
-	print("first value: ", datetime.datetime.now())
 	if WebhookLogs.objects.last() != None:
-		print("second value: ", datetime.datetime.now())
 		if type(WebhookLogs.objects.last().payload["notifications"]) == list: 
-			print("third value: ", datetime.datetime.now())
 			process_webhook_payload.delay(WebhookLogs.objects.last().payload)
-			print("fourth value: ", datetime.datetime.now())
 			WebhookLogs.objects.last().delete()
 
 	# intial form_values
