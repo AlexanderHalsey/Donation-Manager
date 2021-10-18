@@ -103,10 +103,13 @@ def dashboard(request, lang, change=None):
 	file_storage_check()
 
 	# check if send_all function for contacts in seminar desk has been triggered
+	print("first value: ", datetime.datetime.now())
 	if WebhookLogs.objects.last() != None:
+		print("second value: ", datetime.datetime.now())
 		if type(WebhookLogs.objects.last().payload["notifications"]) == list: 
-			print("acknowledge me please")
+			print("third value: ", datetime.datetime.now())
 			process_webhook_payload.delay(WebhookLogs.objects.last().payload)
+			print("fourth value: ", datetime.datetime.now())
 			WebhookLogs.objects.last().delete()
 
 	# intial form_values
