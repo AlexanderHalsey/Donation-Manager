@@ -104,7 +104,7 @@ def dashboard(request, lang, change=None):
 	# check if send_all function for contacts in seminar desk has been triggered
 	if WebhookLogs.objects.last() != None:
 		if type(WebhookLogs.objects.last().payload["notifications"]) == list: 
-			process_webhook_payload.delay(WebhookLogs.objects.last().payload)
+			print(process_webhook_payload.delay(WebhookLogs.objects.last().payload))
 			WebhookLogs.objects.last().delete()
 
 	# intial form_values
