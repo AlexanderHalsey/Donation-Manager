@@ -403,10 +403,8 @@
               <td></td>
               {% else %}
               <td>
-                {% if donation.locked %}
-                <div class="row justify-content-center">  
-                  <span><img src="{% static 'icons/lock.jpeg' %}" class="img" width="25" height="25" alt="lock"></span>
-                </div>
+                {% if donation.locked %} 
+                <span><img src="{% static 'icons/lock.jpeg' %}" class="img" width="25" height="25" alt="lock"></span>
                 {% else %}
                 <form method="GET">
                   {% csrf_token %}

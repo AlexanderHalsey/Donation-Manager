@@ -222,7 +222,7 @@ def dashboard(request, lang, change=None):
 				donation.date_donated = form.cleaned_data["date_donated"]
 				donation.payment_mode = PaymentMode.objects.get(payment_mode = form.cleaned_data["payment_mode"])
 				donation.payment_mode_name = form.cleaned_data["payment_mode"]
-				donation.organisation = Organisation.objects.get(profile__name = form.cleaned_data["organisation"])
+				donation.organisation = Organisation.objects.get(name = form.cleaned_data["organisation"])
 				donation.organisation_name = form.cleaned_data["organisation"]
 				donation.donation_type = DonationType.objects.get(name = form.cleaned_data["donation_type"])
 				donation.donation_type_name = form.cleaned_data["donation_type"]
