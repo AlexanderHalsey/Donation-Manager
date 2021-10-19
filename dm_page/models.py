@@ -60,9 +60,12 @@ class Contact(models.Model):
 		return self.first_name + " " + self.last_name
 
 class PaymentMode(models.Model):
-	payment_mode = models.CharField(max_length=200, null=True, blank=True)
+	payment_mode = models.CharField(max_length=200, null=True, blank=True, verbose_name="Nom")
 	def __str__(self):
 		return self.payment_mode
+	class Meta:
+		verbose_name = "Mode de Paiement"
+		verbose_name_plural = "Mode de Paiement"
 
 class Organisation(models.Model):
 	name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Nom")
@@ -221,8 +224,6 @@ class Paramètre(models.Model):
 		if self.id == 3:
 			return "Conditions d'éligibilité des reçus"
 		if self.id == 4:
-			return "Configuration des Reçus"
-		if self.id == 5:
 			return "Configuration de l'Email"
 
 class WebhookLogs(models.Model):

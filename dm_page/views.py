@@ -199,7 +199,7 @@ def dashboard(request, lang, change=None):
 
 			create_individual_receipt.delay(model_to_dict(receipt), model_to_dict(donation), receipt.file_name)
 			if request.POST.get("email") == 'true':
-				e = Paramètre.objects.get(id=5)
+				e = Paramètre.objects.get(id=4)
 				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, 1, cc=e.cc)
