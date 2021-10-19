@@ -170,7 +170,7 @@ def dashboard(request, lang, change=None):
 			return redirect(f"/{lang}/")
 
 		if request.POST.get("Submit") == "email_confirmation_read":
-			notification = Paramètre.objects.get(id=5)
+			notification = Paramètre.objects.get(id=4)
 			notification.email_notification = False
 			notification.email_notification_list = None
 			notification.save()
