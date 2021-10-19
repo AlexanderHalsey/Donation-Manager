@@ -343,7 +343,7 @@
         <div class="row justify-content-end">
           <div class="col-11 text-start">
             <div class="my-2">
-              <p><span class="ms-3" style="background-color: #e5b3c5;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.red}}<br><span class="ms-3" style="background-color: #f0ddaf;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.yellow}}<br><span class="ms-3" style="background-color: #a7d8b2;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.green}}<br><span class="ms-3" style="background-color: #bfcdf4;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.blue}}</p>
+              <p><span class="ms-3" style="background-color: #e5b3c5;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.red}}<br><span class="ms-3" style="background-color: #f0ddaf;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.yellow}}<br><span class="ms-3" style="background-color: #a7d8b2;padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.green}}<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="{% static 'icons/lock.jpeg' %}" class="img" width="21" height="21" alt="lock">&nbsp;&nbsp;{{language.table.blue}}</p>
             </div>
           </div>
         </div>
@@ -372,8 +372,6 @@
             {% for donation in donations %}
             {% if donation.disabled %}
             <tr class="table-danger">
-            {% elif donation.locked %}
-            <tr class="table-primary">
             {% elif donation.pdf %}
             <tr class="table-success">
             {% elif donation.eligible %}
@@ -401,10 +399,15 @@
               {% else %}
               <td>{{ donation.donation_type }}</td>
               {% endif %}
-              {% if donation.pdf or donation.locked or donation.disabled %}
+              {% if donation.pdf or donation.disabled %}
               <td></td>
               {% else %}
               <td>
+                {% if donation.locked %}
+                <div class="row justify-content-center">  
+                  <span><img src="{% static 'icons/lock.jpeg' %}" class="img" width="25" height="25" alt="lock"></span>
+                </div>
+                {% else %}
                 <form method="GET">
                   {% csrf_token %}
                   <div class="row mx-1 justify-content-end">
@@ -425,6 +428,7 @@
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
                 </form>
+                {% endif %}
               </td>
               {% endif %}
             </tr>

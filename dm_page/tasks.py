@@ -33,7 +33,12 @@ from django.db.transaction import atomic
 
 @shared_task
 def create_individual_receipt(receipt, donation, file_name):
-	receipt_settings = Paramètre.objects.get(id=4)
+	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
+	if len(receipt_settings) > 1:
+		print("There is more than one default value")
+		print("Something has gone wrong with the save functionality")
+	else:
+		receipt_settings = receipt_settings[0]
 	path = f"{BASE_DIR}/static/pdf/receipts/"
 	c = Contact.objects.get(id=donation["contact"])
 	print("path: ", path)
@@ -45,17 +50,17 @@ def create_individual_receipt(receipt, donation, file_name):
 		address = [address[0]+(", " if address[0] != "" else "")+address[1]]+list(filter(lambda x: x, address[2]))+[address[3]+" "+address[4]]+[address[5]+(", " if address[6] != "" else "")+address[6]]
 	text_variables = {
 		"institut_address": [
-			receipt_settings.institut_title, 
-			receipt_settings.institut_street_name, 
-			receipt_settings.institut_post_code + " " + receipt_settings.institut_town
+			receipt_settings.institut_title or "", 
+			receipt_settings.institut_street_name or "", 
+			(receipt_settings.institut_post_code or "") + " " + (receipt_settings.institut_town or "")
 		],
 		"receipt_id": [str(receipt["id"])],
 		"organisation_object": [
 			"Object:", 
-			receipt_settings.object_title, 
-			receipt_settings.object_description
+			receipt_settings.object_title or "", 
+			receipt_settings.object_description or ""
 		],
-		"contact": [c.profile.name], 
+		"contact": [c.profile.name or ""], 
 		"contact_address": address,
 		"date_donated": ["/".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1])],
 		"amount": ["€ "+ str(donation["amount"])],
@@ -65,13 +70,13 @@ def create_individual_receipt(receipt, donation, file_name):
 			donation["forme_du_don_name"], 
 			donation["nature_du_don_name"],
 		], 
-		"institut_village": [receipt_settings.institut_town],
+		"institut_village": [receipt_settings.institut_town or ""],
 		"date_today": ["/".join(str(datetime.date.today()).split("-")[::-1])],
-		"president": [receipt_settings.president],
+		"president": [receipt_settings.president or ""],
 	}
 	images = {
-		"institution": receipt_settings.institut_image,
-		"signature": receipt_settings.president_signature,
+		"institution": receipt_settings.institut_image or "",
+		"signature": receipt_settings.president_signature or "",
 	}
 	packet = io.BytesIO()
 	can = canvas.Canvas(packet, pagesize=A4)
@@ -113,8 +118,11 @@ def create_individual_receipt(receipt, donation, file_name):
 			can.drawString(t[2],t[3], value[index])
 
 	for key, value in images.items():
-		img = ImageReader(value)
-		can.drawImage(img, image_matrix[key][0], image_matrix[key][1], width=image_matrix[key][2], preserveAspectRatio=True)
+		try:
+			img = ImageReader(value)
+			can.drawImage(img, image_matrix[key][0], image_matrix[key][1], width=image_matrix[key][2], preserveAspectRatio=True)
+		except:
+			pass
 	can.showPage()
 	can.save()
 	print("can created.")
@@ -135,7 +143,12 @@ def create_individual_receipt(receipt, donation, file_name):
 
 @shared_task
 def create_annual_receipt(receipt, contact, donations, date_range, file_name):
-	receipt_settings = Paramètre.objects.get(id=4)
+	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
+	if len(receipt_settings) > 1:
+		print("There is more than one default value")
+		print("Something has gone wrong with the save functionality")
+	else:
+		receipt_settings = receipt_settings[0]
 	path = f"{BASE_DIR}/static/pdf/receipts/"
 	p = Profile.objects.get(id=contact["profile"])
 	# Create pdf
@@ -146,15 +159,15 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 		address = [address[0]+(", " if address[0] != "" else "")+address[1]]+list(filter(lambda x: x, address[2]))+[address[3]+" "+address[4]]+[address[5]+(", " if address[6] != "" else "")+address[6]]
 	text_variables = {
 		"institut_address": [
-			receipt_settings.institut_title, 
-			receipt_settings.institut_street_name, 
-			receipt_settings.institut_post_code + " " + receipt_settings.institut_town
+			receipt_settings.institut_title or "", 
+			receipt_settings.institut_street_name or "", 
+			(receipt_settings.institut_post_code or "") + " " + (receipt_settings.institut_town or "")
 		],
 		"receipt_id": [str(receipt["id"])],
 		"organisation_object": [
 			"Object:", 
-			receipt_settings.object_title, 
-			receipt_settings.object_description
+			receipt_settings.object_title or "", 
+			receipt_settings.object_description or ""
 		],
 		"contact": [p.name], 
 		"contact_address": address,
@@ -164,8 +177,8 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 		"in_letters": [num2words.num2words("%.2f"%sum([float(d["amount"]) for d in donations]), lang="fr").capitalize() + " euros"], 
 			}
 	images = {
-		"institution": receipt_settings.institut_image,
-		"president_signature": receipt_settings.president_signature,
+		"institution": receipt_settings.institut_image or "",
+		"president_signature": receipt_settings.president_signature or "",
 	}
 	packet = io.BytesIO()
 	can = canvas.Canvas(packet, pagesize=A4)
@@ -201,9 +214,11 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 				can.drawText(textobject)
 				continue
 			can.drawString(t[2],t[3], value[index])
-
-	img = ImageReader(images["institution"])
-	can.drawImage(img, 49, 555, width=80, preserveAspectRatio=True)
+	try:
+		img = ImageReader(images["institution"])
+		can.drawImage(img, 49, 555, width=80, preserveAspectRatio=True)
+	except:
+		pass
 
 	can.grid([69, 150, 232, 367, 450, 515],[274]+[246-(y*18) for y in range(len(donations[:9])+1)])
 	can.setFont(fonts[0], sizes[4])
@@ -220,7 +235,7 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 		if index == 9:
 			break
 		can.drawString(79, 235-(index*18), " / ".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1]))
-		can.drawString(156, 235-(index*18), PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode)
+		can.drawString(156, 235-(index*18), PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode or "")
 		can.drawString(239, 235-(index*18), donation["forme_du_don_name"])
 		can.drawString(377, 235-(index*18), donation["nature_du_don_name"])
 		can.drawString(460, 235-(index*18), "€ " + str(donation["amount"]))
@@ -240,14 +255,17 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 			can2.drawString(239, 767-(index*18), donation["forme_du_don_name"])
 			can2.drawString(377, 767-(index*18), donation["nature_du_don_name"])
 			can2.drawString(450, 767-(index*18), "€ " + str(donation["amount"]))
-	img2 = ImageReader(str(BASE_DIR)+"/static/png/end_of.png")
-	if len(donations) > 9:
-		additional = (len(donations[9:]))*18
-		if additional != 0:
-			additional += 50
-	else:
-		additional = 0
-	can2.drawImage(img2, 43, 492-additional, width=506, preserveAspectRatio=True)
+	try:
+		img2 = ImageReader(str(BASE_DIR)+"/static/png/end_of.png")
+		if len(donations) > 9:
+			additional = (len(donations[9:]))*18
+			if additional != 0:
+				additional += 50
+		else:
+			additional = 0
+		can2.drawImage(img2, 43, 492-additional, width=506, preserveAspectRatio=True)
+	except:
+		pass
 	can2.showPage()
 	can2.save()
 	packet2.seek(0)
@@ -256,11 +274,14 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 	packet3 = io.BytesIO()
 	can3 = canvas.Canvas(packet3, pagesize=A4)
 	can3.setFont(fonts[1], sizes[0])
-	can3.drawString(52, 734-additional, "A "+receipt_settings.institut_town+" le :")
+	can3.drawString(52, 734-additional, "A "+(receipt_settings.institut_town or "")+" le :")
 	can3.drawString(142, 734-additional, "/".join(str(datetime.date.today()).split("-")[::-1]))
-	can3.drawString(305, 583-additional, receipt_settings.president)
-	img3 = ImageReader(images["president_signature"])
-	can3.drawImage(img3, 310, 483-additional, width=100, preserveAspectRatio=True)
+	can3.drawString(305, 583-additional, (receipt_settings.president or ""))
+	try:
+		img3 = ImageReader(images["president_signature"])
+		can3.drawImage(img3, 310, 483-additional, width=100, preserveAspectRatio=True)
+	except:
+		pass
 	can3.showPage()
 	can3.save()
 	packet3.seek(0)
@@ -312,7 +333,7 @@ def cancel_pdf_receipt(path):
 def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 	try:
 		sleep(t*15)
-		s = Paramètre.objects.get(id=5)
+		s = Paramètre.objects.get(id=4)
 		smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
 		smtp_object.ehlo()
 		smtp_object.starttls()
@@ -350,7 +371,7 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 @shared_task
 def email_confirmation(t, lst):
 	sleep(t*15+10)
-	notification = Paramètre.objects.get(id=5)
+	notification = Paramètre.objects.get(id=4)
 	l = []
 	for contact_id, receipt_id in lst:
 		receipt = ReçusFiscaux.objects.get(id=receipt_id)

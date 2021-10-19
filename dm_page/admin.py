@@ -62,7 +62,7 @@ class SettingsForm(forms.ModelForm):
 		except:
 			pass
 		try:
-			self.fields['host_password'].widget = forms.PasswordInput(attrs={'placeholder':'********','autocomplete': 'off','data-toggle': 'password'}, value=Paramètre.objects.get(id=5).host_password)
+			self.fields['host_password'].widget = forms.PasswordInput(attrs={'placeholder':'********','autocomplete': 'off','data-toggle': 'password'}, value=Paramètre.objects.get(id=4).host_password)
 		except:
 			pass
 	class Meta:
@@ -104,18 +104,6 @@ class ModelAdminSettings(admin.ModelAdmin):
 			)
 		if i == 4:
 			return (
-				'institut_title', 
-				'institut_street_name',
-				'institut_town',
-				'institut_post_code',
-				'institut_image',
-				'object_title',
-				'object_description',
-				'president',
-				'president_signature',
-			)
-		if i == 5:
-			return (
 				'host_email',
 				'host_password',
 				'body',
@@ -124,18 +112,16 @@ class ModelAdminSettings(admin.ModelAdmin):
 				'smtp_port',
 			)
 
-'''class OrganisationForm(forms.ModelForm):
+class OrganisationForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.fields['profile'].required = True
-		self.fields['profile'].queryset = Organisation.objects.filter(profile__object_type="ORGANIZATION")
+		self.fields['name'].required = True
 	class Meta:
 		model = Organisation
 		fields = '__all__'
 
 class ModelAdminOrganisation(admin.ModelAdmin):
-	fields = ('profile',)
-	form = OrganisationForm'''
+	form = OrganisationForm
 
 class DonationTypeForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
@@ -200,7 +186,7 @@ mysite.register(User)
 mysite.register(ReçusFiscaux, ModelAdminDonationReceipt)
 mysite.register(Paramètre, ModelAdminSettings)
 mysite.register(Locked, ModelAdminLocked)
-'''admin.site.register(Organisation, ModelAdminOrganisation)'''
+mysite.register(Organisation, ModelAdminOrganisation)
 mysite.register(DonationType, ModelAdminDonationType)
 mysite.register(NatureDuDon, ModelAdminNatureDuDon)
 mysite.register(FormeDuDon, ModelAdminFormeDuDon)

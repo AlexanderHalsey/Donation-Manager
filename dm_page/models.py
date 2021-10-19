@@ -65,10 +65,25 @@ class PaymentMode(models.Model):
 		return self.payment_mode
 
 class Organisation(models.Model):
-	profile = models.ForeignKey('Profile', on_delete=models.CASCADE, null=True, blank=True)
-	additional_name = models.CharField(max_length= 200, default=None, null=True)
+	name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Nom")
+	institut_title = models.CharField(max_length=300, null=True, blank=True, verbose_name="Institution")
+	institut_street_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Rue")
+	institut_town = models.CharField(max_length=200, null=True, blank=True, verbose_name="Commune")
+	institut_post_code = models.CharField(max_length=200, null=True, blank=True, verbose_name="Code Postal")
+	institut_image = models.FileField(null=True, blank=True, verbose_name="Image de l'Institut")
+	object_title = models.CharField(max_length=300, null=True, blank=True, verbose_name="Titre de l'Objet")
+	object_description = models.TextField(null=True, blank=True, verbose_name="Description de l'Objet")
+	president = models.CharField(max_length=200, null=True, blank=True, verbose_name="Président")
+	president_signature = models.FileField(null=True, blank=True, verbose_name="Signature du Président")
+	used_for_receipt = models.BooleanField(default=False, verbose_name="Détails utilisés pour le reçu")
 	def __str__(self):
-		return self.profile.name
+		return self.name
+	def save(self, *args, **kwargs):
+		if self.used_for_receipt == True:
+			for past_instance in Organisation.objects.all():
+				past_instance.used_for_receipt = False
+				super(Organisation, past_instance).save(*args, **kwargs)
+		super(Organisation, self).save(*args, **kwargs)
 	class Meta:
 		verbose_name = "Organisation"
 		verbose_name_plural = "Organisations"
@@ -190,15 +205,6 @@ class Paramètre(models.Model):
 	donation_type_9 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type9")
 	organisation_10 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation10")
 	donation_type_10 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type10")
-	institut_title = models.CharField(max_length=300, null=True, blank=True, verbose_name="Institution")
-	institut_street_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Rue")
-	institut_town = models.CharField(max_length=200, null=True, blank=True, verbose_name="Commune")
-	institut_post_code = models.CharField(max_length=200, null=True, blank=True, verbose_name="Code Postal")
-	institut_image = models.FileField(null=True, blank=True, verbose_name="Image de l'Institut")
-	object_title = models.CharField(max_length=300, null=True, blank=True, verbose_name="Titre de l'Objet")
-	object_description = models.TextField(null=True, blank=True, verbose_name="Description de l'Objet")
-	president = models.CharField(max_length=200, null=True, blank=True, verbose_name="Président")
-	president_signature = models.FileField(null=True, blank=True, verbose_name="Signature du Président")
 	host_email = models.CharField(max_length=200, null=True, blank=True, verbose_name="Hôte Email")
 	host_password = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mot de passe")
 	cc = models.CharField(max_length=200, null=True, blank=True)
