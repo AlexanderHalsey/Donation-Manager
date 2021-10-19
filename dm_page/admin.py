@@ -155,6 +155,9 @@ class FormeDuDonForm(forms.ModelForm):
 		model = FormeDuDon
 		fields = '__all__'
 
+class ModelAdminPaymentMode(admin.ModelAdmin):
+	fields = ('payment_mode',)
+
 class ModelAdminFormeDuDon(admin.ModelAdmin):
 	fields = (('name', 'default_value'),)
 	form = FormeDuDonForm
@@ -190,4 +193,5 @@ mysite.register(Organisation, ModelAdminOrganisation)
 mysite.register(DonationType, ModelAdminDonationType)
 mysite.register(NatureDuDon, ModelAdminNatureDuDon)
 mysite.register(FormeDuDon, ModelAdminFormeDuDon)
+mysite.register(PaymentMode, ModelAdminPaymentMode)
 
