@@ -150,7 +150,7 @@ def dashboard(request, lang, change=None):
 		if donation.id in locked:
 			donation.locked = True
 			donation.save()
-		if (donation.organisation.name, donation.donation_type.name) in receipt_conditions:
+		if (donation.organisation.name, donation.donation_type_name) in receipt_conditions:
 			donation.eligible = True
 			donation.save()
 
