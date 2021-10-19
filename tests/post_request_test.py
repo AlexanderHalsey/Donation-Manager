@@ -10,7 +10,7 @@ headers["Password"] = "6f85048b984cdf9a3204ac23c4eb7e2f0cc03a5ec01b4113c77f7b686
 
 path = "/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json/"
 
-with open(path+"profile_person_send_all.json", "r") as jfile:
+with open(path+"profile_person_create.json", "r") as jfile:
 	payload = json.load(jfile)
 	resp = requests.post(
 		'http://localhost:8000/webhooks/7f6qy3IqT5L2x75mFoUkaEdrY9Kuutuu2dzbuxOwcfw/', 

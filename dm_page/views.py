@@ -69,15 +69,16 @@ def dms_webhook(request):
 			content_type = "text/plain",
 		)
 	payload = json.loads(request.body)
-	# if type(payload["notifications"]) != list:	# if the payload isn't the send_all function:
+	
+	WebhookLogs.objects.create(
+		payload = payload,
+		received_at = timezone.now(),
+	)
 	WebhookLogs.objects.filter(
 		received_at__lte = timezone.now() - datetime.timedelta(days=7)
 	).delete()
-	WebhookLogs.objects.create(
-		received_at = timezone.now(),
-		payload = payload,
-	)
-	return HttpResponse("payload to be processed")
+	process_webhook_payload.delay()
+	return HttpResponse("Payload to be processed.")
 
 @login_required(login_url="/fr/login")
 def webhooklogs(request, lang, change=None):
@@ -100,12 +101,6 @@ def dashboard(request, lang, change=None):
 
 	# update receipts
 	file_storage_check()
-
-	# check if send_all function for contacts in seminar desk has been triggered
-	if WebhookLogs.objects.last() != None:
-		if type(WebhookLogs.objects.last().payload["notifications"]) == list: 
-			print(process_webhook_payload.delay(WebhookLogs.objects.last().payload))
-			WebhookLogs.objects.last().delete()
 
 	# intial form_values
 	form_values = {
