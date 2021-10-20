@@ -35,11 +35,6 @@ from django.db.transaction import atomic
 def create_individual_receipt(receipt, donation, file_name):
 	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
 	print(donation)
-	print(PaymentMode.objects.get(id=donation["payment_mode"]))
-	try:
-		print(PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode)
-	except:
-		print("hmm")
 	if len(receipt_settings) > 1:
 		print("There is more than one default value")
 		print("Something has gone wrong with the save functionality")
@@ -48,11 +43,14 @@ def create_individual_receipt(receipt, donation, file_name):
 	path = f"{BASE_DIR}/static/pdf/receipts/"
 	c = Contact.objects.get(id=donation["contact"])
 	# Create pdf
+	print("before address")
 	address = eval(c.profile.primary_address)
 	if len(address) == 5:
 		address = address[:2]+[address[2]+", "+address[3]]+[address[4]]
 	if len(address) == 7:
 		address = [address[0]+(", " if address[0] != "" else "")+address[1]]+list(filter(lambda x: x, address[2]))+[address[3]+" "+address[4]]+[address[5]+(", " if address[6] != "" else "")+address[6]]
+	print("after address")
+	print("before text variables")
 	text_variables = {
 		"institut_address": [
 			receipt_settings.institut_title or "", 
@@ -79,10 +77,13 @@ def create_individual_receipt(receipt, donation, file_name):
 		"date_today": ["/".join(str(datetime.date.today()).split("-")[::-1])],
 		"president": [receipt_settings.president or ""],
 	}
+	print("after text variables")
+	print("before image variables")
 	images = {
 		"institution": receipt_settings.institut_image or "",
 		"signature": receipt_settings.president_signature or "",
 	}
+	print("after image variables")
 	packet = io.BytesIO()
 	can = canvas.Canvas(packet, pagesize=A4)
 
@@ -110,6 +111,7 @@ def create_individual_receipt(receipt, donation, file_name):
 		"institution": (45, 565, 80),
 		"signature": (310, -55, 100),
 	}
+	print("before processing text variables")
 	for key,value in text_variables.items():
 		for index in range(len(value)):
 			t = text_matrix[key][index]
@@ -121,7 +123,7 @@ def create_individual_receipt(receipt, donation, file_name):
 				can.drawText(textobject)
 				continue
 			can.drawString(t[2],t[3], value[index])
-
+	print("after processing text variables")
 	for key, value in images.items():
 		try:
 			img = ImageReader(value)
