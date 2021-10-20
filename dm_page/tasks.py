@@ -334,11 +334,14 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 	try:
 		sleep(t*15)
 		s = Paramètre.objects.get(id=4)
+		print("paramater set ok")
 		smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
+		print("SMTP domain and SMTP port accepted.")
 		smtp_object.ehlo()
 		smtp_object.starttls()
 		smtp_object.ehlo()
 		smtp_object.login(s.host_email, s.host_password)
+		print("Logged in ok.")
 		message = MIMEMultipart()
 		message["From"] = s.host_email
 		message["To"] = send_to
