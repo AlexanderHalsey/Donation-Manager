@@ -34,6 +34,7 @@ from django.db.transaction import atomic
 @shared_task
 def create_individual_receipt(receipt, donation, file_name):
 	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
+	print(donation)
 	if len(receipt_settings) > 1:
 		print("There is more than one default value")
 		print("Something has gone wrong with the save functionality")
@@ -342,6 +343,7 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 		smtp_object.ehlo()
 		smtp_object.login(s.host_email, s.host_password)
 		print("Logged in ok.")
+		print(pdf_path)
 		message = MIMEMultipart()
 		message["From"] = s.host_email
 		message["To"] = send_to
