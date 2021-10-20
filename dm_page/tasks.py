@@ -393,8 +393,8 @@ def process_webhook_payload():
 		payload = stored_value.payload
 		stored_value.processed = True
 		stored_value.save()
-
 		action = payload["notifications"][0]["action"].split("profile.")[1]
+		print(action)
 		data = payload["notifications"][0]["payload"]
 
 		try:
