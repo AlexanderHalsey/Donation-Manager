@@ -36,6 +36,10 @@ def create_individual_receipt(receipt, donation, file_name):
 	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
 	print(donation)
 	print(PaymentMode.objects.get(id=donation["payment_mode"]))
+	try:
+		print(PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode)
+	except:
+		print("hmm")
 	if len(receipt_settings) > 1:
 		print("There is more than one default value")
 		print("Something has gone wrong with the save functionality")
@@ -43,7 +47,6 @@ def create_individual_receipt(receipt, donation, file_name):
 		receipt_settings = receipt_settings[0]
 	path = f"{BASE_DIR}/static/pdf/receipts/"
 	c = Contact.objects.get(id=donation["contact"])
-	print("path: ", path)
 	# Create pdf
 	address = eval(c.profile.primary_address)
 	if len(address) == 5:
