@@ -35,6 +35,7 @@ from django.db.transaction import atomic
 def create_individual_receipt(receipt, donation, file_name):
 	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
 	print(donation)
+	print(PaymentMode.objects.get(id=donation["payment_mode"]))
 	if len(receipt_settings) > 1:
 		print("There is more than one default value")
 		print("Something has gone wrong with the save functionality")
@@ -335,7 +336,6 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 	try:
 		sleep(t*15)
 		s = Paramètre.objects.get(id=4)
-		print("paramater set ok")
 		smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
 		print("SMTP domain and SMTP port accepted.")
 		smtp_object.ehlo()
@@ -343,7 +343,6 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 		smtp_object.ehlo()
 		smtp_object.login(s.host_email, s.host_password)
 		print("Logged in ok.")
-		print(pdf_path)
 		message = MIMEMultipart()
 		message["From"] = s.host_email
 		message["To"] = send_to
@@ -360,6 +359,7 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 				f"attachment; filename={pdf_path.split('/receipts/')[1]}",
 			)
 			message.attach(part)
+		print("PDF file found.")
 		text = message.as_string()
 		smtp_object.sendmail(s.host_email, send_to, text)
 		smtp_object.quit()
