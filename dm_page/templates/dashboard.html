@@ -386,7 +386,7 @@
               {% endif %}
               <td class="text-center">{{ donation.date_donated|date:"Y / m / d" }}</td>
               <td class="text-end">€ {{ donation.amount }}</td>
-              <td>{{ donation.payment_mode }}</td>
+              <td>{{ donation.payment_mode_name }}</td>
               {% if donation.organisation is None %}
               <td>{{ donation.organisation_name }}</td>
               {% else %}
@@ -400,9 +400,9 @@
               {% if donation.pdf or donation.disabled %}
               <td></td>
               {% else %}
-              <td>
+              <td style="text-align: center;">
                 {% if donation.locked %} 
-                <span style="margin-left: 60px;"><img src="{% static 'icons/lock.png' %}" class="img" width="25" height="25" alt="lock"></span>
+                <span><img src="{% static 'icons/lock.png' %}" class="img" width="25" height="25" alt="lock"></span>
                 {% else %}
                 <form method="GET">
                   {% csrf_token %}

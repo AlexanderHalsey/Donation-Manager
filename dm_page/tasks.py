@@ -32,16 +32,16 @@ from django.db.transaction import atomic
 
 
 @shared_task
-def create_individual_receipt(receipt, donation, file_name):
+def create_individual_receipt(receipt_id, donation_id, file_name):
 	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
-	print(donation)
+	donation = Donation.objects.get(id=donation_id)
 	if len(receipt_settings) > 1:
 		print("There is more than one default value")
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
 	path = f"{BASE_DIR}/static/pdf/receipts/"
-	c = Contact.objects.get(id=donation["contact"])
+	c = donation.contact
 	# Create pdf
 	address = eval(c.profile.primary_address)
 	if len(address) == 5:
@@ -54,7 +54,7 @@ def create_individual_receipt(receipt, donation, file_name):
 			receipt_settings.institut_street_name or "", 
 			(receipt_settings.institut_post_code or "") + " " + (receipt_settings.institut_town or "")
 		],
-		"receipt_id": [str(receipt["id"])],
+		"receipt_id": [str(receipt_id)],
 		"organisation_object": [
 			"Object:", 
 			receipt_settings.object_title or "", 
@@ -62,13 +62,13 @@ def create_individual_receipt(receipt, donation, file_name):
 		],
 		"contact": [c.profile.name or ""], 
 		"contact_address": address,
-		"date_donated": ["/".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1])],
-		"amount": ["€ "+ str(donation["amount"])],
+		"date_donated": ["/".join(str(donation.date_donated).split("-")[::-1])],
+		"amount": ["€ "+ str(donation.amount)],
 		"other_donation_variables": [
-			num2words.num2words("%.2f"%float(donation["amount"] or 0), lang="fr").capitalize() + " euros", 
-			PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode, 
-			donation["forme_du_don_name"], 
-			donation["nature_du_don_name"],
+			num2words.num2words("%.2f"%float(donation.amount or 0), lang="fr").capitalize() + " euros", 
+			donation.payment_mode_name, 
+			donation.forme_du_don_name, 
+			donation.nature_du_don_name,
 		], 
 		"institut_village": [receipt_settings.institut_town or ""],
 		"date_today": ["/".join(str(datetime.date.today()).split("-")[::-1])],
@@ -142,15 +142,19 @@ def create_individual_receipt(receipt, donation, file_name):
 	return
 
 @shared_task
-def create_annual_receipt(receipt, contact, donations, date_range, file_name):
+def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file_name):
 	receipt_settings = Organisation.objects.filter(used_for_receipt=True)
+	receipt = ReçusFiscaux.objects.get(id=receipt_id)
+	contact = Contact.objects.get(id=contact_id)
+	donations = Donation.objects.filter(id__in = donation_lst)
+	print("these should be donation objects...\n", donations)
 	if len(receipt_settings) > 1:
 		print("There is more than one default value")
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
 	path = f"{BASE_DIR}/static/pdf/receipts/"
-	p = Profile.objects.get(id=contact["profile"])
+	p = contact.profile
 	# Create pdf
 	address = eval(p.primary_address)
 	if len(address) == 5:
@@ -163,7 +167,7 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 			receipt_settings.institut_street_name or "", 
 			(receipt_settings.institut_post_code or "") + " " + (receipt_settings.institut_town or "")
 		],
-		"receipt_id": [str(receipt["id"])],
+		"receipt_id": [str(receipt_id)],
 		"organisation_object": [
 			"Object:", 
 			receipt_settings.object_title or "", 
@@ -171,10 +175,10 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 		],
 		"contact": [p.name], 
 		"contact_address": address,
-		"date_start": ["/".join((str(date_range[0]).split("T")[0]).split("-")[::-1])],
-		"date_end": ["/".join((str(date_range[1]).split("T")[0]).split("-")[::-1])],
-		"total_amount": ["€ "+ str("%.2f"%sum([float(d["amount"]) for d in donations]))],
-		"in_letters": [num2words.num2words("%.2f"%sum([float(d["amount"]) for d in donations]), lang="fr").capitalize() + " euros"], 
+		"date_start": ["/".join(date_range[0].split("-")[::-1])],
+		"date_end": ["/".join(date_range[1].split("-")[::-1])],
+		"total_amount": ["€ "+ str("%.2f"%sum([float(d.amount) for d in donations]))],
+		"in_letters": [num2words.num2words("%.2f"%sum([float(d.amount) for d in donations]), lang="fr").capitalize() + " euros"], 
 			}
 	images = {
 		"institution": receipt_settings.institut_image or "",
@@ -234,11 +238,11 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 	for index, donation in enumerate(donations):
 		if index == 9:
 			break
-		can.drawString(79, 235-(index*18), " / ".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1]))
-		can.drawString(156, 235-(index*18), PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode or "")
-		can.drawString(239, 235-(index*18), donation["forme_du_don_name"])
-		can.drawString(377, 235-(index*18), donation["nature_du_don_name"])
-		can.drawString(460, 235-(index*18), "€ " + str(donation["amount"]))
+		can.drawString(79, 235-(index*18), " / ".join(str(donation.date_donated).split("-")[::-1]))
+		can.drawString(156, 235-(index*18), donation.payment_mode_name or "")
+		can.drawString(239, 235-(index*18), donation.forme_du_don_name)
+		can.drawString(377, 235-(index*18), donation.nature_du_don_name)
+		can.drawString(460, 235-(index*18), "€ " + str(donation.amount))
 	can.showPage()
 	can.save()
 	packet.seek(0)
@@ -250,11 +254,11 @@ def create_annual_receipt(receipt, contact, donations, date_range, file_name):
 		can2.grid([69, 154, 232, 367, 438, 515],[778-(y*18) for y in range(len(donations[9:])+1)])
 		can2.setFont(fonts[2], sizes[3])
 		for index, donation in enumerate(donations[9:]):
-			can2.drawString(79, 767-(index*18), " / ".join((str(donation["date_donated"]).split("T")[0]).split("-")[::-1]))
-			can2.drawString(168, 767-(index*18), PaymentMode.objects.get(id=donation["payment_mode"]).payment_mode)
-			can2.drawString(239, 767-(index*18), donation["forme_du_don_name"])
-			can2.drawString(377, 767-(index*18), donation["nature_du_don_name"])
-			can2.drawString(450, 767-(index*18), "€ " + str(donation["amount"]))
+			can2.drawString(79, 767-(index*18), " / ".join(str(donation.date_donated).split("-")[::-1]))
+			can2.drawString(168, 767-(index*18), donation.payment_mode_name)
+			can2.drawString(239, 767-(index*18), donation.forme_du_don_name)
+			can2.drawString(377, 767-(index*18), donation.nature_du_don_name)
+			can2.drawString(450, 767-(index*18), "€ " + str(donation.amount))
 	try:
 		img2 = ImageReader(str(BASE_DIR)+"/static/png/end_of.png")
 		if len(donations) > 9:

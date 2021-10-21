@@ -197,7 +197,7 @@ def dashboard(request, lang, change=None):
 			receipt.donation_list = [donation.id]
 			receipt.cancel = False
 
-			create_individual_receipt.delay(model_to_dict(receipt), model_to_dict(donation), receipt.file_name)
+			create_individual_receipt.delay(receipt.id, donation.id, receipt.file_name)
 			if request.POST.get("email") == 'true':
 				e = Paramètre.objects.get(id=4)
 				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
@@ -620,11 +620,15 @@ def pdf_receipts(request, lang, change=None):
 	# annual_receipt tests for Ava Martin
 	# if date_trigger.toordinal() <= datetime.date.today().toordinal():
 	if request.GET.get('annual_receipt') == "ok":
-		date_range = [datetime.date(2019,1,1), datetime.date.today()]
+		date_range = [str(Paramètre.objects.get(id=1).date_range_start), str(Paramètre.objects.get(id=1).date_range_end)]
 		for x in range(1,11):
 			print(x)
 			contact = Contact.objects.get(id=x) 
-			annual_donations = Donation.objects.filter(contact=contact).filter(eligible=True).filter(pdf=False) # .filter(date_donated__gte = date_range[0]).filter(date_donated__lte = date_range[1])
+			annual_donations = Donation.objects.filter(contact=contact)\
+				.filter(eligible=True)\
+				.filter(pdf=False)\
+				.filter(date_donated__gte = date_range[0])\
+				.filter(date_donated__lte = date_range[1])
 			if len(annual_donations) > 0:
 				receipt = ReçusFiscaux()
 				receipt.save()
@@ -636,9 +640,9 @@ def pdf_receipts(request, lang, change=None):
 				receipt.cancel = False
 				receipt.save()
 				create_annual_receipt.delay(
-					model_to_dict(receipt), 
-					model_to_dict(contact), 
-					[model_to_dict(a) for a in annual_donations], 
+					receipt.id, 
+					contact.id, 
+					receipt.donation_list, 
 					date_range, 
 					receipt.file_name)
 				for donation in annual_donations:
@@ -835,10 +839,10 @@ def confirm_annual(request, lang, change=None):
 				receipt.cancel = False
 				receipt.save()
 				create_annual_receipt.delay(
-					model_to_dict(receipt), 
-					model_to_dict(receipt.contact), 
-					[model_to_dict(a) for a in annual_donations], 
-					date_range, 
+					receipt.id, 
+					receipt.contact.id, 
+					receipt.donation_list, 
+					[str(date) for date in date_range], 
 					receipt.file_name,
 				)
 				for donation in annual_donations:
