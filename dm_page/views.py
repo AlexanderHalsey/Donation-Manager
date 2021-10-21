@@ -197,7 +197,7 @@ def dashboard(request, lang, change=None):
 			receipt.donation_list = [donation.id]
 			receipt.cancel = False
 
-			create_individual_receipt.delay(receipt.id, donation.id, receipt.file_name)
+			create_individual_receipt(receipt.id, donation.id, receipt.file_name)
 			if request.POST.get("email") == 'true':
 				e = Paramètre.objects.get(id=4)
 				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
@@ -639,7 +639,7 @@ def pdf_receipts(request, lang, change=None):
 				receipt.donation_list = [d.id for d in annual_donations]
 				receipt.cancel = False
 				receipt.save()
-				create_annual_receipt.delay(
+				create_annual_receipt(
 					receipt.id, 
 					contact.id, 
 					receipt.donation_list, 
@@ -686,7 +686,6 @@ def pdf_receipts(request, lang, change=None):
 			receipt = ReçusFiscaux.objects.get(id=request.POST["Submit"])
 			send_to = request.POST["email"]
 			cc = request.POST["cc"]
-			print(cc)
 			body = request.POST["message"] + "\n\n"
 			path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
 			send_email.delay(receipt.id, path, send_to, body, 1, cc=cc)
@@ -838,7 +837,7 @@ def confirm_annual(request, lang, change=None):
 				receipt.donation_list = [d.id for d in annual_donations]
 				receipt.cancel = False
 				receipt.save()
-				create_annual_receipt.delay(
+				create_annual_receipt(
 					receipt.id, 
 					receipt.contact.id, 
 					receipt.donation_list, 
