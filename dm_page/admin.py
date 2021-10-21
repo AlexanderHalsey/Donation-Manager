@@ -106,8 +106,8 @@ class ModelAdminSettings(admin.ModelAdmin):
 			return (
 				'host_email',
 				'host_password',
-				'body',
 				'cc',
+				'body',
 				'smtp_domain',
 				'smtp_port',
 			)

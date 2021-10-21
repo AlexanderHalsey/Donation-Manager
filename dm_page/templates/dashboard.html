@@ -358,7 +358,6 @@
           <thead class="table-primary">
             <tr>
               <th>{{language.table.id}}</th>
-              <th>SeminarDesk ID</th>
               <th>{{language.table.contact}}</th>
               <th>{{language.table.dateDonated}}</th>
               <th>{{language.table.amount}}</th>
@@ -380,7 +379,6 @@
             <tr>
             {% endif %}
               <td>{{ donation.id }}</td>
-              <td>{{donation.contact.profile.seminar_desk_id}}</td>
               {% if donation.contact is None %}
               <td>{{ donation.contact_name }}</td>
               {% else %}
@@ -404,7 +402,7 @@
               {% else %}
               <td>
                 {% if donation.locked %} 
-                <span><img src="{% static 'icons/lock.jpeg' %}" class="img" width="25" height="25" alt="lock"></span>
+                <span style="margin-left: 60px;"><img src="{% static 'icons/lock.png' %}" class="img" width="25" height="25" alt="lock"></span>
                 {% else %}
                 <form method="GET">
                   {% csrf_token %}

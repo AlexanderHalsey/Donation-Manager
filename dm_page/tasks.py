@@ -467,7 +467,7 @@ def process_webhook_payload():
 						print("Profile object found at create.")
 						return 
 					except:
-						print("New profile being created.")
+						print(f"New profile being created for {data['name']}.")
 						p = Profile()
 						object_type = data["objectType"]
 						if object_type == "PERSON":

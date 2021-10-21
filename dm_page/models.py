@@ -211,7 +211,7 @@ class Paramètre(models.Model):
 	host_email = models.CharField(max_length=200, null=True, blank=True, verbose_name="Hôte Email")
 	host_password = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mot de passe")
 	cc = models.CharField(max_length=200, null=True, blank=True)
-	body = models.TextField(max_length=200, null=True, blank=True)
+	body = models.TextField(max_length=200, null=True, blank=True, verbose_name="Message")
 	smtp_domain = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Domain")
 	smtp_port = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Port")
 	email_notification = models.BooleanField(default=False)
