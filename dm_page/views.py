@@ -742,7 +742,7 @@ def pdf_receipts(request, lang, change=None):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
 		file_name = ReçusFiscaux.objects.get(id=int(i)).file_name
-		file_name = f"/app/static/pdf/receipts/{file_name}"
+		file_name = f"/static/pdf/receipts/{file_name}"
 	else:
 		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
