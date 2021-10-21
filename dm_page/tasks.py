@@ -134,8 +134,6 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	if path[:4] == "/app" or path[:3] == "app":
-		path = "https://dmsivy.herokuapp.com" + path.split("app")[1]
 	print(path+file_name)
 	outputStream = open(path + file_name, "wb")
 	print("outputStream created")
