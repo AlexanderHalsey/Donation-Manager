@@ -82,7 +82,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"{BASE_DIR}/static/pdf/receipts/"
+	path = f"static/pdf/receipts/"
 	c = donation.contact
 	# Create pdf
 	address = eval(c.profile.primary_address)
@@ -187,13 +187,12 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 	receipt = ReçusFiscaux.objects.get(id=receipt_id)
 	contact = Contact.objects.get(id=contact_id)
 	donations = Donation.objects.filter(id__in = donation_lst)
-	print("these should be donation objects...\n", donations)
 	if len(receipt_settings) > 1:
 		print("There is more than one default value")
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"{BASE_DIR}/static/pdf/receipts/"
+	path = f"static/pdf/receipts/"
 	p = contact.profile
 	# Create pdf
 	address = eval(p.primary_address)

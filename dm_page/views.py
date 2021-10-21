@@ -200,7 +200,7 @@ def dashboard(request, lang, change=None):
 			create_individual_receipt(receipt.id, donation.id, receipt.file_name)
 			if request.POST.get("email") == 'true':
 				e = Paramètre.objects.get(id=4)
-				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
+				path = f"static/pdf/receipts/{receipt.file_name}"
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, 1, cc=e.cc)
 				email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
@@ -687,7 +687,7 @@ def pdf_receipts(request, lang, change=None):
 			send_to = request.POST["email"]
 			cc = request.POST["cc"]
 			body = request.POST["message"] + "\n\n"
-			path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
+			path = f"static/pdf/receipts/{receipt.file_name}"
 			send_email.delay(receipt.id, path, send_to, body, 1, cc=cc)
 			email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			return redirect(f'{lang}/pdf_receipts/')
@@ -848,7 +848,7 @@ def confirm_annual(request, lang, change=None):
 					donation.pdf = True
 					donation.save()
 				e = Paramètre.objects.get(id=4)
-				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
+				path = f"static/pdf/receipts/{receipt.file_name}"
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, t, cc=e.cc)
 				email_statuses.append((receipt.contact.id, receipt.id))
