@@ -423,9 +423,10 @@ def process_webhook_payload():
 							p.alternative_email = data["alternativeEmail"]
 							p.website = data["website"]
 							p.fax_number = data["faxNumber"]
-							p.primary_address = str([address for key, address in data["primaryAddress"].items()])
-							print(data["primaryAddress"])
-							print(str([address for key, address in data["primaryAddress"].items()]))
+							address = [address for key, address in data["primaryAddress"].items()]
+							address = list(filter(lambda x: x, [address[1]] + address[5:] + [address[0]] + address[2:5]))
+							p.primary_address = str(address)
+							print(str(address))
 							p.billing_address_active = data["billingAddressActive"]
 							p.billing_address = str([address for key, address in data["billingAddress"].items()])
 							p.remarks = data["remarks"]
