@@ -29,7 +29,11 @@
         {% endfor %}
         <br>
         <br>
+        {% if contact.profile.disabled %}
+        <p style="color: red;">{{language.contact.seminardeskprofiledeleted}}
+        {% else %}
         <button class="btn btn-sm btn-dark"><a href="https://institutvajrayogini.seminardesk.com/Personen/{{contact.profile.seminar_desk_id}}">{{language.buttons.seminarDeskProfile}}</a></button>
+        {% endif %}
       </div>
     </div>
   </div>

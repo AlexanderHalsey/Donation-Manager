@@ -36,6 +36,7 @@ class Profile(models.Model):
 	vat_id = models.CharField(max_length= 200, default=None, null=True)
 	customer_number = models.CharField(max_length= 200, default=None, null=True)
 	additional_fields = models.TextField(default=None, null=True)
+	disabled = models.BooleanField(default=False)
 	def __str__(self):
 		return self.name
 
@@ -126,7 +127,7 @@ class DonationType(models.Model):
 	organisation = models.ForeignKey('Organisation', on_delete=models.CASCADE, null=True, blank=True)
 	name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Nom")
 	def __str__(self):
-		return self.name
+		return self.name + f" - ({self.organisation})" 
 	class Meta:
 		verbose_name = "Type de Don"
 		verbose_name_plural = "Types de Dons"
@@ -177,6 +178,7 @@ class ReçusFiscaux(models.Model):
 	cancel_description = models.TextField(null=True, blank=True, verbose_name="Description de l'annulation")
 	email_active = models.BooleanField(default=False)
 	email_cancel = models.BooleanField(default=False)
+	upload = models.FileField(upload_to='pdf/receipts/', null=True, blank=True)
 	class Meta:
 		verbose_name = "Reçus Fiscaux"
 		verbose_name_plural = "Reçus Fiscaux"

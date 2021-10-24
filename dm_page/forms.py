@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from django.core.exceptions import ValidationError
 
 class DonationForm(forms.Form):
 
@@ -15,7 +16,7 @@ class DonationForm(forms.Form):
 
 	def __init__(self, *args, **kwargs):
 		super(DonationForm, self).__init__(*args, **kwargs)
-		self.fields['contact'].choices = [(str(contact), str(contact)) for contact in Contact.objects.all()]
+		self.fields['contact'].choices = [(str(contact), str(contact)) for contact in Profile.objects.filter(disabled=True)]
 		self.fields['payment_mode'].choices = [(str(mode), str(mode)) for mode in PaymentMode.objects.all()]
 		self.fields['donation_type'].choices = [(str(t), str(t)) for t in DonationType.objects.all()]
 		self.fields['organisation'].choices = [(str(organisation), str(organisation)) for organisation in Organisation.objects.all()]
@@ -23,4 +24,11 @@ class DonationForm(forms.Form):
 		self.fields['forme_du_don'].choices = [(str(forme), str(forme)) for forme in FormeDuDon.objects.all()]
 		self.fields['nature_du_don'].initial = NatureDuDon.objects.get(default_value=True).name
 		self.fields['nature_du_don'].choices = [(str(nature), str(nature)) for nature in NatureDuDon.objects.all()]
+
+	def clean_donation_type(self):
+		for d in DonationType.objects.all():
+			if str(d).split(" - ")[0] == self.cleaned_data['donation_type'].split(" - ")[0]:
+				if str(d.organisation) != self.data['organisation']:
+					raise ValidationError('Not a compatible donation type.')
+				return self.cleaned_data['donation_type']
 		

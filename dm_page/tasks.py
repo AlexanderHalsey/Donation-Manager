@@ -84,7 +84,6 @@ def process_webhook_payload():
 		stored_value.processed = True
 		stored_value.save()
 		action = payload["notifications"][0]["action"].split("profile.")[1]
-		print(action)
 		data = payload["notifications"][0]["payload"]
 
 		try:
@@ -116,7 +115,6 @@ def process_webhook_payload():
 							address = [address for key, address in data["primaryAddress"].items()]
 							address = list(filter(lambda x: x, [address[1]] + address[5:] + [address[0]] + address[2:5]))
 							p.primary_address = str(address)
-							print(str(address))
 							p.billing_address_active = data["billingAddressActive"]
 							p.billing_address = str([address for key, address in data["billingAddress"].items()])
 							p.remarks = data["remarks"]
@@ -215,7 +213,8 @@ def process_webhook_payload():
 				for receipt in linked_receipts:
 					receipt.contact_name = profile_name
 					receipt.save()
-				p.delete()
+				p.disabled = True
+				p.save()
 				return
 
 			p.seminar_desk_id = data["id"]

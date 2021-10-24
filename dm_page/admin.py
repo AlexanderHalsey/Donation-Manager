@@ -62,6 +62,17 @@ class SettingsForm(forms.ModelForm):
 		except:
 			pass
 		try:
+			for x in range(1,11):
+				self.fields[f'organisation_{x}'].widget.can_add_related = False
+				self.fields[f'donation_type_{x}'].widget.can_add_related = False
+				self.fields[f'organisation_{x}'].widget.can_change_related = False
+				self.fields[f'donation_type_{x}'].widget.can_change_related = False
+				self.fields[f'organisation_{x}'].widget.can_delete_related = False
+				self.fields[f'donation_type_{x}'].widget.can_delete_related = False
+				# self.fields[f'donation_type_{x}'].queryset = DonationType.objects.filter(organisation=self.fields[f'organisation_{x}'].value)
+		except:
+			pass
+		try:
 			self.fields['host_password'].widget = forms.PasswordInput(attrs={'placeholder':'********','autocomplete': 'off','data-toggle': 'password'}, value=Paramètre.objects.get(id=4).host_password)
 		except:
 			pass

@@ -124,7 +124,8 @@
 </script>
 
 <hr>
-<div class="row">
+<div class="row justify-content-end">
+  <!-- Tags version 2.0 
   <div class="col-sm-4">
     <div class="card" style="background-color: FloralWhite;">
       <div class="card-body">
@@ -134,18 +135,19 @@
         {% endfor %}
         <hr>
         {% if language.language == "fr" %}
-        <button id="create_tag" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
-        <button id="update_tag" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
-        <button id="delete_tag" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        <button id="create_tag" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.delete}}</button>
         {% else %}
-        <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
-        <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
-        <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.delete}}</button>
         {% endif %}
         {% include 'tag_form.html' %}
 	    </div>
     </div>
   </div>
+  -->
   <div class="col-sm-4">
     <div class="card text-center" style="background-color: AliceBlue;">
       <div class="card-body">

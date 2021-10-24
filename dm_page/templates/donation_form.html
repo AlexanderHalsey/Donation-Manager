@@ -81,7 +81,13 @@
                 {% endif %}
                 {% endfor %}
               </select>
-              <div class="invalid-feedback">{{language.forms.invalidFeedback.donationType}}</div>
+              <div class="invalid-feedback">
+              {% if form_values.errorlist.donation_type_non_corresponding %}
+              {{language.forms.invalidFeedback.donationTypeNonCorresponding}}
+              {% else %}
+              {{language.forms.invalidFeedback.donationType}}
+              {% endif %}
+              </div>
             </div>
           </div>
           <div class="row mb-3">

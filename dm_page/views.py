@@ -8,9 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.core import serializers
+from django.core.cache import cache
 from django.forms.models import model_to_dict
 
-from donations.settings import BASE_DIR, DMS_WEBHOOK_USERNAME, DMS_WEBHOOK_PASSWORD
+from donations.settings import BASE_DIR, DMS_WEBHOOK_USERNAME, DMS_WEBHOOK_PASSWORD, DEBUG
 from .models import *
 from .utils import *
 from .tasks import *
@@ -94,7 +95,8 @@ def webhooklogs(request, lang, change=None):
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
-
+	print(os.getenv('SMTP_DOMAIN'))
+	x = y
 	# language change whilst mainting current url
 	if change != None:
 		return redirect(f'/{change}')
@@ -145,14 +147,19 @@ def dashboard(request, lang, change=None):
 	locked = list(set(list(chain(*[eval(lock.donation_list) for lock in Locked.objects.all()]))))
 	# receipt eligibility and locked status
 	eligibility = Paramètre.objects.get(id=3)
-	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}"))) for i in range(1,11)]))
+	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}")).split(" - ")[0]) for i in range(1,11)]))
 	for donation in unadulterated_donations:
 		if donation.id in locked:
 			donation.locked = True
 			donation.save()
-		if (donation.organisation.name, donation.donation_type_name) in receipt_conditions:
-			donation.eligible = True
-			donation.save()
+		if (donation.organisation_name, donation.donation_type_name) in receipt_conditions:
+			if donation.eligible == False:
+				donation.eligible = True
+				donation.save()
+		else:
+			if donation.eligible == True:
+				donation.eligible = False
+				donation.save()
 
 	# front-end functionality
 	scroll = 0 # to load with page scroll number so the page appears static on request
@@ -200,7 +207,7 @@ def dashboard(request, lang, change=None):
 			create_individual_receipt(receipt.id, donation.id, receipt.file_name)
 			if request.POST.get("email") == 'true':
 				e = Paramètre.objects.get(id=4)
-				path = f"static/pdf/receipts/{receipt.file_name}"
+				path = f"media/pdf/receipts/{receipt.file_name}"
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, 1, cc=e.cc)
 				email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
@@ -224,8 +231,8 @@ def dashboard(request, lang, change=None):
 				donation.payment_mode_name = form.cleaned_data["payment_mode"]
 				donation.organisation = Organisation.objects.get(name = form.cleaned_data["organisation"])
 				donation.organisation_name = form.cleaned_data["organisation"]
-				donation.donation_type = DonationType.objects.get(name = form.cleaned_data["donation_type"])
-				donation.donation_type_name = form.cleaned_data["donation_type"]
+				donation.donation_type = DonationType.objects.filter(name = form.cleaned_data["donation_type"].split(" - ")[0])[0]
+				donation.donation_type_name = form.cleaned_data["donation_type"].split(" - ")[0]
 				donation.nature_du_don = NatureDuDon.objects.get(name = form.cleaned_data["nature_du_don"])
 				donation.nature_du_don_name = form.cleaned_data["nature_du_don"]
 				donation.forme_du_don = FormeDuDon.objects.get(name = form.cleaned_data["forme_du_don"])
@@ -242,6 +249,8 @@ def dashboard(request, lang, change=None):
 		else:
 			form_values["errors"] = True
 			for error in form.errors:
+				if error == "donation_type" and form.data['organisation'] != form.data['donation_type'].split(" - ")[1][1:-1]:
+					form_values["errorlist"]["donation_type_non_corresponding"] = True
 				form_values["errorlist"][error] = "is-invalid"
 			form.fields["contact"].initial = request.POST["contact"]
 			form.fields["date_donated"].initial = request.POST["date_donated"]
@@ -687,7 +696,7 @@ def pdf_receipts(request, lang, change=None):
 			send_to = request.POST["email"]
 			cc = request.POST["cc"]
 			body = request.POST["message"] + "\n\n"
-			path = f"static/pdf/receipts/{receipt.file_name}"
+			path = f"media/pdf/receipts/{receipt.file_name}"
 			send_email.delay(receipt.id, path, send_to, body, 1, cc=cc)
 			email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			return redirect(f'{lang}/pdf_receipts/')
@@ -741,7 +750,8 @@ def pdf_receipts(request, lang, change=None):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
 		file_name = ReçusFiscaux.objects.get(id=int(i)).file_name
-		file_name = f"/static/pdf/receipts/{file_name}"
+		file_name = f"/media/pdf/receipts/{file_name}"
+		print(file_name)
 	else:
 		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
@@ -848,7 +858,7 @@ def confirm_annual(request, lang, change=None):
 					donation.pdf = True
 					donation.save()
 				e = Paramètre.objects.get(id=4)
-				path = f"static/pdf/receipts/{receipt.file_name}"
+				path = f"media/pdf/receipts/{receipt.file_name}"
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, t, cc=e.cc)
 				email_statuses.append((receipt.contact.id, receipt.id))

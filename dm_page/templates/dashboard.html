@@ -2,6 +2,7 @@
 {% block page_content %}
 {% load static %}
 
+
 <script type="text/javascript">
   var scroll = "{{ scroll }}";
   window.addEventListener('load', 
@@ -256,7 +257,8 @@
     });
 </script>
 
-<div class="row">
+<div class="row justify-content-end">
+  <!-- Tags for version 2.0 
   <div class="col-sm-4">
     <div class="card" style="background-color: FloralWhite;">
       <div class="card-body">
@@ -266,18 +268,19 @@
         {% endfor %}
         <hr>
         {% if language.language == "fr" %}
-        <button id="create_tag" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
-        <button id="update_tag" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
-        <button id="delete_tag" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        <button id="create_tag" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.delete}}</button>
         {% else %}
-        <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.create}}</button>
-        <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.update}}</button>
-        <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag_form">{{language.buttons.tagButton.delete}}</button>
+        <button id="create_tag" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.create}}</button>
+        <button id="update_tag" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.update}}</button>
+        <button id="delete_tag" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tag-form">{{language.buttons.tagButton.delete}}</button>
         {% endif %}
         {% include 'tag_form.html' %}
 	    </div>
     </div>
   </div>
+  -->
   <div class="col-sm-4">
     <div class="card text-center" style="background-color: AliceBlue;">
       <div class="card-body">
@@ -379,24 +382,12 @@
             <tr>
             {% endif %}
               <td>{{ donation.id }}</td>
-              {% if donation.contact is None %}
-              <td>{{ donation.contact_name }}</td>
-              {% else %}
               <td><a href="{% url 'contact' lang=language.language pk=donation.contact.profile.seminar_desk_id %}" >{{ donation.contact.profile.name }}</a></td>
-              {% endif %}
               <td class="text-center">{{ donation.date_donated|date:"Y / m / d" }}</td>
               <td class="text-end">€ {{ donation.amount }}</td>
               <td>{{ donation.payment_mode_name }}</td>
-              {% if donation.organisation is None %}
               <td>{{ donation.organisation_name }}</td>
-              {% else %}
-              <td>{{ donation.organisation }}</td>
-              {% endif %}
-              {% if donation.donation_type is None %}
               <td>{{ donation.donation_type_name }}</td>
-              {% else %}
-              <td>{{ donation.donation_type }}</td>
-              {% endif %}
               {% if donation.pdf or donation.disabled %}
               <td></td>
               {% else %}
@@ -408,7 +399,7 @@
                   {% csrf_token %}
                   <div class="row mx-1 justify-content-end">
                     {% for condition in receipt_conditions %}
-                    {% if donation.organisation|stringformat:"s" == condition.0 and donation.donation_type|stringformat:"s" == condition.1 %}
+                    {% if donation.organisation_name == condition.0 and donation.donation_type_name == condition.1 %}
                     <div class="col-4">
                       <button name="create_receipt" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em;" value="{{ donation.id }}"><img src="{% static 'icons/receipt.png' %}" class="img" width="21" height="21" alt="create_receipt"></button>
                     </div>
@@ -443,4 +434,5 @@
     {% include 'email_status_notification.html' %}
   </div>
 </div>
+
 {% endblock %}

@@ -43,7 +43,7 @@ def file_storage_check():
 				donation = Donation.objects.get(id=i)
 				donation.pdf = False
 				donation.save()
-			receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}")
+			receipt.file_name = cancel_pdf_receipt(f"media/pdf/receipts/{receipt.file_name}")
 			receipt.save()
 
 def export_xls(view, data, columns, file_name_extension):
@@ -82,7 +82,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"static/pdf/receipts/"
+	path = f"media/pdf/receipts/"
 	c = donation.contact
 	# Create pdf
 	address = eval(c.profile.primary_address)
@@ -169,7 +169,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	print("can created.")
 	packet.seek(0)
 	new_pdf = PdfFileReader(packet)
-	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/individual_receipt.pdf", "rb"))
+	existing_pdf = PdfFileReader(open(f"static/pdf/individual_receipt.pdf", "rb"))
 	print("existing template found.")
 	output = PdfFileWriter()
 	page = existing_pdf.getPage(0)
@@ -178,6 +178,10 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	outputStream = open(path + file_name, "wb")
 	print("outputStream created")
 	output.write(outputStream)
+	print("Output type: ", type(output), "\n", "OutputStream type: ", type(outputStream))
+	receipt = ReçusFiscaux.objects.get(id=receipt_id)
+	receipt.upload = path + file_name
+	receipt.save()
 	outputStream.close()
 	print("outputStream saved.")
 	return
@@ -192,7 +196,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"static/pdf/receipts/"
+	path = f"media/pdf/receipts/"
 	p = contact.profile
 	# Create pdf
 	address = eval(p.primary_address)
@@ -298,15 +302,27 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 			can2.drawString(239, 767-(index*18), donation.forme_du_don_name)
 			can2.drawString(377, 767-(index*18), donation.nature_du_don_name)
 			can2.drawString(450, 767-(index*18), "€ " + str(donation.amount))
+		additional = (len(donations[9:]))*18
+		if additional != 0:
+			additional += 50
+	else:
+		additional = 0
+	# draw line
+	can2.setLineWidth(1)
+	can2.line(41, 806-additional, 552, 806-additional)
+	can2.setFont(fonts[1], sizes[0])
+	final_clause = "Le bénéficiare certifie sur l'honneur que les dons et versements qu'il reçoit ouvrent droit à la réduction d'impôt prévue à l'article 200 du CGI, 238 bis du CGI, 885-0 V bis A."
+	textobject2 = can2.beginText(51, 783-additional)
+	wrapped_text2 = "\n".join(wrap(final_clause, 94))
+	textobject2.textLines(wrapped_text2)
+	can2.drawText(textobject2)
+	can2.drawString(305, 678-additional, "Président de l'association")
+	can2.drawString(52, 734-additional, "A "+(receipt_settings.institut_town or "")+" le :")
+	can2.drawString(146, 734-additional, "/".join(str(datetime.date.today()).split("-")[::-1]))
+	can2.drawString(305, 583-additional, (receipt_settings.president or ""))
 	try:
-		img2 = ImageReader(str(BASE_DIR)+"/static/png/end_of.png")
-		if len(donations) > 9:
-			additional = (len(donations[9:]))*18
-			if additional != 0:
-				additional += 50
-		else:
-			additional = 0
-		can2.drawImage(img2, 43, 492-additional, width=506, preserveAspectRatio=True)
+		img3 = ImageReader(images["president_signature"])
+		can2.drawImage(img3, 310, 483-additional, width=100, preserveAspectRatio=True)
 	except:
 		pass
 	can2.showPage()
@@ -314,29 +330,12 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 	packet2.seek(0)
 	new_pdf2 = PdfFileReader(packet2)
 
-	packet3 = io.BytesIO()
-	can3 = canvas.Canvas(packet3, pagesize=A4)
-	can3.setFont(fonts[1], sizes[0])
-	can3.drawString(52, 734-additional, "A "+(receipt_settings.institut_town or "")+" le :")
-	can3.drawString(142, 734-additional, "/".join(str(datetime.date.today()).split("-")[::-1]))
-	can3.drawString(305, 583-additional, (receipt_settings.president or ""))
-	try:
-		img3 = ImageReader(images["president_signature"])
-		can3.drawImage(img3, 310, 483-additional, width=100, preserveAspectRatio=True)
-	except:
-		pass
-	can3.showPage()
-	can3.save()
-	packet3.seek(0)
-	new_pdf3 = PdfFileReader(packet3)
-
-	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/annual_receipt.pdf", "rb"))
+	existing_pdf = PdfFileReader(open(f"static/pdf/annual_receipt.pdf", "rb"))
 	output = PdfFileWriter()
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	page2 = existing_pdf.getPage(1)
 	page2.mergePage(new_pdf2.getPage(0))
-	page2.mergePage(new_pdf3.getPage(0))
 	output.addPage(page)
 	output.addPage(page2)
 	outputStream = open(path + file_name, "wb")
