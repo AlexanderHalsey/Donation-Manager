@@ -166,7 +166,16 @@ CACHES = {
 
 django_heroku.settings(locals())
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL") # HEROKU REDIS URI
+REDIS_TLS_URL = os.getenv("REDIS_TLS_URL")
+CELERY_BROKER_URL = REDIS_TLS_URL # HEROKU REDIS URI
 # CELERY_BROKER_USE_SSL = True
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'alex.halsey5@gmail.com'
+EMAIL_HOST_PASSWORD = 'xeeirvvfpdrvqwri'
+EMAIL_USE_TLS = True
+
+
