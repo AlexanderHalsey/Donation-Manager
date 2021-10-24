@@ -28,7 +28,7 @@ DMS_WEBHOOK_USERNAME = os.getenv('DMS_WEBHOOK_USERNAME')
 DMS_WEBHOOK_PASSWORD = os.getenv('DMS_WEBHOOK_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = (os.getenv('DEBUG_VALUE') == 'True')
 
 ALLOWED_HOSTS = ['dmsivy.herokuapp.com', '127.0.0.1', 'localhost'] 
 
