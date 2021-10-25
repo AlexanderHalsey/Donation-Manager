@@ -178,9 +178,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
 	with open(path + file_name, "wb") as f:
-		outputStream = File(f)
-		output.write(outputStream)
-		receipt.upload = file_name
+		receipt.upload.save(file_name, File(f))
 		receipt.save()
 		print("new file created.")
 	return
