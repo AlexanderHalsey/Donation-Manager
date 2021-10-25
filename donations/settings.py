@@ -172,9 +172,10 @@ CELERY_BROKER_URL = REDIS_TLS_URL # HEROKU REDIS URI
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
-ADMINS = [('Alex', 'alex.halsey@icloud.com'),]
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'alex.halsey5@gmail.com'
-EMAIL_HOST_PASSWORD = 'xeeirvvfpdrvqwri'
+ADMINS = [(os.getenv('ADMIN_NAME'), os.getenv('ADMIN_EMAIL')),]
+SERVER_EMAIL = os.getenv('EMAIL_ADDRESS')
+EMAIL_HOST = os.getenv('SMTP_DOMAIN')
+EMAIL_PORT = int(os.getenv('SMTP_PORT'))
+EMAIL_HOST_USER = os.getenv('EMAIL_ADDRESS')
+EMAIL_HOST_PASSWORD = os.getenv('PASSWORD')
 EMAIL_USE_TLS = True
