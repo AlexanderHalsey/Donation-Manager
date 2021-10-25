@@ -178,7 +178,7 @@ class ReçusFiscaux(models.Model):
 	cancel_description = models.TextField(null=True, blank=True, verbose_name="Description de l'annulation")
 	email_active = models.BooleanField(default=False)
 	email_cancel = models.BooleanField(default=False)
-	upload = models.FileField(upload_to='pdf/receipts/', null=True, blank=True)
+	
 	class Meta:
 		verbose_name = "Reçus Fiscaux"
 		verbose_name_plural = "Reçus Fiscaux"

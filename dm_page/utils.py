@@ -17,6 +17,7 @@ import csv
 
 # pdf receipt
 from donations.settings import BASE_DIR
+from django.core.files import File
 import num2words
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
@@ -176,13 +177,11 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
 	outputStream = open(path + file_name, "wb")
+	outputStreamDjango = File(outputStream)
 	print("outputStream created")
-	output.write(outputStream)
-	print("Output type: ", type(output), "\n", "OutputStream type: ", type(outputStream))
-	receipt = ReçusFiscaux.objects.get(id=receipt_id)
-	receipt.upload = path + file_name
-	receipt.save()
+	output.write(outputStreamDjango)
 	outputStream.close()
+	outputStreamDjango.close()
 	print("outputStream saved.")
 	return
 
@@ -339,7 +338,9 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 	output.addPage(page)
 	output.addPage(page2)
 	outputStream = open(path + file_name, "wb")
-	output.write(outputStream)
+	outputStreamDjango = File(outputStream)
+	output.write(outputStreamDjango)
+	outputStreamDjango.close()
 	outputStream.close()
 	return
 
@@ -365,7 +366,9 @@ def cancel_pdf_receipt(path):
 	new_path = "".join(new_path)
 	new_path = path.split("/receipts/")[0] + "/receipts/" + new_path
 	outputStream = open(f"{new_path}", "wb")
-	output.write(outputStream)
+	outputStreamDjango = File(outputStream)
+	output.write(outputStreamDjango)
+	outputStreamDjango.close()
 	outputStream.close()
 	os.remove(f"{path}")
 	return new_path.split("/receipts/")[1]
