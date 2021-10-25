@@ -43,7 +43,7 @@ def file_storage_check():
 				donation = Donation.objects.get(id=i)
 				donation.pdf = False
 				donation.save()
-			receipt.file_name = cancel_pdf_receipt(f"media/pdf/receipts/{receipt.file_name}")
+			receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}")
 			receipt.save()
 
 def export_xls(view, data, columns, file_name_extension):
@@ -82,7 +82,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"media/pdf/receipts/"
+	path = f"{BASE_DIR}/static/pdf/receipts/"
 	c = donation.contact
 	# Create pdf
 	address = eval(c.profile.primary_address)
@@ -196,7 +196,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"media/pdf/receipts/"
+	path = f"{BASE_DIR}/static/pdf/receipts/"
 	p = contact.profile
 	# Create pdf
 	address = eval(p.primary_address)
@@ -330,7 +330,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 	packet2.seek(0)
 	new_pdf2 = PdfFileReader(packet2)
 
-	existing_pdf = PdfFileReader(open(f"static/pdf/annual_receipt.pdf", "rb"))
+	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/annual_receipt.pdf", "rb"))
 	output = PdfFileWriter()
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
@@ -348,7 +348,7 @@ def cancel_pdf_receipt(path):
 	# only considering individual receipts at the moment
 	packet = io.BytesIO()
 	can = canvas.Canvas(packet, pagesize=A4)
-	img = ImageReader(str(BASE_DIR)+"/static/png/LOGO-ANNULÉ.png")
+	img = ImageReader(f"{BASE_DIR}/static/png/LOGO-ANNULÉ.png")
 	can.drawImage(img, -100, 400, width=800, preserveAspectRatio=True, mask='auto')
 	can.showPage()
 	can.save()
