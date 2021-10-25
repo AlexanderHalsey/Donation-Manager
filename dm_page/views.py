@@ -95,7 +95,8 @@ def webhooklogs(request, lang, change=None):
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
-
+	print("DEBUG VALUE: ", os.getenv("DEBUG_VALUE"))
+	print("Error Toggle: ", os.getenv("errortoggle"))
 	if os.getenv("errortoggle") == 'True':
 		x = y
 	# language change whilst mainting current url
