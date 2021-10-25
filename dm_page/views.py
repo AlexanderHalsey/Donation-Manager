@@ -11,7 +11,7 @@ from django.core import serializers
 from django.core.cache import cache
 from django.forms.models import model_to_dict
 
-from donations.settings import BASE_DIR, DMS_WEBHOOK_USERNAME, DMS_WEBHOOK_PASSWORD, DEBUG, EMAIL_PORT
+from donations.settings import *
 from .models import *
 from .utils import *
 from .tasks import *
@@ -95,9 +95,7 @@ def webhooklogs(request, lang, change=None):
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
-	print("SMTP PORT: ", type(eval(os.getenv("SMTP_PORT"))))
-	print("DEBUG VALUE: ", os.getenv("DEBUG_VALUE"))
-	print("Error Toggle: ", os.getenv("errortoggle"))
+	print(f"Email Settings: \n{ADMINS}\t{type(ADMINS)}\n{SERVER_EMAIL}\t{type(SERVER_EMAIL)}\n{EMAIL_HOST}\t{type(EMAIL_HOST)}\n{EMAIL_PORT}\t{type(EMAIL_PORT)}\n{EMAIL_HOST_USER}\t{type(EMAIL_HOST_USER)}\n{EMAIL_HOST_PASSWORD}\t{type(EMAIL_HOST_PASSWORD)}")
 	if os.getenv("errortoggle") == 'True':
 		x = y
 	# language change whilst mainting current url
