@@ -173,3 +173,8 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
 ADMINS = [('Alex', 'alex.halsey@icloud.com'),]
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'alex.halsey5@gmail.com'
+EMAIL_HOST_PASSWORD = 'xeeirvvfpdrvqwri'
+EMAIL_USE_TLS = True
