@@ -180,7 +180,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	outputStream = open(path + file_name, "wb")
 	print("outputStream created")
 	output.write(outputStream)
-	receipt.upload = outputStream
+	receipt.upload = output
 	receipt.save()
 	outputStream.close()
 	print("outputStream saved.")
