@@ -204,6 +204,7 @@ def dashboard(request, lang, change=None):
 			receipt.file_name = f"{receipt.id}_{donation.contact.profile.name}_{str(donation.date_donated)}_Individuel_{donation.id}.pdf"
 			receipt.donation_list = [donation.id]
 			receipt.cancel = False
+			receipt.save()
 
 			create_individual_receipt(receipt.id, donation.id, receipt.file_name)
 			if request.POST.get("email") == 'true':
@@ -212,7 +213,6 @@ def dashboard(request, lang, change=None):
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, 1, cc=e.cc)
 				email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
-			receipt.save()
 			return redirect("/")
 
 		form = DonationForm(request.POST)

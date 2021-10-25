@@ -83,6 +83,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
+	receipt = ReçusFiscaux.objects.get(id=receipt_id)
 	path = f"{BASE_DIR}/media/pdf/receipts/"
 	c = donation.contact
 	# Create pdf
@@ -179,6 +180,8 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	outputStream = open(path + file_name, "wb")
 	print("outputStream created")
 	output.write(outputStream)
+	receipt.upload = outputStream
+	receipt.save()
 	outputStream.close()
 	print("outputStream saved.")
 	return
