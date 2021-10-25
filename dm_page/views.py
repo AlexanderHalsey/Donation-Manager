@@ -11,7 +11,7 @@ from django.core import serializers
 from django.core.cache import cache
 from django.forms.models import model_to_dict
 
-from donations.settings import BASE_DIR, DMS_WEBHOOK_USERNAME, DMS_WEBHOOK_PASSWORD, DEBUG
+from donations.settings import BASE_DIR, DMS_WEBHOOK_USERNAME, DMS_WEBHOOK_PASSWORD, DEBUG, EMAIL_PORT
 from .models import *
 from .utils import *
 from .tasks import *
@@ -95,6 +95,7 @@ def webhooklogs(request, lang, change=None):
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
+	print("SMTP PORT: ", type(eval(os.getenv("SMTP_PORT"))))
 	print("DEBUG VALUE: ", os.getenv("DEBUG_VALUE"))
 	print("Error Toggle: ", os.getenv("errortoggle"))
 	if os.getenv("errortoggle") == 'True':
