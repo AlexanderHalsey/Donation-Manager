@@ -44,7 +44,7 @@ def file_storage_check():
 				donation = Donation.objects.get(id=i)
 				donation.pdf = False
 				donation.save()
-			receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}")
+			receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/media/pdf/receipts/{receipt.file_name}")
 			receipt.save()
 
 def export_xls(view, data, columns, file_name_extension):
@@ -83,7 +83,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"{BASE_DIR}/static/pdf/receipts/"
+	path = f"{BASE_DIR}/media/pdf/receipts/"
 	c = donation.contact
 	# Create pdf
 	address = eval(c.profile.primary_address)
@@ -170,18 +170,16 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	print("can created.")
 	packet.seek(0)
 	new_pdf = PdfFileReader(packet)
-	existing_pdf = PdfFileReader(open(f"static/pdf/individual_receipt.pdf", "rb"))
+	existing_pdf = PdfFileReader(open(f"{BASE_DIR}/static/pdf/individual_receipt.pdf", "rb"))
 	print("existing template found.")
 	output = PdfFileWriter()
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
 	outputStream = open(path + file_name, "wb")
-	outputStreamDjango = File(outputStream)
 	print("outputStream created")
-	output.write(outputStreamDjango)
+	output.write(outputStream)
 	outputStream.close()
-	outputStreamDjango.close()
 	print("outputStream saved.")
 	return
 
@@ -195,7 +193,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"{BASE_DIR}/static/pdf/receipts/"
+	path = f"{BASE_DIR}/media/pdf/receipts/"
 	p = contact.profile
 	# Create pdf
 	address = eval(p.primary_address)
@@ -338,10 +336,8 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 	output.addPage(page)
 	output.addPage(page2)
 	outputStream = open(path + file_name, "wb")
-	outputStreamDjango = File(outputStream)
-	output.write(outputStreamDjango)
+	output.write(outputStream)
 	outputStreamDjango.close()
-	outputStream.close()
 	return
 
 def cancel_pdf_receipt(path):
@@ -366,9 +362,7 @@ def cancel_pdf_receipt(path):
 	new_path = "".join(new_path)
 	new_path = path.split("/receipts/")[0] + "/receipts/" + new_path
 	outputStream = open(f"{new_path}", "wb")
-	outputStreamDjango = File(outputStream)
-	output.write(outputStreamDjango)
-	outputStreamDjango.close()
+	output.write(outputStream)
 	outputStream.close()
 	os.remove(f"{path}")
 	return new_path.split("/receipts/")[1]
