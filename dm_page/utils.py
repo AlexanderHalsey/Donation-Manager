@@ -177,15 +177,10 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	outputStream = open(path + file_name, "wb")
-	print("outputStream created")
-	output.write(outputStream)
-	outputdb = File(outputStream)
-	receipt.upload = outputdb
-	receipt.save()
-	outputStream.close()
-	outputdb.close()
-	print("outputStream saved.")
+	with open(path + file_name, "wb") as f:
+		outputStream = File(f)
+		output.write(outputStream)
+		print("new file created.")
 	return
 
 def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file_name):
