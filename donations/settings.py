@@ -173,3 +173,8 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
 ADMINS = [(os.getenv('ADMIN_NAME'), os.getenv('ADMIN_EMAIL'))]
+EMAIL_HOST = os.getenv('SMTP_DOMAIN')
+EMAIL_PORT = os.getenv('SMTP_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_ADDRESS')
+EMAIL_HOST_PASSWORD = os.getenv('PASSWORD')
+EMAIL_USE_TLS = True
