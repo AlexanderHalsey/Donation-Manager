@@ -180,10 +180,10 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	output.addPage(page)
 	f = open(path + file_name, "wb+")
 	output.write(f)
-	f.seek(0)
-	print(f"File(f): {File(f)}\tType: {type(File(f))}\tOutput: {output}\tOutput type: {type(output)}")
+	print(f"File(f): {File(f)}\tType File(f): {type(File(f))}\tOutput: {output}\tOutput type: {type(output)}\tFile: {f}\tFile Type: {type(f)}")
 	receipt.upload.save(file_name, File(f))
-	print(f"New file created. \tFile type: {type(f)}\tFile value: {f.getvalue()}")
+	receipt.save()
+	print(f"New file created.")
 	f.close()
 	return
 
