@@ -205,4 +205,5 @@ mysite.register(DonationType, ModelAdminDonationType)
 mysite.register(NatureDuDon, ModelAdminNatureDuDon)
 mysite.register(FormeDuDon, ModelAdminFormeDuDon)
 mysite.register(PaymentMode, ModelAdminPaymentMode)
+mysite.register(MediaFileTest)
 

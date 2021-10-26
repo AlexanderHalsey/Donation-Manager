@@ -236,3 +236,6 @@ class WebhookLogs(models.Model):
 		indexes = [
 			models.Index(fields=["received_at"]),
 		]
+
+class MediaFileTest(models.Model):
+	file = models.FileField(upload_to='pdf/receipts', null=True, blank=True)
