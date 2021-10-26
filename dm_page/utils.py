@@ -179,7 +179,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
 	with open(path + file_name, "wb") as f:
-		django_file = File(f)
+		django_file = ContentFile(f)
 		output.write(django_file)
 		default_storage.save(path+file_name, ContentFile(f))
 	print("New file created.")
