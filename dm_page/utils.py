@@ -178,12 +178,12 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	with open(path + file_name, "wb") as f:
-		output.write(f)
-	default_storage.save(file_name, File(open(path+file_name, 'rb')))
-
-	print(f"File created. \tFile type: {type(f)}")
-	print("new file created.")
+	f = open(path + file_name, "wb+")
+	output.write(f)
+	f.seek(0)
+	default_storage.save(path + file_name, File(f))
+	print(f"New file created. \tFile type: {type(f)}")
+	f.close()
 	return
 
 def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file_name):
