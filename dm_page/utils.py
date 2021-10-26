@@ -178,11 +178,11 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	f = open(path + file_name, "wb+")
-	output.write(f)
-	default_storage.save(path+file_name, File(f))
+	with open(path + file_name, "wb") as f:
+		django_file = File(f)
+		output.write(django_file)
+		default_storage.save(path+file_name, django_file)
 	print("New file created.")
-	f.close()
 	return
 
 def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file_name):
