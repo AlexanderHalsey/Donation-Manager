@@ -18,7 +18,7 @@ import csv
 # pdf receipt
 from donations.settings import BASE_DIR
 from django.core.files import File
-from django.core.files.storage import default_storage
+from django.core.files.storage import FileSystemStorage
 import num2words
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
@@ -178,9 +178,10 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	with open('static/pdf/receipts/' + file_name, "wb+") as f:
+	custom_storage = FileSystemStorage(location='static', base_url='/static/')
+	with open(path + file_name, "wb+") as f:
 		output.write(f)
-		default_storage.save(path+file_name, File(f))
+		custom_storage.save(path+file_name, File(f))
 	print("New file created.")
 	return
 
