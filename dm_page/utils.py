@@ -178,9 +178,9 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	with open(path + file_name, "r+b") as f:
+	with open(path + file_name, "wb") as f:
 		output.write(f)
-		default_storage.save(file_name, File(f))
+	default_storage.save(file_name, File(open(path+file_name, 'rb')))
 
 	print(f"File created. \tFile type: {type(f)}")
 	print("new file created.")
