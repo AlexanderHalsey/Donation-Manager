@@ -209,7 +209,7 @@ def dashboard(request, lang, change=None):
 			create_individual_receipt(receipt.id, donation.id, receipt.file_name)
 			if request.POST.get("email") == 'true':
 				e = Paramètre.objects.get(id=4)
-				path = f"{BASE_DIR}/media/pdf/receipts/{receipt.file_name}"
+				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, 1, cc=e.cc)
 				email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
@@ -697,7 +697,7 @@ def pdf_receipts(request, lang, change=None):
 			send_to = request.POST["email"]
 			cc = request.POST["cc"]
 			body = request.POST["message"] + "\n\n"
-			path = f"{BASE_DIR}/media/pdf/receipts/{receipt.file_name}"
+			path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
 			send_email.delay(receipt.id, path, send_to, body, 1, cc=cc)
 			email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			return redirect(f'{lang}/pdf_receipts/')
@@ -751,7 +751,7 @@ def pdf_receipts(request, lang, change=None):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
 		file_name = ReçusFiscaux.objects.get(id=int(i)).file_name
-		file_name = f"media/pdf/receipts/{file_name}"
+		file_name = f"static/pdf/receipts/{file_name}"
 	else:
 		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
@@ -797,7 +797,7 @@ def pdf_receipts(request, lang, change=None):
 
 @login_required(login_url='/fr/login')
 def receipt(request, file):
-	full_path = f'{BASE_DIR}/media/pdf/receipts/{file}'
+	full_path = f'{BASE_DIR}/static/pdf/receipts/{file}'
 	with open(full_path, 'rb') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = f'attachment; filename="{file}"'
@@ -858,7 +858,7 @@ def confirm_annual(request, lang, change=None):
 					donation.pdf = True
 					donation.save()
 				e = Paramètre.objects.get(id=4)
-				path = f"{BASE_DIR}/media/pdf/receipts/{receipt.file_name}"
+				path = f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}"
 				body = e.body.replace("receipt_id", str(receipt.id))
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, t, cc=e.cc)
 				email_statuses.append((receipt.contact.id, receipt.id))

@@ -17,7 +17,6 @@ import csv
 
 # pdf receipt
 from donations.settings import BASE_DIR
-from django.core.files import File
 import num2words
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
@@ -44,7 +43,7 @@ def file_storage_check():
 				donation = Donation.objects.get(id=i)
 				donation.pdf = False
 				donation.save()
-			receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/media/pdf/receipts/{receipt.file_name}")
+			receipt.file_name = cancel_pdf_receipt(f"{BASE_DIR}/static/pdf/receipts/{receipt.file_name}")
 			receipt.save()
 
 def export_xls(view, data, columns, file_name_extension):
@@ -84,7 +83,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	else:
 		receipt_settings = receipt_settings[0]
 	receipt = ReçusFiscaux.objects.get(id=receipt_id)
-	path = f"{BASE_DIR}/media/pdf/receipts/"
+	path = f"{BASE_DIR}/static/pdf/receipts/"
 	c = donation.contact
 	# Create pdf
 	address = eval(c.profile.primary_address)
@@ -179,10 +178,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	output.addPage(page)
 	f = open(path + file_name, "wb+")
 	output.write(f)
-	print(f"File(f): {File(f)}\tType File(f): {type(File(f))}\tOutput: {output}\tOutput type: {type(output)}\tFile: {f}\tFile Type: {type(f)}")
-	receipt.upload.save(file_name, File(f))
-	receipt.save()
-	print(f"New file created.")
+	print("New file created.")
 	f.close()
 	return
 
@@ -196,7 +192,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"{BASE_DIR}/media/pdf/receipts/"
+	path = f"{BASE_DIR}/static/pdf/receipts/"
 	p = contact.profile
 	# Create pdf
 	address = eval(p.primary_address)
