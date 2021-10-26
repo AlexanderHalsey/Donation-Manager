@@ -183,7 +183,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	f.seek(0)
 	print(f"File(f): {File(f)}\tType: {type(File(f))}\tOutput: {output}\tOutput type: {type(output)}")
 	receipt.upload.save(file_name, File(f))
-	print(f"New file created. \tFile type: {type(f)}")
+	print(f"New file created. \tFile type: {type(f)}\tFile value: {f.getvalue()}")
 	f.close()
 	return
 
@@ -341,7 +341,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 	output.addPage(page2)
 	outputStream = open(path + file_name, "wb")
 	output.write(outputStream)
-	outputStreamDjango.close()
+	outputStream.close()
 	return
 
 def cancel_pdf_receipt(path):
