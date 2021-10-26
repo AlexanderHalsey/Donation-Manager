@@ -179,9 +179,10 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	output.addPage(page)
 	f = open(path + file_name, "wb")
 	output.write(f)
+	f.seek(0)
+	default_storage.save(file_name, f)
 	f.close()
 	print(f"File created. \tFile type: {type(f)}")
-	default_storage.save(file_name, f)
 	print("new file created.")
 	return
 
