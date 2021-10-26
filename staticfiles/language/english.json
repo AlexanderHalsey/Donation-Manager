@@ -1,0 +1,167 @@
+{
+  "language": "en",
+  "login": {
+	"username": "Username...",
+	"password": "Password..."
+  },
+  "navbar": {
+	"dashboard": "Dashboard",
+	"admin": "Admin",
+	"hello": "Hello, ",
+	"logout": "Logout"
+  },
+  "titles": {
+	"tags": "Tags",
+	"totalNumberOfDonations": "Total Number of Donations",
+	"totalAmountDonated": "Total Amount Donated",
+	"donations": "Donations",
+	"donators": "Donators",
+	"pdfReceipts": "Fiscal Receipts",
+	"filter": "Filter",
+	"withFilter": "With the Filter: ",
+	"infoCanceled": "Information on Canceled Receipt"
+  },
+  "buttons": {
+	"tagButton": {
+	  "create": "Create a Tag",
+	  "update": "Update a Tag",
+	  "delete": "Delete Tags"
+	},
+	"donationButton": {
+	  "create": "Add a Donation"
+	},
+	"exportCsv": "Export to .csv",
+	"exportXls": "Export to .xls",
+	"search": "Search",
+	"update": "Update",
+	"confirm": "Confirm",
+	"remove": "Remove",
+	"delete": "Delete",
+	"submit": "Submit",
+	"cancel": "Cancel",
+	"send": "Send",
+	"seminarDeskProfile": "Seminar Desk Profile"
+  },
+  "forms": { 
+	"tagTitle": {
+	  "create": "Create a Tag",
+      "update": "Update a Tag",
+	  "delete": "Delete Tags"
+	},
+	"donationTitle": {
+	  "create": "New Donation",
+	  "update": "Update Donation",
+	  "delete": "Delete Donation",
+	  "deleteText": "Are you sure you want to remove this donation? This will move the donation to a disabled status.",
+	  "confirm": "Confirm Receipt Details"
+	},
+	"tagLabelName": "Tag Name:",
+	"multipleContactsLabelName": "Contacts:",
+	"contactLabelName": "Contact:",
+	"dateDonatedLabelName": "Date Donated:",
+	"dateCreatedLabelName": "Date Created:",
+	"filterDateFrom": "from",
+	"filterDateTo": "to",
+	"donationTypeLabelName": "Donation Type:",
+	"organisationLabelName": "Organisation:",
+	"paymentModeLabelName": "Payment Mode:",
+	"formeDuDonLabelName": "Form of Donation:",
+	"natureDuDonLabelName": "Nature of Donation:",
+	"amountLabelName": "Amount:",
+	"numberDonationsLabelName": "Number of Donations",
+	"sendEmailLabelName": "Send Email to:",
+	"email": {
+		"title": "Send Receipt",
+		"recipient": "Recipient :",
+		"message": "Message :"
+	},
+	"disabledLabelName": "Include Deleted", 
+	"canceledLabelName": "Cancelled Receipts",
+	"contactPlaceholder": "Type to search...",
+	"multipleContactPlaceholder": "Add contacts",
+	"multipleContactRemovePlaceholder": "Remove contacts",
+	"datePlaceholder": "DD  / MM / YYYY",
+	"receiptLabelName": "File name:",
+	"receiptLabelType": "Receipt type:",
+	"receiptType": {
+		"annual": "Annual",
+		"individual": "Individual"
+	},
+	"invalidFeedback": {
+	  "contact": "Select a valid contact.",
+	  "amount": "Select a valid amount.",
+	  "number": "Select a valid number.",
+	  "dateDonated": "Select a valid date.",
+	  "organisation": "Select a valid organisation.",
+	  "paymentMode": "Select a valid payment mode.",
+	  "donationType": "Select a valid donation type.",
+	  "donationTypeNonCorresponding": "Select a donation type that corresponds to its Organisation.",
+	  "natureDuDon": "Select a valid donation nature.",
+	  "formeDuDon": "Select a valid donation form."
+	}
+  },
+  "table": {
+	"id": "ID",
+	"contact": "Contact",
+	"dateDonated": "Date Donated",
+	"dateCreated": "Date Created",
+	"receiptType": "Receipt Type",
+	"fileName": "File Name",
+	"viewDownload": "View / Download",
+	"totalSumDonated": "Total Sum Donated",
+	"totalNumberDonated": "Total Number",
+	"amount": "Amount",
+	"organisation": "Organisation",
+	"paymentMode": "Payment Mode",
+	"donationType": "Donation Type",
+	"tags": "Tags",
+	"updateRemove": "Create Individual Receipt / Update / Remove",
+	"sendEmail": "Send Email",
+	"emailSent": "Email Sent",
+	"emailNotSent": "Email not Sent",
+	"red": "Deleted Donations",
+	"redReceipt": "Cancelled Receipts",
+	"yellow": "Donations eligible for a receipt",
+	"green": "Donations with a receipt",
+	"blue": "Blocked Donations"
+  },
+  "contact": {
+  	"emailLabel": "Email Address: ",
+  	"phoneLabel": "Phone Number: ",
+  	"addressLabel": "Postal Address: ",
+  	"informationLabel": "Additional information: ",
+  	"seminardeskprofiledeleted": "This contact has been deleted on SeminarDesk."
+  },
+  "confirmAnnualDonations": {
+  	"title": "Annual Receipts",
+  	"description": "This page displays the list of donations per donator for the date range of ",
+  	"changeRange": "If you would like to change the date range for the fiscal year, please go to ",
+  	"changeRangeBold": "Admin -> Settings -> Fiscal Year Date Range",
+  	"selectContacts": "Please select a list of contacts to be considered for an annual receipt",
+  	"selectContactsAdditional": "Alternatively click the 'select all' button and remove contacts not to be considered.",
+  	"selectAllLabel": "Select All",
+  	"tables": {
+  	  "id": "ID",
+  	  "dateDonated": "Date Donated",
+  	  "amount": "Amount",
+  	  "organisation": "Organisation",
+  	  "donationType": "Donation Type",
+  	  "paymentMode": "Payment Mode",
+  	  "formOfDonation": "Form of Donation",
+  	  "natureOfDonation": "Nature of Donation"
+  	}
+  },
+  "receiptTriggerNotification": {
+  	"title": "Annual Receipts Notification",
+  	"description": "You are receiving this notification as a reminder that there are annual receipts due to be processed for the fiscal year.",
+  	"description2": "To process the annual receipts, go to :",
+  	"description2Bold": "Admin -> Settings -> Release Date",
+  	"understood": "Understood"
+  },
+  "emailStatusNotification": {
+    "title": "Emails Sent Notification",
+    "emailSentTo": "Email sent to :",
+    "emailNotSentTo": "Email not sent to :",
+    "accept": "Accept"
+  }
+}
