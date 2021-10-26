@@ -178,11 +178,11 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	custom_storage = FileSystemStorage(location='static', base_url='/static/')
-	with open(path + file_name, "wb+") as f:
+	custom_storage = FileSystemStorage(location='staticfiles', base_url='/static/')
+	with open('staticfiles/pdf/receipts/' + file_name, "wb+") as f:
 		django_file = File(f)
 		output.write(django_file)
-		custom_storage._save(path+file_name, django_file)
+		custom_storage._save('staticfiles/pdf/receipts/'+file_name, django_file)
 	print("New file created.")
 	return
 
