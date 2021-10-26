@@ -182,7 +182,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	output.write(f)
 	f.seek(0)
 	print(f"File(f): {File(f)}\tType: {type(File(f))}\tOutput: {output}\tOutput type: {type(output)}")
-	default_storage.save(path + file_name, File(f))
+	receipt.upload.save(file_name, File(f))
 	print(f"New file created. \tFile type: {type(f)}")
 	f.close()
 	return
