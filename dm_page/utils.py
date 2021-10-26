@@ -18,7 +18,6 @@ import csv
 # pdf receipt
 from donations.settings import BASE_DIR
 from django.core.files import File
-from django.core.files.storage import FileSystemStorage
 import num2words
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.pdfgen import canvas
@@ -85,7 +84,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	else:
 		receipt_settings = receipt_settings[0]
 	receipt = ReçusFiscaux.objects.get(id=receipt_id)
-	path = f"{BASE_DIR}/static/pdf/receipts/"
+	path = f"{BASE_DIR}/media/pdf/receipts/"
 	c = donation.contact
 	# Create pdf
 	address = eval(c.profile.primary_address)
@@ -178,12 +177,10 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	page = existing_pdf.getPage(0)
 	page.mergePage(new_pdf.getPage(0))
 	output.addPage(page)
-	custom_storage = FileSystemStorage(location='staticfiles', base_url='/static/')
-	with open('staticfiles/pdf/receipts/' + file_name, "wb+") as f:
-		django_file = File(f)
-		output.write(django_file)
-		custom_storage._save('staticfiles/pdf/receipts/'+file_name, django_file)
+	outputStream = open(path + file_name, "wb+")
+	output.write(outputStream)
 	print("New file created.")
+	outputStream.close()
 	return
 
 def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file_name):
@@ -196,7 +193,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 		print("Something has gone wrong with the save functionality")
 	else:
 		receipt_settings = receipt_settings[0]
-	path = f"{BASE_DIR}/static/pdf/receipts/"
+	path = f"{BASE_DIR}/media/pdf/receipts/"
 	p = contact.profile
 	# Create pdf
 	address = eval(p.primary_address)
