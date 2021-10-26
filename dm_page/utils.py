@@ -182,7 +182,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 	with open(path + file_name, "wb+") as f:
 		django_file = File(f)
 		output.write(django_file)
-		custom_storage.save(path+file_name, django_file)
+		custom_storage._save(path+file_name, django_file)
 	print("New file created.")
 	return
 
