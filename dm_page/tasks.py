@@ -404,7 +404,16 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 		dbx = dropbox.Dropbox(DROPBOX_OAUTH2_TOKEN)
 		meta, res = dbx.files_download(pdf_path)
 		part = MIMEBase("application", "octet-stream")
-		part.set_payload(res.raw)
+		try:
+			part.set_payload(res.content)
+			print("content")
+		except:
+			pass
+		try:
+			part.set_payload(res)
+			print("response")
+		except:
+			pass
 		encoders.encode_base64(part)
 		part.add_header(
 			"Content-Disposition",
