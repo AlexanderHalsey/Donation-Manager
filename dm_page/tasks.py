@@ -396,23 +396,24 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 		print("Logged in ok.")
 		message = MIMEMultipart()
 		message["From"] = s.host_email
-		message["To"] = send_to
+		message["To"] = 'alex.halsey@icloud.com'
 		if cc not in ("", None):
 			message["Cc"] = cc
 		message["Subject"] = "Receipt"
 		message.attach(MIMEText(body+"\n\n", "plain"))
-		with open(pdf_path, "rb") as attachment:
-			part = MIMEBase("application", "octet-stream")
-			part.set_payload(attachment.read())
-			encoders.encode_base64(part)
-			part.add_header(
-				"Content-Disposition",
-				f"attachment; filename={pdf_path.split('/receipts/')[1]}",
-			)
-			message.attach(part)
+		dbx = dropbox.Dropbox(DROPBOX_OAUTH2_TOKEN)
+		meta, res = dbx.files_download(pdf_path)
+		part = MIMEBase("application", "octet-stream")
+		part.set_payload(res.raw)
+		encoders.encode_base64(part)
+		part.add_header(
+			"Content-Disposition",
+			f"attachment; filename={pdf_path.split('/reçus/')[1]}",
+		)
+		message.attach(part)
 		print("PDF file found.")
 		text = message.as_string()
-		smtp_object.sendmail(s.host_email, send_to, text)
+		smtp_object.sendmail(s.host_email, 'alex.halsey@icloud.com', text)
 		smtp_object.quit()
 		receipt = ReçusFiscaux.objects.get(id=receipt_id)
 		if pdf_path.split(".pdf")[0][-6:] == "Annulé":
