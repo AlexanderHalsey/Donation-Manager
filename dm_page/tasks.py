@@ -341,7 +341,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 	return
 
 @shared_task
-def cancel_pdf_receipt(path):
+def cancel_pdf_receipt(path, receipt_id):
 	# this also needs to include anual pdf_receipts !!!
 	# only considering individual receipts at the moment
 	packet = io.BytesIO()
@@ -373,11 +373,14 @@ def cancel_pdf_receipt(path):
 		bin_data = outputStream.read()
 	dbx.files_upload(bin_data, f'/media/reçus/{file_name}') # <-- cancelled receipt to be uploaded
 	print("Cancelled version saved to DropBox.")
+	receipt = ReçusFiscaux.objects.get(id=receipt_id)
+	receipt.file_name = file_name
+	receipt.save()
 	try:
 		os.remove(file_name)
 	except:
 		pass
-	return file_name
+	return 
 
 @shared_task
 def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
