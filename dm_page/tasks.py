@@ -406,20 +406,26 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 		part = MIMEBase("application", "octet-stream")
 		try:
 			part.set_payload(res.content)
+			encoders.encode_base64(part)
+			part.add_header(
+				"Content-Disposition",
+				f"attachment; filename={pdf_path.split('/reçus/')[1]}",
+			)
+			message.attach(part)
 			print("content")
 		except:
 			pass
 		try:
 			part.set_payload(res)
+			encoders.encode_base64(part)
+			part.add_header(
+				"Content-Disposition",
+				f"attachment; filename={pdf_path.split('/reçus/')[1]}",
+			)
+		message.attach(part)
 			print("response")
 		except:
 			pass
-		encoders.encode_base64(part)
-		part.add_header(
-			"Content-Disposition",
-			f"attachment; filename={pdf_path.split('/reçus/')[1]}",
-		)
-		message.attach(part)
 		print("PDF file found.")
 		text = message.as_string()
 		smtp_object.sendmail(s.host_email, 'alex.halsey@icloud.com', text)
