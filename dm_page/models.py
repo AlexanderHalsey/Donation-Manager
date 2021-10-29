@@ -68,26 +68,35 @@ class PaymentMode(models.Model):
 		verbose_name = "Mode de Paiement"
 		verbose_name_plural = "Mode de Paiement"
 
+def path_to_institut_image(instance, filename):
+	return f'organisation/{instance.name}/institutImage/{filename}'
+
+def path_to_president_signature(instance, filename):
+	return f'organisation/{instance.name}/presidentSignature/{filename}'
+
 class Organisation(models.Model):
 	name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Nom")
 	institut_title = models.CharField(max_length=300, null=True, blank=True, verbose_name="Institution")
 	institut_street_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Rue")
 	institut_town = models.CharField(max_length=200, null=True, blank=True, verbose_name="Commune")
 	institut_post_code = models.CharField(max_length=200, null=True, blank=True, verbose_name="Code Postal")
-	institut_image = models.FileField(null=True, blank=True, verbose_name="Image de l'Institut")
+	institut_image = models.FileField(upload_to=path_to_institut_image, null=True, blank=True, verbose_name="Image de l'Institut")
 	object_title = models.CharField(max_length=300, null=True, blank=True, verbose_name="Titre de l'Objet")
 	object_description = models.TextField(null=True, blank=True, verbose_name="Description de l'Objet")
 	president = models.CharField(max_length=200, null=True, blank=True, verbose_name="Président")
-	president_signature = models.FileField(null=True, blank=True, verbose_name="Signature du Président")
+	president_signature = models.FileField(upload_to=path_to_president_signature, null=True, blank=True, verbose_name="Signature du Président")
 	used_for_receipt = models.BooleanField(default=False, verbose_name="Détails utilisés pour le reçu")
+
 	def __str__(self):
 		return self.name
+
 	def save(self, *args, **kwargs):
 		if self.used_for_receipt == True:
 			for past_instance in Organisation.objects.all():
 				past_instance.used_for_receipt = False
 				super(Organisation, past_instance).save(*args, **kwargs)
 		super(Organisation, self).save(*args, **kwargs)
+
 	class Meta:
 		verbose_name = "Organisation"
 		verbose_name_plural = "Organisations"

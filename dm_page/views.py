@@ -20,6 +20,7 @@ from .forms import DonationForm
 
 import json
 import datetime
+import dropbox
 import os
 from itertools import chain
 from secrets import compare_digest
@@ -206,7 +207,7 @@ def dashboard(request, lang, change=None):
 			receipt.cancel = False
 			receipt.save()
 
-			create_individual_receipt(receipt.id, donation.id, receipt.file_name)
+			create_individual_receipt.delay(receipt.id, donation.id, receipt.file_name)
 			if request.POST.get("email") == 'true':
 				e = Paramètre.objects.get(id=4)
 				path = f"{BASE_DIR}/media/pdf/receipts/{receipt.file_name}"
@@ -649,7 +650,7 @@ def pdf_receipts(request, lang, change=None):
 				receipt.donation_list = [d.id for d in annual_donations]
 				receipt.cancel = False
 				receipt.save()
-				create_annual_receipt(
+				create_annual_receipt.delay(
 					receipt.id, 
 					contact.id, 
 					receipt.donation_list, 
@@ -751,16 +752,15 @@ def pdf_receipts(request, lang, change=None):
 		show_modal_pdf = True
 		i = request.GET.get("view_pdf")
 		file_name = ReçusFiscaux.objects.get(id=int(i)).file_name
-		file_name = f"/media/pdf/receipts/{file_name}"
 	else:
 		show_modal_pdf = False
 	if request.GET.get("download_pdf"):
 		i = request.GET.get("download_pdf")
 		file_name = ReçusFiscaux.objects.get(id=int(i)).file_name
-		full_path = f"{BASE_DIR}/media/pdf/receipts/{file_name}"
-		with open(full_path, 'rb') as pdf:
-			response = HttpResponse(pdf, content_type='application/pdf')
-			response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+		dbx = dropbox.Dropbox(DROPBOX_OAUTH2_TOKEN)
+		m, res = dbx.files_download(f"/media/reçus/{file_name}")
+		response = HttpResponse(io.BytesIO(res.content), content_type='application/pdf')
+		response['Content-Disposition'] = f'attachment; filename={file_name}'
 		return response
 
 	try:
@@ -847,7 +847,7 @@ def confirm_annual(request, lang, change=None):
 				receipt.donation_list = [d.id for d in annual_donations]
 				receipt.cancel = False
 				receipt.save()
-				create_annual_receipt(
+				create_annual_receipt.delay(
 					receipt.id, 
 					receipt.contact.id, 
 					receipt.donation_list, 
