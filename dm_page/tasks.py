@@ -422,7 +422,7 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 				"Content-Disposition",
 				f"attachment; filename={pdf_path.split('/reçus/')[1]}",
 			)
-		message.attach(part)
+			message.attach(part)
 			print("response")
 		except:
 			pass
