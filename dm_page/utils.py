@@ -33,7 +33,7 @@ def file_storage_check():
 				donation = Donation.objects.get(id=i)
 				donation.pdf = False
 				donation.save()
-			cancel_pdf_receipt.delay(f"/media/reçus/{receipt.file_name}")
+			cancel_pdf_receipt.delay(f"/media/reçus/{receipt.file_name}", receipt.id)
 
 def export_xls(view, data, columns, file_name_extension):
 	response = HttpResponse()
