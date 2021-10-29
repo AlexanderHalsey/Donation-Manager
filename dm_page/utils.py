@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 import datetime
 from donations.settings import BASE_DIR
+from .tasks import cancel_pdf_receipt
 from .models import *
 import json
 import io
