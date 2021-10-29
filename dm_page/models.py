@@ -222,6 +222,7 @@ class Paramètre(models.Model):
 	host_email = models.CharField(max_length=200, null=True, blank=True, verbose_name="Hôte Email")
 	host_password = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mot de passe")
 	cc = models.CharField(max_length=200, null=True, blank=True)
+	email_subject = models.CharField(max_length=200, null=True, blank=True, verbose_name="Sujet")
 	body = models.TextField(max_length=200, null=True, blank=True, verbose_name="Message", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu")
 	smtp_domain = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Domain")
 	smtp_port = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Port")
@@ -246,5 +247,3 @@ class WebhookLogs(models.Model):
 			models.Index(fields=["received_at"]),
 		]
 
-class MediaFileTest(models.Model):
-	file = models.FileField(upload_to='pdf/receipts', null=True, blank=True)

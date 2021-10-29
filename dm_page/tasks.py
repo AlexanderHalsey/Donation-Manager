@@ -383,7 +383,7 @@ def cancel_pdf_receipt(path, receipt_id):
 	return 
 
 @shared_task
-def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
+def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None):
 	try:
 		sleep(t*15)
 		s = Paramètre.objects.get(id=4)
@@ -396,10 +396,10 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 		print("Logged in ok.")
 		message = MIMEMultipart()
 		message["From"] = s.host_email
-		message["To"] = 'alex.halsey@icloud.com'
+		message["To"] = send_to
 		if cc not in ("", None):
 			message["Cc"] = cc
-		message["Subject"] = "Receipt"
+		message["Subject"] = subject
 		message.attach(MIMEText(body+"\n\n", "plain"))
 		dbx = dropbox.Dropbox(DROPBOX_OAUTH2_TOKEN)
 		meta, res = dbx.files_download(pdf_path)
@@ -414,7 +414,7 @@ def send_email(receipt_id, pdf_path, send_to, body, t, cc=None):
 		print("PDF file found.")
 		text = message.as_string()
 		print("message processed ok")
-		smtp_object.sendmail(s.host_email, 'alex.halsey@icloud.com', text)
+		smtp_object.sendmail(s.host_email, send_to, text)
 		print("email sent")
 		smtp_object.quit()
 		receipt = ReçusFiscaux.objects.get(id=receipt_id)

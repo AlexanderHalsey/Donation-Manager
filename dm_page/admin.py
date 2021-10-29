@@ -118,6 +118,7 @@ class ModelAdminSettings(admin.ModelAdmin):
 				'host_email',
 				'host_password',
 				'cc',
+				'email_subject',
 				'body',
 				'smtp_domain',
 				'smtp_port',
@@ -205,5 +206,4 @@ mysite.register(DonationType, ModelAdminDonationType)
 mysite.register(NatureDuDon, ModelAdminNatureDuDon)
 mysite.register(FormeDuDon, ModelAdminFormeDuDon)
 mysite.register(PaymentMode, ModelAdminPaymentMode)
-mysite.register(MediaFileTest)
 

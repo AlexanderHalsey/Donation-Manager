@@ -212,7 +212,8 @@ def dashboard(request, lang, change=None):
 				e = Paramètre.objects.get(id=4)
 				path = f"/media/reçus/{receipt.file_name}"
 				body = e.body.replace("R_ID", str(receipt.id))
-				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, 1, cc=e.cc)
+				subject = e.email_subject or ""
+				send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, 1, cc=e.cc)
 				email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			return redirect("/")
 
@@ -684,11 +685,12 @@ def pdf_receipts(request, lang, change=None):
 	}
 
 	unadulterated_receipts = ReçusFiscaux.objects.all()
-	email_content = {"true": False, "id": "", "email": "","cc": "", "file": ""}
+	email_content = {"true": False, "id": "", "email": "","cc": "","subject": "", "file": ""}
 	if request.GET.get("send_email") not in ("", None):
 		email_content["true"] = True
 		email_content["id"] = unadulterated_receipts.get(id=request.GET.get("send_email")).id
 		email_content["email"] = unadulterated_receipts.get(id=request.GET.get("send_email")).contact.profile.email
+		email_content["subject"] = "" if Paramètre.objects.get(id=4).email_subject == None else  Paramètre.objects.get(id=4).email_subject
 		email_content["cc"] = "" if Paramètre.objects.get(id=4).cc == None else  Paramètre.objects.get(id=4).cc
 		email_content["file"] = unadulterated_receipts.get(id=request.GET.get("send_email")).file_name
 
@@ -700,7 +702,8 @@ def pdf_receipts(request, lang, change=None):
 			body = request.POST["message"] + "\n\n"
 			body = body.replace("R_ID", str(receipt.id))
 			path = f"/media/reçus/{receipt.file_name}"
-			send_email.delay(receipt.id, path, send_to, body, 1, cc=cc)
+			subject = request.POST["subject"]
+			send_email.delay(receipt.id, path, send_to, subject, body, 1, cc=cc)
 			email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			return redirect(f'{lang}/pdf_receipts/')
 
@@ -860,8 +863,9 @@ def confirm_annual(request, lang, change=None):
 					donation.save()
 				e = Paramètre.objects.get(id=4)
 				path = f"/media/reçus/{receipt.file_name}"
+				subject = e.email_subject or ""
 				body = e.body.replace("R_ID", str(receipt.id))
-				send_email.delay(receipt.id, path, receipt.contact.profile.email, body, t, cc=e.cc)
+				send_email.delay(receipt.id, path, subject, receipt.contact.profile.email, body, t, cc=e.cc)
 				email_statuses.append((receipt.contact.id, receipt.id))
 		email_confirmation.delay(len(contacts), email_statuses)
 		return redirect(f"/{lang}/")
