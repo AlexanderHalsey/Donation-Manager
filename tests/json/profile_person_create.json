@@ -4,15 +4,15 @@
   "properties": {
     "timestamp": 1628763451956
   },
-  "notifications": [
+  "notifications": [ 
     {
       "action": "profile.create",
       "payload": {
-        "id": 6217,
+        "id": 6219,
         "objectType": "PERSON",
         "salutation": "Herr",
         "title": "",
-        "name": "Person 20210805",
+        "name": "Person 20210807",
         "language": "en",
         "labels": [
           {
@@ -28,18 +28,18 @@
             "pictureUrl": []
           }
         ],
-        "email": "personmail@mail.com",
+        "email": "alex.halsey@icloud.com",
         "alternativeEmail": "personemail2@mail2.com",
         "website": "personwebsite.com",
         "faxNumber": "",
         "primaryAddress": {
-          "careOf": "Room 123",
-          "streetAddress": "Apart XYZ",
-          "streetAddress2": "",
-          "zipCode": "4321",
-          "city": "City XYZ",
-          "province": "Province XYZ",
-          "countryCode": ""
+          "careOf": "",
+          "streetAddress": "11 Clou D Avau",
+          "streetAddress2": "Les Granges",
+          "zipCode": "1922",
+          "city": "Salvan",
+          "province": "Valais",
+          "countryCode": "CH"
         },
         "billingAddressActive": false,
         "billingAddress": {
@@ -88,7 +88,7 @@
           "hhh": ""
         },
         "firstName": "Person",
-        "lastName": "20210805",
+        "lastName": "20210807",
         "additionalTitle": "Title 1",
         "dateOfBirth": "1990-01-02",
         "profession": "Consultant",

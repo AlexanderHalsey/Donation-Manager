@@ -1,7 +1,7 @@
 <form action="" method="POST" autocomplete="off">
   {% csrf_token %}
   <div class="modal fade" role="dialog" data-bs-backdrop="static" id="confirm_donation" aria-labelledby="confirmLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" style="max-width:43%;" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="confirmLabel">{{ form_values.title }}</h5>
@@ -10,55 +10,55 @@
         <div class="modal-body">
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.contactLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>{{form.fields.contact.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.dateDonatedLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>{{form.fields.date_donated.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.amountLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>€ {{form.fields.amount_euros.initial}}{{form.fields.amount_cents.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.organisationLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>{{form.fields.organisation.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.donationTypeLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>{{form.fields.donation_type.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.paymentModeLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>{{form.fields.payment_mode.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.formeDuDonLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>{{form.fields.forme_du_don.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
             <label class="col-md-5 text-end"><strong>{{language.forms.natureDuDonLabelName}}</strong></label>
-            <div class="col-md-6 text-center">
+            <div class="col-md-6">
               <label>{{form.fields.nature_du_don.initial}}</label>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="col-md-4 text-end"><strong>{{language.forms.sendEmailLabelName}}</strong></label>
-            <div class="col-md-8">
+            <label class="col-md-5 text-end"><strong>{{language.forms.sendEmailLabelName}}</strong></label>
+            <div class="col-md-6">
               <label>{{ form_values.email_address }}</label>
               <input class="form-check-input mx-2" type="checkbox" value="" id="send_email" name="email" checked>
             </div>

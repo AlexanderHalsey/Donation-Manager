@@ -62,3 +62,44 @@ def export_csv(view, data, file_name_extension):
 	for row in data:
 		writer.writerow(row)
 	return response
+
+def format_address(json_string):
+	address = eval(json_string)
+	formatted_address = []
+
+	care_of = address["careOf"]
+	street_address = address["streetAddress"]
+	street_address_2 = address["streetAddress2"]
+	zip_code = address["zipCode"]
+	city = address["city"]
+	province = address["province"]
+	countryCode = address["countryCode"]
+
+	if care_of not in (None, "") and street_address not in (None, ""):
+		formatted_address.append(care_of+", "+street_address)
+	elif care_of not in (None, ""):
+		formatted_address.append(care_of)
+	elif street_address not in (None, ""):
+		formatted_address.append(street_address)
+
+	if street_address_2 not in (None, ""):
+		formatted_address.append(street_address_2)
+
+	if zip_code not in (None, "") and city not in (None, ""):
+		formatted_address.append(zip_code+", "+city)
+		if province not in (None, ""):
+			formatted_address.append(province)
+	elif zip_code not in (None, ""):
+		if province not in (None, ""):
+			formatted_address.append(zip_code+", "+province)
+		else:
+			formatted_address.append(zip_code)
+	elif city not in (None, ""):
+		if province not in (None, ""):
+			formatted_address.append(city+", "+province)
+		else:
+			formatted_address.append(city)
+	elif province not in (None, ""):
+            formatted_address.append(province)
+
+	return formatted_address

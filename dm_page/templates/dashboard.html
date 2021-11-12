@@ -86,7 +86,7 @@
         document.getElementById("pdf_view").click();
       }
     );
-    {% endif %}
+  {% endif %}
 
   window.addEventListener('submit',
     function(){
@@ -139,31 +139,6 @@
     }
   );
 
-  window.addEventListener('load', function () {
-    $("#id_organisation").change('shown.bs.modal', function () {
-      var orgs = $("#id_organisation");
-      var dTypes = $("#id_donation_type");
-      if (orgs.val() == '-----') {
-        $("#id_donation_type").prop("disabled", true);
-        console.log(dTypes.prop("disabled"));
-        dTypes.options.length = 0;
-        dTypes.value = "-----";
-      } else {
-        dTypes.disabled = false;
-        var  orgNames = orgs.getElementsByTagName("option");
-        var dTypeNames = eval('{{ donation_types|safe }}');
-        dTypes.options.length = 0;
-        dTypes.options[0] = new Option("-----", "-----");
-        for (let i=0; i < dTypeNames.length; i++) {
-          if (dTypeNames[i][0] == $(this).val()) {
-            dTypes.options[dTypes.options.length] = new Option(dTypeNames[i][1],dTypeNames[i][1]);
-          }
-        }
-      }
-      console.log(dTypes);
-    })
-  });
- 
   window.addEventListener('load', function() {
     var orgs = document.getElementById("filter_organisation");
     var dTypes = document.getElementById("filter_donation_type");
@@ -218,11 +193,13 @@
     var lang = "{{language.language}}";
     if (lang == 'en') {
       $('#donationTable').DataTable({
-        'order': [[0, "desc"]]
+        'order': [[0, "desc"]],
+        'pageLength': 25
       });
     } else if (lang == 'fr') {
       $('#donationTable').DataTable({
         'order': [[0, "desc"]],
+        'pageLength': 25,
         'language':  {
             "emptyTable": "Aucune donnée disponible dans le tableau",
             "lengthMenu": "Afficher _MENU_ éléments",
@@ -361,13 +338,14 @@
           <thead class="table-primary">
             <tr>
               <th>{{language.table.id}}</th>
+              <th>SDID</th>
               <th>{{language.table.contact}}</th>
               <th>{{language.table.dateDonated}}</th>
               <th>{{language.table.amount}}</th>
               <th>{{language.table.paymentMode}}</th>
               <th>{{language.table.organisation}}</th>
               <th>{{language.table.donationType}}</th>
-              <th style="font-size: 12px !important; max-width: 90px;">{{language.table.updateRemove}}</th>
+              <th>{{language.table.updateRemove}}</th>
             </tr>
           </thead>
           <tbody>
@@ -382,9 +360,10 @@
             <tr>
             {% endif %}
               <td>{{ donation.id }}</td>
+              <td>{{ donation.contact.profile.seminar_desk_id }}</td>
               <td><a href="{% url 'contact' lang=language.language pk=donation.contact.profile.seminar_desk_id %}" >{{ donation.contact.profile.name }}</a></td>
               <td class="text-center">{{ donation.date_donated|date:"Y / m / d" }}</td>
-              <td class="text-end">€ {{ donation.amount }}</td>
+              <td class="text-end">{{ donation.amount }} €</td>
               <td>{{ donation.payment_mode_name }}</td>
               <td>{{ donation.organisation_name }}</td>
               <td>{{ donation.donation_type_name }}</td>
@@ -392,30 +371,32 @@
               <td></td>
               {% else %}
               <td style="text-align: center;">
-                {% if donation.locked %} 
-                <span><img src="{% static 'icons/lock.png' %}" class="img" width="25" height="25" alt="lock"></span>
-                {% else %}
                 <form method="GET">
                   {% csrf_token %}
                   <div class="row mx-1 justify-content-end">
                     {% for condition in receipt_conditions %}
                     {% if donation.organisation_name == condition.0 and donation.donation_type_name == condition.1 %}
                     <div class="col-4">
-                      <button name="create_receipt" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em;" value="{{ donation.id }}"><img src="{% static 'icons/receipt.png' %}" class="img" width="21" height="21" alt="create_receipt"></button>
+                      <button title="{{language.table.createReceiptHover}}" name="create_receipt" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em;" value="{{ donation.id }}"><img src="{% static 'icons/receipt.png' %}" class="img" width="21" height="21" alt="create_receipt"></button>
                     </div>
                     {% endif %}
                     {% endfor %}
+                    {% if donation.locked %} 
+                    <div class="col-8">
+                      <span><img src="{% static 'icons/lock.png' %}" class="img" width="25" height="25" alt="lock"></span>
+                    </div>
+                    {% else %}
                     <div class="col-4">
-                      <button name="update" class="btn btn-warning btn-sm btn-outline-success py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/write.png' %}" class="img" width="21" height="21" alt="update"></button>
+                      <button title="{{language.table.updateHover}}" name="update" class="btn btn-warning btn-sm btn-outline-success py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/write.png' %}" class="img" width="21" height="21" alt="update"></button>
                     </div>
                     <div class="col-4">
-                      <button name="delete" class="btn btn-danger btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/delete.png' %}" class="img" width="21" height="21" alt="delete"></button>
+                      <button title="{{language.table.deleteHover}}" name="delete" class="btn btn-danger btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/delete.png' %}" class="img" width="21" height="21" alt="delete"></button>
                     </div>
+                    {% endif %}
                   </div>
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
                 </form>
-                {% endif %}
               </td>
               {% endif %}
             </tr>

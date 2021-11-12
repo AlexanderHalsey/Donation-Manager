@@ -84,11 +84,13 @@
     var lang = "{{language.language}}";
     if (lang == 'en') {
       $('#donatorTable').DataTable({
-          'order': [[0, "desc"]]
+          'order': [[0, "desc"]],
+          'pageLength': 25
         });
     } else if (lang == 'fr') {
       $('#donatorTable').DataTable({
         'order': [[0, "desc"]],
+        'pageLength': 25,
         'language':  {
             "emptyTable": "Aucune donnée disponible dans le tableau",
             "lengthMenu": "Afficher _MENU_ éléments",
@@ -245,12 +247,12 @@
                   <div class="col-12">
                     <div class="input-group mb-3">
                       <span class="p-2"><strong>{{language.forms.amountLabelName}}</strong></span>
-                      <span class="input-group-text">€</span>
                       <input name="amount_gte" class="form-control {{is_invalid.amount_gte}} text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
                       <div class="invalid-tooltip input-group-text">{{language.forms.invalidFeedback.amount}}</div>
-                      <span class="input-group-text"><=</span>
                       <span class="input-group-text">€</span>
+                      <span class="input-group-text"><=</span>
                       <input name="amount_lte" class="form-control {{is_invalid.amount_lte}} text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
+                      <span class="input-group-text">€</span>
                       <div class="invalid-tooltip input-group-text">{{language.forms.invalidFeedback.amount}}</div>
                     </div>
                   </div>
@@ -285,7 +287,7 @@
                 {% endfor %}
               </td>
               <td>{{ contact.total_donations }}</td>
-              <td class="text-end">€ {{ contact.total_donated }}</td>
+              <td class="text-end">{{ contact.total_donated }} €</td>
             </tr>
             {% endfor %}
           </tbody>

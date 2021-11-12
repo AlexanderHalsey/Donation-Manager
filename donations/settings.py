@@ -131,7 +131,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-GB'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 
@@ -176,6 +176,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
 ADMINS = [(os.getenv('ADMIN_NAME'), os.getenv('ADMIN_EMAIL')),]
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 SERVER_EMAIL = os.getenv('EMAIL_ADDRESS')
 EMAIL_HOST = os.getenv('SMTP_DOMAIN')
 EMAIL_PORT = int(os.getenv('SMTP_PORT'))

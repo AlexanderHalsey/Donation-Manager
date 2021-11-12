@@ -1,10 +1,24 @@
 {% extends 'base.html' %}
 {% block page_content %}
+
+<script type="text/javascript">
+	window.addEventListener('load', function() {
+		var logs_json = eval('{{logs_json|safe}}');
+		var l = document.getElementsByClassName("payload");
+		console.log(l[0]);
+		for (let x=0; x < l.length; x++) {
+			console.log(logs_json[x]);
+			l[x].innerHTML = prettyPrintJson.toHtml(logs_json[x]);
+		}
+	})
+</script>
+
 {% for log in logs %}
 <h5>Received at:</h5>
 <p>{{log.received_at}}</p>
 <h5>Payload:</h5>
-<p>{{log.payload}}</p>
+<pre class="payload">
+</pre>
 </hr>
 {% endfor %}
 {% endblock %}

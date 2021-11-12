@@ -17,21 +17,25 @@ class MyAdminSite(admin.AdminSite):
 		# Sort the apps alphabetically.
 		app_list = sorted(app_dict.values(), key=lambda x: x['name'].lower())
 		modified_app_list = deepcopy(app_list)
-		modified_app_list.insert(1, {
-			"name": "Reçus et Paramètres",
-			"app_label": "reçusetparamètres",
+		modified_app_list.insert(1, {  
+			"name": "Paramètres",
+			"app_label": "paramètres",
 			"app_url": "/fr/admin/dm_page/",
 			"has_module_perms": True,
-			"models": modified_app_list[1]["models"][:3]
+			"models": modified_app_list[1]["models"][:]
 		})
-		modified_app_list[2]["name"] = "Modèles"
-		modified_app_list[2]["app_label"] = "modèles"
-		modified_app_list[2]["models"] = modified_app_list[2]["models"][3:]
 		# Sort the models alphabetically within each app.
+		modified_app_list = modified_app_list[:2]
 		for app in modified_app_list:
 		    app['models'].sort(key=lambda x: x['name'])
 
 		return modified_app_list
+
+class DonationReceiptForm(forms.ModelForm):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.fields['cancel'].required = True
+		self.fields['cancel_description'].required = True
 
 class ModelAdminDonationReceipt(admin.ModelAdmin):
 	list_display = ('id','contact','file_name',)
@@ -39,6 +43,7 @@ class ModelAdminDonationReceipt(admin.ModelAdmin):
 	fields = ('cancel','cancel_description')
 	verbose_name = "Reçus Fiscaux"
 	verbose_name_plural = "Reçus Fiscaux"
+	form = DonationReceiptForm
 	def get_readonly_fields(self, request, obj):
 		if obj.cancel:
 			return ('cancel',)
@@ -99,7 +104,7 @@ class ModelAdminSettings(admin.ModelAdmin):
 		if i == 1:
 			return ('date_range_start','date_range_end')
 		if i == 2:
-			return ('release_date', 'automatic', 'manual')
+			return ('release_date', 'manual')
 		if i == 3:
 			return (
 				('organisation_1', 'donation_type_1'),
@@ -116,8 +121,10 @@ class ModelAdminSettings(admin.ModelAdmin):
 		if i == 4:
 			return (
 				'host_email',
+				'host_email_name',
 				'host_password',
 				'cc',
+				'bcc',
 				'email_subject',
 				'body',
 				'smtp_domain',

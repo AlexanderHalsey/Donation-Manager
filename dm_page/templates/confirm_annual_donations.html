@@ -42,18 +42,24 @@
 		<script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js" integrity="sha384-h9Hm5g3bPPTf1ge+R8GamzLHN6biulBpX9gRAw9anvbZ/VozYeDgvJpcBY8V3+aH" crossorigin="anonymous"></script>
 
 		<script>
+			var cs = eval('{{contacts_json|safe}}');
 			$('.flexdatalist').flexdatalist({
-				minLength: 1
+				minLength: 1,
+				valueProperty: "id",
+				visibleProperties: ["name"],
+				searchIn: "name",
+				data: cs
 			});
 			window.addEventListener('load', function() {
-				var contacts = eval('{{contact_names|safe}}'), add = document.getElementById('addContacts'), remove = document.getElementById('removeContacts'), select = document.getElementById('selectAllContacts'), submit = document.getElementById('confirm_annual_receipts');
+				var contacts = eval('{{contacts_json|safe}}'), add = document.getElementById('addContacts'), remove = document.getElementById('removeContacts'), select = document.getElementById('selectAllContacts'), submit = document.getElementById('confirm_annual_receipts');
 				select.onclick = function () {
 					if (select.checked == true) {
 						$(add).flexdatalist('reset');
 						$(add).flexdatalist('disabled', true);
 						$(remove).flexdatalist('disabled', false);
 						for (let i=0; i < contacts.length; i++) {
-							var elements = document.getElementsByName(contacts[i]);
+							var elements = document.getElementsByName(contacts[i]["id"]);
+							console.log(elements);
 							for (let i=0; i < elements.length; i++) {
 								elements[i].hidden = false;
 							}
@@ -64,7 +70,7 @@
 						$(remove).flexdatalist('disabled', true);
 						$(add).flexdatalist('disabled', false);
 						for (let i=0; i < contacts.length; i++) {
-							var elements = document.getElementsByName(contacts[i]);
+							var elements = document.getElementsByName(contacts[i]["id"]);
 							for (let i=0; i < elements.length; i++) {
 								elements[i].hidden = true;
 							}
@@ -73,15 +79,15 @@
 					}
 				};
 				add.change = function () {
-					var values = $(add).val().split(",");
+					var values = add.value.split(",");
 					if (values[0].length == 0) {
 						submit.hidden = true;
 					} else {
 						submit.hidden = false;
 					}
 					for (let i=0; i < contacts.length; i++) {
-						var elements = document.getElementsByName(contacts[i]);
-						if (values.includes(contacts[i])) {
+						var elements = document.getElementsByName(contacts[i]["id"]);
+						if (values.includes(contacts[i]["id"])) {
 							for (let i=0; i < elements.length; i++) {
 								elements[i].hidden = false;
 							}
@@ -93,15 +99,15 @@
 					}
 				};
 				remove.change = function () {
-					var values = $(remove).val().split(",");
+					var values = remove.value.split(",");
 					if (values[0].length == 0) {
 						submit.hidden = true;
 					} else {
 						submit.hidden = false;
 					}
 					for (let i=0; i < contacts.length; i++) {
-						var elements = document.getElementsByName(contacts[i]);
-						if (values.includes(contacts[i])) {
+						var elements = document.getElementsByName(contacts[i]["id"]);
+						if (values.includes(contacts[i]["id"])) {
 							for (let i=0; i < elements.length; i++) {
 								elements[i].hidden = true;
 							}
@@ -160,51 +166,58 @@
 					  <label>{{language.confirmAnnualDonations.selectAllLabel}}</label>
 					</div>
 					<div class="col-6 my-3">
-					  <input id="addContacts" type='text' class='form-control flexdatalist' data-min-length="1" multiple='multiple' list="flexDataContacts" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
+					  <input id="addContacts" type='text' class='form-control flexdatalist' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
 				      <br>
-				      <input id="removeContacts" type='text' class='form-control flexdatalist' data-min-length="1" multiple='multiple' list="flexDataContacts" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
-				      <datalist id="flexDataContacts">
-				      	{% for contact, email, donations in contacts %}
-				      	<option value="{{contact}}">{{contact}}</option>
-				        {% endfor %}
-					  </datalist>
+				      <input id="removeContacts" type='text' class='form-control flexdatalist' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
 				    </div>
 				  </div>
 				  <hr>
 				  <div id="receipt_tables" class="row mx-2 scrol">
-				      {% for contact, email, donations in contacts %}
-				  	    <label name="{{contact}}" class="my-1" hidden><strong>{{contact}}</strong>&nbsp;-&nbsp;{{email}}</label>
+				      {% for dict in contacts %}
+				      	{% if dict.email %}
+				  	    <label name="{{dict.id}}" class="my-1" hidden><strong>{{dict.name}}</strong>&nbsp;-&nbsp;{{dict.email}}</label>
+				  	    {% else %}
+				  	    <label style="color: red;" name="{{dict.id}}" class="my-1" hidden><strong style="color: black;">{{dict.name}}</strong>&nbsp;-&nbsp;{{language.confirmAnnualDonations.noEmail}}</label>
+				  	    {% endif %}
 				  	    <br>
-				  	    <table name="{{contact}}" class="table table-sm table-bordered table-striped" hidden>
-				  	      <thead class="table-primary">
-				  	        <tr>
-				  	          <th>{{language.confirmAnnualDonations.tables.id}}</th>
-				  	          <th>{{language.confirmAnnualDonations.tables.dateDonated}}</th>
-				  	          <th>{{language.confirmAnnualDonations.tables.amount}}</th>
-				  	          <th>{{language.confirmAnnualDonations.tables.organisation}}</th>
-				  	          <th>{{language.confirmAnnualDonations.tables.donationType}}</th>
-				  	          <th>{{language.confirmAnnualDonations.tables.paymentMode}}</th>
-				  	          <th>{{language.confirmAnnualDonations.tables.formOfDonation}}</th>
-				  	          <th>{{language.confirmAnnualDonations.tables.natureOfDonation}}</th>
-				  	        </tr>
-				  	      </thead>
-				  	      <tbody>
-				  	      	{% for donation in donations %}
-				  	      	<tr>
-				  	      	  <td>{{donation.id}}</td>
-				  	          <td>{{donation.date_donated}}</td>
-				  	          <td>{{donation.amount}}</td>
-				  	          <td>{{donation.organisation}}</td>
-				  	          <td>{{donation.donation_type}}</td>
-				  	          <td>{{donation.payment_mode}}</td>
-				  	          <td>{{donation.forme_du_don_name}}</td>
-				  	          <td>{{donation.nature_du_don_name}}</td>
-				  	      	</tr>
-				  	      	{% endfor %}
-				  	      </tbody>
-				  	    </table>
-				  	    <br name="{{contact}}" hidden>
-				  	    <hr name="{{contact}}" hidden>
+				  	    <br>
+				  	    <div class="col-2">
+					  	  {% for line in dict.address %}
+					  	  <p name="{{dict.id}}" style="margin: 0;" hidden>{{line}}</p>
+					  	  {% endfor %}
+					  	</div>
+					  	<div class="col-10">
+					  	  <table name="{{dict.id}}" class="table table-sm table-bordered table-striped" hidden>
+					  	    <thead class="table-primary">
+					  	      <tr>
+					  	        <th>{{language.confirmAnnualDonations.tables.id}}</th>
+					  	        <th>{{language.confirmAnnualDonations.tables.dateDonated}}</th>
+					  	        <th>{{language.confirmAnnualDonations.tables.amount}}</th>
+					  	        <th>{{language.confirmAnnualDonations.tables.organisation}}</th>
+					  	        <th>{{language.confirmAnnualDonations.tables.donationType}}</th>
+					  	        <th>{{language.confirmAnnualDonations.tables.paymentMode}}</th>
+					  	        <th>{{language.confirmAnnualDonations.tables.formOfDonation}}</th>
+					  	        <th>{{language.confirmAnnualDonations.tables.natureOfDonation}}</th>
+					  	      </tr>
+					  	    </thead>
+					  	    <tbody>
+					  	     {% for donation in dict.donations %}
+					  	     <tr>
+					  	      	<td>{{donation.id}}</td>
+					  	        <td>{{donation.date_donated}}</td>
+					  	        <td>{{donation.amount}}</td>
+					  	        <td>{{donation.organisation}}</td>
+					  	        <td>{{donation.donation_type_name}}</td>
+					  	        <td>{{donation.payment_mode}}</td>
+					  	        <td>{{donation.forme_du_don_name}}</td>
+					  	        <td>{{donation.nature_du_don_name}}</td>
+					  	     </tr>
+					  	     {% endfor %}
+					  	    </tbody>
+					  	  </table>
+					  	</div>
+				  	    <br name="{{dict.id}}" hidden>
+				  	    <hr name="{{dict.id}}" hidden>
 				  	  {% endfor %}
 				  	  <br>
 				  	  <div class="row justify-content-end">

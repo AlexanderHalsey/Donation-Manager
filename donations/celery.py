@@ -17,7 +17,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
 	'annual_receipts_check': {
 		'task': 'donations.receipt_trigger_notification',
-		'schedule': crontab() # runs every minute
+		'schedule': crontab(minute="0", hour="0", day_of_week="*") # runs once a day at 00:00
 	}
 }
 app.conf.timezone = 'UTC'

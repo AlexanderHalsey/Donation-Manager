@@ -16,7 +16,7 @@
               <span class="p-2"><strong>{{language.forms.contactLabelName}}</strong></span>
               <input name="contact" class="float-left form-control" placeholder="" list="datalistO" value="{{ initial_filter_values.contact }}" autocomplete="off">
               <datalist id="datalistO">
-                {% for id, contact in form.fields.contact.choices %}
+                {% for id, contact in form.fields.contact_name.choices %}
                 <option value="{{ contact }}"></option>
                 {% endfor %}
               </datalist>
@@ -52,7 +52,7 @@
               <span class="p-2"><strong>{{language.forms.paymentModeLabelName}}</strong></span>
               <select name="payment_mode" class="form-select" aria-label="Default select example">
                 <option value="-----" selected>-----</option>
-                {% for id, mode in form.fields.payment_mode.choices %}
+                {% for id, mode in form.fields.payment_mode_name.choices %}
                 {% if initial_filter_values.payment_mode == mode %}
                 <option value="{{ mode }}" selected>{{ mode }}</option>
                 {% else %}
@@ -67,7 +67,7 @@
               <span class="p-2"><strong>{{language.forms.organisationLabelName}}</strong></span>
               <select id="filter_organisation" name="organisation" class="form-select" aria-label="Default select example">
                 <option value="-----" selected>-----</option>
-                {% for id, organisation in form.fields.organisation.choices %}
+                {% for id, organisation in form.fields.organisation_name.choices %}
                 {% if initial_filter_values.organisation == organisation %}
                 <option value="{{ organisation }}" selected>{{ organisation }}</option>
                 {% else %}
@@ -90,12 +90,12 @@
           <div class="col-6">
             <div class="input-group mb-3">
               <span class="p-2"><strong>{{language.forms.amountLabelName}}</strong></span>
-              <span class="input-group-text">€</span>
               <input name="amount_gte" class="form-control {{form_values.errorlist.amount_gte}} text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_gte }}">
+              <span class="input-group-text">€</span>
               <div class="invalid-tooltip input-group-text">{{language.forms.invalidFeedback.amount}}</div>
               <span class="input-group-text"><=</span>
-              <span class="input-group-text">€</span>
               <input name="amount_lte" class="form-control {{form_values.errorlist.amount_lte}} text-end" aria-label="Amount (to the nearest Euro)" autocomplete="off" value="{{ initial_filter_values.amount_lte }}">
+              <span class="input-group-text">€</span>
               <div class="invalid-tooltip input-group-text">{{language.forms.invalidFeedback.amount}}</div>
             </div>
           </div>
