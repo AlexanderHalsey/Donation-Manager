@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
 	window.addEventListener('load', function() {
-		var logs_json = eval('{{logs_json|safe}}');
+		var logs_json = eval(`{{logs_json|safe}}`);
 		var l = document.getElementsByClassName("payload");
 		console.log(l[0]);
 		for (let x=0; x < l.length; x++) {

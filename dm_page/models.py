@@ -25,7 +25,7 @@ class Profile(models.Model):
 	alternative_email = models.CharField(max_length= 200, default="", null=True, blank=True)
 	website = models.CharField(max_length= 200, default="", null=True, blank=True)
 	fax_number = models.CharField(max_length= 200, default="", null=True, blank=True)
-	primary_address = models.TextField(default="", null=True)
+	primary_address = models.JSONField(default=None, null=True)
 	billing_address_active = models.CharField(max_length= 200, default="", null=True, blank=True)
 	billing_address = models.TextField(default="", null=True, blank=True)
 	remarks = models.TextField(default="", null=True, blank=True)

@@ -63,8 +63,8 @@ def export_csv(view, data, file_name_extension):
 		writer.writerow(row)
 	return response
 
-def format_address(json_string):
-	address = eval(json_string)
+def format_address(json_dict):
+	address = json_dict
 	formatted_address = []
 
 	care_of = address["careOf"]

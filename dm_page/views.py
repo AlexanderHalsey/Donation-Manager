@@ -459,7 +459,7 @@ def contact(request, pk, lang, change=None):
 
 	# context
 	contact = Contact.objects.get(profile__seminar_desk_id=pk)
-	address = eval(contact.profile.primary_address)
+	address = contact.profile.primary_address
 	address = list(filter(lambda x: x, [value for key, value in address.items()]))
 	tags = contact.tags.all()
 	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id).filter(disabled=False)
