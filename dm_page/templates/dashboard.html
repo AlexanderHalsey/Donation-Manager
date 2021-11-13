@@ -338,7 +338,6 @@
           <thead class="table-primary">
             <tr>
               <th>{{language.table.id}}</th>
-              <th>SDID</th>
               <th>{{language.table.contact}}</th>
               <th>{{language.table.dateDonated}}</th>
               <th>{{language.table.amount}}</th>
@@ -360,7 +359,6 @@
             <tr>
             {% endif %}
               <td>{{ donation.id }}</td>
-              <td>{{ donation.contact.profile.seminar_desk_id }}</td>
               <td><a href="{% url 'contact' lang=language.language pk=donation.contact.profile.seminar_desk_id %}" >{{ donation.contact.profile.name }}</a></td>
               <td class="text-center">{{ donation.date_donated|date:"Y / m / d" }}</td>
               <td class="text-end">{{ donation.amount }} €</td>

@@ -98,7 +98,6 @@ def webhooklogs(request, lang, change=None):
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
 
-	print(dir(timezone.now()))
 	if os.getenv("errortoggle") == 'True':
 		x = y
 	# language change whilst mainting current url
