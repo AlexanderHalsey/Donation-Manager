@@ -226,20 +226,29 @@
     </ul>
   </div>
   <div class="card-body">
-    <div class="row justify-content-end mx-2" style="position:relative;">
-      <div class="col-2 my-2" style="position: absolute; bottom:0; left:0;">
-        <div class="row p-1">
-          <form method="GET" action="">
-            <div class="row p-1">
+    <div class="row">
+      <div class="col-3 text-center" style="margin-top: 20px;">
+        <div class="row">
+          <div class="col">
+            <form method="GET" action="">
+              <div class="row">
+                <div class="col">
+                  <a id="annualProcessing" class="btn btn-success" href="{% url 'confirm_annual' lang=language.language %}" hidden>{{language.buttons.processAnnual}}</a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <br>
+        <div class="row justify-content-end">
+          <div class="col-11 text-start">
             <div class="col">
-              <a id="annualProcessing" class="btn btn-success" href="{% url 'confirm_annual' lang=language.language %}" hidden>{{language.buttons.processAnnual}}</a>
+              <p><span style="background-color: #e5b3c5; padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.redReceipt}}<br><span style="font-size: 0.8em;">&nbsp;<img src="{% static 'icons/tick-button.png' %}" class="img-fluid" width="21" height="21" alt="tick" style="border-radius: 50%;">&nbsp;&nbsp;</span>{{language.table.emailSent}}<br><span style="font-size: 0.8em;">&nbsp;<img src="{% static 'icons/x-button.png' %}" class="img-fluid" width="21" height="21" alt="x-" style="border-radius: 50%;">&nbsp;&nbsp;</span>{{language.table.emailNotSent}}</p>
             </div>
           </div>
-          </form>
         </div>
-        <p><span style="background-color: #e5b3c5; padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;{{language.table.redReceipt}}<br><span style="font-size: 0.8em;">&nbsp;<img src="{% static 'icons/tick-button.png' %}" class="img-fluid" width="21" height="21" alt="tick" style="border-radius: 50%;">&nbsp;&nbsp;</span>{{language.table.emailSent}}<br><span style="font-size: 0.8em;">&nbsp;<img src="{% static 'icons/x-button.png' %}" class="img-fluid" width="21" height="21" alt="x-" style="border-radius: 50%;">&nbsp;&nbsp;</span>{{language.table.emailNotSent}}</p>
       </div>
-      <div class="col-10 p-1">
+      <div class="col-9 p-3">
         <form method="GET" autocomplete="off">
           <div class="card p-2" style="background-color: WhiteSmoke;">
             <div class="row justify-content-between">
@@ -385,10 +394,10 @@
                   <span title="{{language.table.emailSent}}{{donation_receipt.email_sent_time}}" style="font-size: 0.8em; margin-left:30px;"><img src="{% static 'icons/tick-button.png' %}" class="img-fluid" width="21" height="21" alt="tick" style="border-radius: 50%;"></span>
                   {% else %}
                   <span title="{{language.table.emailNotSent}}" style="font-size: 0.8em; margin-left:30px; border-radius: 50%;"><img src="{% static 'icons/x-button.png' %}" class="img-fluid" width="21" height="21" alt="x" style="border-radius: 50%;"></span>
+                  {% endif %}
                   <input type="hidden" name="scroll" value="">
                   <input type="hidden" name="collapse" value="">
                 </form>
-                {% endif %}
               </td>
               <td style="width: 150px;">
                 <form method="GET" target="_blank" style="float: left;">

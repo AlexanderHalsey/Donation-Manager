@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,12 +48,13 @@
 		<!-- Pretty Print JSON CSS-->
 		<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/pretty-print-json@1.1/dist/pretty-print-json.css>
 
+		<link rel="icon"href="{% static 'favicon.ico' %}">
 		
 		<title>Donation Management System</title>
 		<style>
 		  .hello-msg{
 		    font-size: 18px;
-		    color: #fff;
+		    color: #563613;
 		    margin-right: 20px;
 		  }
 		</style>
@@ -60,7 +62,7 @@
 
 	<body>
 		{% include 'navbar.html' %}
-		<hr>
+		<br>
 		<div class="container-fluid">
 		  {% block page_content %}
 		  {% endblock %}

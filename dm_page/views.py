@@ -386,17 +386,21 @@ def dashboard(request, lang, change=None):
 						donations = donations.filter(donation_type_name=value)
 					if key == "organisation":
 						donations = donations.filter(organisation_name=value)
-			columns = ["ID", "Name", "Date Donated", "Amount", "Payment Mode", "Donation Type", "Organisation"]
-			data = [[donation.id, donation.contact.profile.name, str(donation.date_donated), 
-				float(donation.amount), (None if donation.payment_mode == None else donation.payment_mode.payment_mode), 
-				(None if donation.donation_type == None else donation.donation_type.name), (None if donation.organisation == None else donation.organisation.name)] 
-				for donation in donations]
-			# export_xls:
-			if request.GET.get("Submit") == "export_xls":
-				return export_xls("Donations", data, columns, file_name_extension)
-			# export csv
-			if request.GET.get("Submit") == "export_csv":
-				return export_csv("Donations", data, file_name_extension)
+
+			# if exporting
+			if request.GET.get("Submit") == "export_xls" or request.GET.get("Submit") == "export_csv":
+				columns = ["N°", "Nom", "Date du don", "Montant", "Mode de Paiement", "Type de don", "Organisation", "Forme du don", "Nature du Don"]
+				data = [[donation.id, donation.contact.profile.name, str(donation.date_donated), 
+					float(donation.amount), donation.payment_mode.payment_mode, 
+					donation.donation_type.name, donation.organisation.name, 
+					donation.forme_du_don_name, donation.nature_du_don_name] 
+					for donation in donations]
+				# export_xls:
+				if request.GET.get("Submit") == "export_xls":
+					return export_xls("Donations", data, columns, file_name_extension)
+				# export csv
+				if request.GET.get("Submit") == "export_csv":
+					return export_csv("Donations", data, file_name_extension)
 				
 			scroll = int(request.GET["scroll"] or 0)
 			collapse = request.GET["collapse"]
@@ -521,23 +525,6 @@ def donators(request, lang, change=None):
 	# context 
 	tags = Tag.objects.all()
 	donations = Donation.objects.all().filter(disabled=False).order_by('-date_donated')
-	contacts = list()
-	for donation in donations:
-		for obj in contacts:
-			if obj["id"] == donation.contact.profile.seminar_desk_id:
-				obj["total_donations"] += 1
-				obj["total_donated"] += donation.amount
-				break
-		else:
-			contacts.append({
-				"id": donation.contact.profile.seminar_desk_id,
-				"tags": donation.contact.tags,
-				"name": donation.contact.profile.name,
-				"total_donations": 1,
-				"total_donated": donation.amount
-			})
-	contacts = sorted(contacts, key=lambda x: x["id"])
-
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
 	pdf_path = None
@@ -584,10 +571,38 @@ def donators(request, lang, change=None):
 						donations = donations.filter(amount__lte=float(value))
 					except:
 						is_invalid["amount_lte"] = "is-invalid"
-		columns = ["Id", "Name", "Email Address", "Total_donated"]
+
+	# contacts to be used for iteration on the table - this is created after filter
+	contacts = list()
+	for donation in donations:
+		for obj in contacts:
+			if obj["id"] == donation.contact.profile.seminar_desk_id:
+				obj["total_donations"] += 1
+				obj["total_donated"] += donation.amount
+				break
+		else:
+			contacts.append({
+				"id": donation.contact.profile.seminar_desk_id,
+				"name": donation.contact.profile.name,
+				"total_donations": 1,
+				"total_donated": donation.amount
+			})
+	contacts = sorted(contacts, key=lambda x: x["id"])
+
+	# if exporting
+	if request.GET.get("Submit") == "export_xls" or request.GET.get("Submit") == "export_csv":
+		columns = ["N°", "Nom", "Email", "Montant_total", "Total_de_dons", "Modes de Paiement", "Organisations", "Types de dons", "Nature des dons", "Forme des dons"]
 		contacts = set([donation.contact for donation in donations])
-		data = [[contact.id, contact.profile.name, contact.profile.email, 
-			sum([d.amount for d in donations.filter(contact=contact)])] for contact in contacts]
+		data = [
+			[contact.id, contact.profile.name, contact.profile.email, 
+			sum([d.amount for d in donations.filter(contact=contact)]), 
+			len([d for d in donations.filter(contact=contact)]), 
+			", ".join(list(set([d.payment_mode_name for d in donations.filter(contact=contact)]))),
+			", ".join(list(set([d.organisation_name for d in donations.filter(contact=contact)]))),
+			", ".join(list(set([d.donation_type_name for d in donations.filter(contact=contact)]))),
+			", ".join(list(set([d.nature_du_don_name for d in donations.filter(contact=contact)]))),
+			", ".join(list(set([d.forme_du_don_name for d in donations.filter(contact=contact)])))] 
+		for contact in contacts]
 		# export_xls:
 		if request.GET.get("Submit") == "export_xls":
 			return export_xls("Contacts", data, columns, file_name_extension)

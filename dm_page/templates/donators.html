@@ -85,12 +85,12 @@
     if (lang == 'en') {
       $('#donatorTable').DataTable({
           'order': [[0, "desc"]],
-          'pageLength': 25
+          'pageLength': 10
         });
     } else if (lang == 'fr') {
       $('#donatorTable').DataTable({
         'order': [[0, "desc"]],
-        'pageLength': 25,
+        'pageLength': 10,
         'language':  {
             "emptyTable": "Aucune donnée disponible dans le tableau",
             "lengthMenu": "Afficher _MENU_ éléments",
@@ -188,8 +188,8 @@
   </div>
   <div class="card-body">
     <div class="row">
-      <div class="col-5 text-center">
-        <div class="container" style="margin: 20px;">
+      <div class="col-6 text-center">
+        <div class="container text-start" style="margin: 10px;">
           <form method="GET" action="">
             {% for name,value in initial_filter_values.items %}
               <input type="hidden" name="{{name}}" value="{{value}}">
@@ -265,13 +265,12 @@
           <input type="hidden" name="collapse" value="collapse">
         </form>
       </div>
-      <div class="col-7">
+      <div class="col-6">
         <table id="donatorTable" class="table table-sm table-striped table-bordered">
           <thead>
             <tr class="table-primary">
               <th>{{language.table.id}}</th>
               <th>{{language.table.contact}}</th>
-              <th>{{language.table.tags}}</th>
               <th style="font-size: 90%;">{{language.table.totalNumberDonated}}</th>
               <th style="font-size: 80%;">{{language.table.totalSumDonated}}</th>
             </tr>
@@ -281,11 +280,6 @@
             <tr>
               <td>{{ contact.id }}</td>
               <td><a href="{% url 'contact' lang=language.language pk=contact.id %}" >{{ contact.name }}</a></td>
-              <td>
-                {% for tag in donation.contact.tags.all %}
-                <span class="badge rounded-pill text-{{ tag.text_colour }}" style="background-color: {{ tag.bg_colour }};">{{ tag.tag }}</span>
-                {% endfor %}
-              </td>
               <td>{{ contact.total_donations }}</td>
               <td class="text-end">{{ contact.total_donated }} €</td>
             </tr>
