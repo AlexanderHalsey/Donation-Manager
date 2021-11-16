@@ -49,6 +49,5 @@ class DonationForm(forms.Form):
 			if str(d).split(" - ")[0] == self.data['donation_type'].split(" - ")[0]:
 				if str(d.organisation) != self.data['organisation']:
 					raise ValidationError('Not a compatible donation type.')
-				return self.cleaned_data['donation_type']
-		return self.cleaned_data['donation_type']
+				return self.data['donation_type']
 		
