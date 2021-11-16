@@ -50,4 +50,5 @@ class DonationForm(forms.Form):
 				if str(d.organisation) != self.data['organisation']:
 					raise ValidationError('Not a compatible donation type.')
 				return self.cleaned_data['donation_type']
+		return self.cleaned_data['donation_type']
 		
