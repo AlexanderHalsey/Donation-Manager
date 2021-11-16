@@ -90,6 +90,8 @@ def webhooklogs(request, lang, change=None):
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
+	for org in Organisation.objects.all():
+		print(str(org))
 	if os.getenv("errortoggle") == 'True':
 		x = y
 	# language change whilst mainting current url
