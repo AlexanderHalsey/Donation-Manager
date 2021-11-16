@@ -48,7 +48,11 @@ class DonationForm(forms.Form):
 		for d in DonationType.objects.all():
 			print("does this come through at all?")
 			if str(d).split(" - ")[0] == self.data['donation_type'].split(" - ")[0]:
+				print("first step")
 				if str(d.organisation) != self.data['organisation']:
+					print("this shouldn't be the case")
+					print(str(d.organisation))
+					print(self.data['organisation'])
 					raise ValidationError('Not a compatible donation type.')
 				return self.data['donation_type']
 		
