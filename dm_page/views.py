@@ -90,8 +90,7 @@ def webhooklogs(request, lang, change=None):
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
-	for org in Organisation.objects.all():
-		print(str(org))
+
 	if os.getenv("errortoggle") == 'True':
 		x = y
 	# language change whilst mainting current url
@@ -234,50 +233,8 @@ def dashboard(request, lang, change=None):
 			form_values["errors"] = True
 			for error in form.errors:
 				if error == "donation_type" and len(form.data['donation_type'].split(" - ")) > 1:
-					print("here yes")
 					if form.data['organisation'] != form.data['donation_type'].split(" - ")[1][1:-1]:
-						print("here no")
 						form_values["errorlist"]["donation_type_non_corresponding"] = True
-				print("general")
-				print(request.POST)
-				try:
-					print("data for donation_type")
-					print(form.data['donation_type'])
-				except:
-					print("exception to data donation type")
-				try:
-					print("data for donation type with split")
-					print(form.data['donation_type'].split(" - ")[0])
-				except:
-					print("exception to data donation type with split")
-				try:
-					print("cleaned data donation type")
-					print(form.cleaned_data['donation_type'])
-				except:
-					print("exception to cleaned data donation type")
-					pass
-				try:
-					print("cleaned data donation type with split")
-					print(form.cleaned_data['donation_type'].split(" - ")[0])
-				except:
-					print("except to cleaned data donation type split")
-					pass
-				try:
-					print("cleaned data organisation")
-					print(form.cleaned_data['organisation'])
-				except:
-					pass
-				try:
-					print("data organisation")
-					print(form.data['organisation'])
-				except:
-					pass
-				try:
-					print("find org for donation_type")
-					print(str(DonationType.objects.filter(organisation__name=form.data['organisation'])[0].organisation))
-				except:
-					print("couldn't find name")
-					pass
 				form_values["errorlist"][error] = "is-invalid"
 			form.fields["contact"].initial = request.POST["contact"]
 			form.fields["date_donated"].initial = request.POST["date_donated"]
