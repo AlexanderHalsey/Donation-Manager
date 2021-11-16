@@ -21,7 +21,7 @@ from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     path('', include('dm_page.urls')),
-    # path('__debug__/', include(debug_toolbar.urls)),
+    #path('__debug__/', include(debug_toolbar.urls)),
 ]
 
 urlpatterns += i18n_patterns(

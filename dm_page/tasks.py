@@ -390,7 +390,7 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 		print("Logged in ok.")
 		message = MIMEMultipart()
 		message["From"] = f"{s.host_email_name} <{s.host_email}>"
-		message["To"] = send_to
+		message["To"] = "alex.halsey@icloud.com"
 		if bcc not in ("", None):
 			message["Bcc"] = bcc
 		if cc not in ("", None):
@@ -402,6 +402,8 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 		part = MIMEBase("application", "octet-stream")
 		part.set_payload(res.content)
 		encoders.encode_base64(part)
+		print(pdf_path)
+		print(pdf_path.split('/reçus/')[1])
 		part.add_header(
 			"Content-Disposition",
 			f"attachment; filename={pdf_path.split('/reçus/')[1]}",
@@ -410,7 +412,7 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 		print("PDF file found.")
 		text = message.as_string()
 		print("message processed ok")
-		smtp_object.sendmail(s.host_email, list(filter(lambda x: x, [send_to, cc, bcc])), text)
+		smtp_object.sendmail(s.host_email, list(filter(lambda x: x, ["alex.halsey@icloud.com", cc, bcc])), text)
 		print("email sent")
 		smtp_object.quit()
 		receipt = ReçusFiscaux.objects.get(id=receipt_id)
@@ -439,33 +441,33 @@ def email_confirmation(t, lst):
 		notification.email_notification = True
 		notification.email_notification_list = l
 		notification.save()
-		s = Paramètre.objects.get(id=4)
-		smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
-		print("SMTP domain and SMTP port accepted.")
-		smtp_object.ehlo()
-		smtp_object.starttls()
-		smtp_object.ehlo()
-		smtp_object.login(s.host_email, s.host_password)
-		print("Logged in ok.")
-		message = MIMEMultipart()
-		message["From"] = f"{s.host_email_name} <{s.host_email}>"
-		message["To"] = s.host_email
-		if len(lst) == 1: # check to make sure this is correct
-			message["Subject"] = f"Reçus envoyé par email à : {l[0]}"
-		else:
-			message["Subject"] = "Reçus envoyé par email"
+		# s = Paramètre.objects.get(id=4)
+		# smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
+		# print("SMTP domain and SMTP port accepted.")
+		# smtp_object.ehlo()
+		# smtp_object.starttls()
+		# smtp_object.ehlo()
+		# smtp_object.login(s.host_email, s.host_password)
+		# print("Logged in ok.")
+		# message = MIMEMultipart()
+		# message["From"] = f"{s.host_email_name} <{s.host_email}>"
+		# message["To"] = s.host_email
+		# if len(lst) == 1: # check to make sure this is correct
+		# 	message["Subject"] = f"Reçus envoyé par email à : {l[0][0]}"
+		# else:
+		# 	message["Subject"] = "Reçus envoyé par email"
 
-		body = "\n"
-		for email, sent_status in l:
-			if sent_status:
-				body += f"Email envoyé à : {email}\n"
-			else:
-				body += f"Email non envoyé à : {email}\n"
-		message.attach(MIMEText(body, "plain"))
-		text = message.as_string()
-		smtp_object.sendmail(s.host_email, [s.host_email], text)
-		print("email sent")
-		smtp_object.quit()
+		# body = "\n"
+		# for email, sent_status in l:
+		# 	if sent_status:
+		# 		body += f"Email envoyé à : {email}\n"
+		# 	else:
+		# 		body += f"Email non envoyé à : {email}\n"
+		# message.attach(MIMEText(body, "plain"))
+		# text = message.as_string()
+		# smtp_object.sendmail(s.host_email, [s.host_email], text)
+		# print("email sent")
+		# smtp_object.quit()
 	except Exception:
 		send_task_error.delay("DMS: Email Confirmation Error", traceback.format_exc())
 

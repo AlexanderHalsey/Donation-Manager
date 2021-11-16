@@ -142,6 +142,15 @@ def dashboard(request, lang, change=None):
 	# receipt eligibility 
 	eligibility = Paramètre.objects.get(id=3)
 	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}")).split(" - ")[0]) for i in range(1,11)]))
+	for donation in unadulterated_donations:
+		if (donation.organisation_name, donation.donation_type_name) in receipt_conditions: 
+			if donation.eligible == False:
+				donation.eligible = True
+				donation.save()
+		else:
+			if donation.eligible == True:
+				donation.eligible = False
+				donation.save()
 
 	# front-end functionality
 	scroll = 0 # to load with page scroll number so the page appears static on request
@@ -432,7 +441,7 @@ def contact(request, pk, lang, change=None):
 		notification.email_notification = False
 		notification.email_notification_list = None
 		notification.save()
-		return redirect(f"/{lang}/{pk}/")
+		return redirect(f"/{lang}/contact/{pk}/")
 
 	# context
 	contact = Contact.objects.get(profile__seminar_desk_id=pk)
@@ -792,16 +801,10 @@ def confirm_annual(request, lang, change=None):
 			if request.POST.get("contacts") not in ("", None):
 				sdbp = [int(i) for i in request.POST.get("contacts").split(",")]
 				dtbp = donations.exclude(contact__profile__seminar_desk_id__in=sdbp)
-			# exclude contacts with no email
-			dtbp = dtbp.exclude(contact__profile__email=None)
-			dtbp = dtbp.exclude(contact__profile__email="")
 		else:
 			if request.POST.get("contacts") not in ("", None):
 				sdbp = [int(i) for i in request.POST.get("contacts").split(",")]
 				dtbp = donations.filter(contact__profile__seminar_desk_id__in=sdbp) 
-				# exclude contacts with no email
-				dtbp = dtbp.exclude(contact__profile__email=None)
-				dtbp = dtbp.exclude(contact__profile__email="")
 			else:
 				return redirect(f'/{lang}/recusannuels/')
 
@@ -833,8 +836,9 @@ def confirm_annual(request, lang, change=None):
 				path = f"/media/reçus/{receipt.file_name}"
 				subject = e.email_subject or ""
 				body = e.body.replace("R_ID", str(receipt.id))
-				send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
-				email_statuses.append((receipt.contact.id, receipt.id))
+				if receipt.contact.profile.email not in ("", None):
+					send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
+					email_statuses.append((receipt.contact.id, receipt.id))
 		email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
 		return redirect(f"/{lang}/")
 
