@@ -86,12 +86,12 @@ def format_address(json_dict):
 		formatted_address.append(street_address_2)
 
 	if zip_code not in (None, "") and city not in (None, ""):
-		formatted_address.append(zip_code+", "+city)
+		formatted_address.append(zip_code+" "+city)
 		if province not in (None, ""):
 			formatted_address.append(province)
 	elif zip_code not in (None, ""):
 		if province not in (None, ""):
-			formatted_address.append(zip_code+", "+province)
+			formatted_address.append(zip_code+" "+province)
 		else:
 			formatted_address.append(zip_code)
 	elif city not in (None, ""):

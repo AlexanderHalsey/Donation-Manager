@@ -278,7 +278,7 @@ class Paramètre(models.Model):
 		if self.id == 1:
 			return "Plage de dates pour l'année fiscale"
 		if self.id == 2:
-			return "Date de notification des reçus annuels"
+			return "Date d'ouverture des reçus annuels"
 		if self.id == 3:
 			return "Conditions d'éligibilité pour les reçus"
 		if self.id == 4:

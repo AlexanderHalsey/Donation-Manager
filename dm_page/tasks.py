@@ -450,7 +450,11 @@ def email_confirmation(t, lst):
 		message = MIMEMultipart()
 		message["From"] = f"{s.host_email_name} <{s.host_email}>"
 		message["To"] = s.host_email
-		message["Subject"] = "Reçus envoyé par email"
+		if len(lst) == 1: # check to make sure this is correct
+			message["Subject"] = f"Reçus envoyé par email à : {l[0]}"
+		else:
+			message["Subject"] = "Reçus envoyé par email"
+
 		body = "\n"
 		for email, sent_status in l:
 			if sent_status:
