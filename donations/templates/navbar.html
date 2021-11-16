@@ -1,21 +1,24 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #c0d6ea; border-bottom: 2px solid #563613;">
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #dadada; border-bottom: 2px solid black;">
   <div class="container-fluid">
-    <span class="navbar-brand" href="#"><img src="{% static 'png/hand_begging_bowl.png' %}" class="img" width="43" height="45" alt="logo">&nbsp;&nbsp;DMS Ivy</span>
+    <span class="navbar-brand" href="#"><img src="{% static 'png/hand_begging_bowl.png' %}" class="img" width="43" height="45" alt="logo">&nbsp;&nbsp;<strong>DMS Ivy</strong></span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+    &nbsp;&nbsp;&nbsp;
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item active">
-          <a class="nav-link" href="{% url 'dashboard' lang=language.language %}" style="color: #563613;">{{language.navbar.dashboard}}</a>
+          <a class="nav-link" href="{% url 'dashboard' lang=language.language %}" style="color: black;">{{language.navbar.dashboard}}</a>
         </li>
+        {% if request.user.is_staff %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'admin:index' %}" style="color: black;">{{language.navbar.admin}}</a>
+        </li>
+        {% endif %}
         {% if request.user.is_superuser %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'admin:index' %}" style="color: #563613;">{{language.navbar.admin}}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'webhooklogs' lang=language.language %}" style="color: #563613;">Webhooks</a>
+          <a class="nav-link" href="{% url 'webhooklogs' lang=language.language %}" style="color: black;">Webhooks</a>
         </li>
         {% endif %}
       </ul>

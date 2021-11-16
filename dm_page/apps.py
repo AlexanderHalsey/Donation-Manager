@@ -1,8 +1,8 @@
-from django.apps import AppConfig
+# from django.apps import AppConfig
 
 
-class DmPageConfig(AppConfig):
-    name = 'dm_page'
+# class DmPageConfig(AppConfig):
+#     name = 'dm_page'
 
-    def ready(self):
-    	import dm_page.signals
+#     def ready(self):
+#     	import dm_page.signals

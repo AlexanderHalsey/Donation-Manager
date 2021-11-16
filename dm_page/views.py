@@ -84,20 +84,12 @@ def dms_webhook(request):
 
 @login_required(login_url="/fr/login")
 def webhooklogs(request, lang, change=None):
-	'''path = Path("/Users/alexanderhalsey/Documents/Work/Coding/Django/Donation Manager/tests/json")
-	for file in path.iterdir():
-		payload = json.load(file)
-		WebhookLogs.objects.create(
-			received_at = timezone.now(),
-			payload = payload,
-		)'''
 	logs = WebhookLogs.objects.all().order_by("-received_at")
 	logs_json = json.dumps([log.payload for log in logs])
 	return render(request, 'webhooklogs.html',{'logs': logs, 'logs_json': logs_json, 'language': language_text(lang=lang)})
 
 @login_required(login_url='/fr/login')
 def dashboard(request, lang, change=None):
-
 	if os.getenv("errortoggle") == 'True':
 		x = y
 	# language change whilst mainting current url
@@ -146,28 +138,9 @@ def dashboard(request, lang, change=None):
 	donations_count = unadulterated_donations.count()
 	total_donated = sum([d.amount for d in unadulterated_donations])
 
-	# Locked Donations
-	locked = list(set(list(chain(*[eval(lock.donation_list) for lock in Locked.objects.all()]))))
-	# receipt eligibility and locked status
+	# receipt eligibility 
 	eligibility = Paramètre.objects.get(id=3)
 	receipt_conditions = list(filter(lambda x: x != ('None', 'None'), [(str(getattr(eligibility,f"organisation_{i}")),str(getattr(eligibility,f"donation_type_{i}")).split(" - ")[0]) for i in range(1,11)]))
-	for donation in unadulterated_donations:
-		if donation.id in locked:
-			if donation.locked == False:
-				donation.locked = True
-				donation.save()
-		else:
-			if donation.locked == True:
-				donation.locked = False
-				donation.save()
-		if (donation.organisation_name, donation.donation_type_name) in receipt_conditions: 
-			if donation.eligible == False:
-				donation.eligible = True
-				donation.save()
-		else:
-			if donation.eligible == True:
-				donation.eligible = False
-				donation.save()
 
 	# front-end functionality
 	scroll = 0 # to load with page scroll number so the page appears static on request
@@ -259,8 +232,12 @@ def dashboard(request, lang, change=None):
 			form_values["errors"] = True
 			for error in form.errors:
 				if error == "donation_type" and len(form.data['donation_type'].split(" - ")) > 1:
+					print("here yes")
 					if form.data['organisation'] != form.data['donation_type'].split(" - ")[1][1:-1]:
+						print("here no")
 						form_values["errorlist"]["donation_type_non_corresponding"] = True
+				print("general")
+				print(request.POST)
 				form_values["errorlist"][error] = "is-invalid"
 			form.fields["contact"].initial = request.POST["contact"]
 			form.fields["date_donated"].initial = request.POST["date_donated"]
@@ -463,7 +440,7 @@ def contact(request, pk, lang, change=None):
 	# context
 	contact = Contact.objects.get(profile__seminar_desk_id=pk)
 	address = contact.profile.primary_address
-	address = list(filter(lambda x: x, [value for key, value in address.items()]))
+	address = list(filter(lambda x: x, [address["careOf"], address["streetAddress"], address["streetAddress2"], address["city"], address["zipCode"], address["province"], address["countryCode"]]))
 	tags = contact.tags.all()
 	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id).filter(disabled=False)
 	donations_count = donations.count()

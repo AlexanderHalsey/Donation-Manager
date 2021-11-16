@@ -1,1 +1,1 @@
-default_app_config = 'dm_page.apps.DmPageConfig'
+# default_app_config = 'dm_page.apps.DmPageConfig'

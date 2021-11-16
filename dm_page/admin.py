@@ -186,19 +186,24 @@ class LockedForm(forms.ModelForm):
 		super().__init__(*args, **kwargs)
 		self.fields['date_start'].required = False
 		self.fields['date_end'].required = False
-		self.fields['name'].required = False
-		self.fields['contacts'].required = False
-		self.fields['organisations'].required = False
-		self.fields['donation_types'].required = False
+		# self.fields['name'].required = False
+		# self.fields['contacts'].required = False
+		# self.fields['organisations'].required = False
+		# self.fields['donation_types'].required = False
 	class Meta:
 		model = Locked
 		fields = '__all__'
 
 class ModelAdminLocked(admin.ModelAdmin):
-	fields = ('name',('date_start', 'date_end'),'contacts','organisations','donation_types')
+	fields = ('name','date_start', 'date_end',)#'contacts','organisations','donation_types')
 	list_display = ('id','name','date_start','date_end',)
 	list_display_links = ('name',)
 	form = LockedForm
+	def get_actions(self, request):
+		actions = super().get_actions(request)
+		if 'delete_selected' in actions:
+			del actions['delete_selected']
+		return actions
 
 # Register your models here.
 mysite = MyAdminSite()
