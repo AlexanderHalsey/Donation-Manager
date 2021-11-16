@@ -272,9 +272,10 @@ def dashboard(request, lang, change=None):
 					pass
 				try:
 					print("find org for donation_type")
-					print(str(DonationType.objects.filter(organisation__name=form.data['organisation'])[0]))
+					print(str(DonationType.objects.filter(organisation__name=form.data['organisation'])[0].organisation))
 				except:
 					print("couldn't find name")
+					pass
 				form_values["errorlist"][error] = "is-invalid"
 			form.fields["contact"].initial = request.POST["contact"]
 			form.fields["date_donated"].initial = request.POST["date_donated"]
