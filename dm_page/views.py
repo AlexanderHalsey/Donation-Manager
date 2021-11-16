@@ -238,6 +238,22 @@ def dashboard(request, lang, change=None):
 						form_values["errorlist"]["donation_type_non_corresponding"] = True
 				print("general")
 				print(request.POST)
+				try:
+					print(form.cleaned_data['donation_type'])
+				except:
+					pass
+				try:
+					print(form.cleaned_data['donation_type'].split(" - ")[0])
+				except:
+					pass
+				try:
+					print(form.cleaned_data['organisation'])
+				except:
+					pass
+				try:
+					print(form.data['organisation'])
+				except:
+					pass
 				form_values["errorlist"][error] = "is-invalid"
 			form.fields["contact"].initial = request.POST["contact"]
 			form.fields["date_donated"].initial = request.POST["date_donated"]
