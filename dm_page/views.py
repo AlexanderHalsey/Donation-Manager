@@ -244,6 +244,11 @@ def dashboard(request, lang, change=None):
 				except:
 					print("exception to data donation type")
 				try:
+					print("data for donation type with split")
+					print(form.data['donation_type'].split(" - ")[0])
+				except:
+					print("exception to data donation type with split")
+				try:
 					print("cleaned data donation type")
 					print(form.cleaned_data['donation_type'])
 				except:
