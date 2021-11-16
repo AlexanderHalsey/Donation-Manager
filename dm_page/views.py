@@ -239,18 +239,22 @@ def dashboard(request, lang, change=None):
 				print("general")
 				print(request.POST)
 				try:
+					print("cleaned data donation type")
 					print(form.cleaned_data['donation_type'])
 				except:
 					pass
 				try:
+					print("cleaned data donation type with split")
 					print(form.cleaned_data['donation_type'].split(" - ")[0])
 				except:
 					pass
 				try:
+					print("cleaned data organisation")
 					print(form.cleaned_data['organisation'])
 				except:
 					pass
 				try:
+					print("data organisation")
 					print(form.data['organisation'])
 				except:
 					pass
