@@ -201,7 +201,10 @@ def dashboard(request, lang, change=None):
 				e = Paramètre.objects.get(id=4)
 				path = f"/media/reçus/{receipt.file_name}"
 				body = e.body.replace("R_ID", str(receipt.id))
-				subject = e.email_subject or ""
+				if e.email_subject:
+					subject = e.email_subject.replace("R_ID", str(receipt.id))
+				else:
+					subject = ""
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, 1, cc=e.cc, bcc=e.bcc)
 				email_confirmation.delay(1, [(receipt.contact.id, receipt.id)])
 			return redirect("/")
@@ -834,7 +837,10 @@ def confirm_annual(request, lang, change=None):
 					donation.save()
 				e = Paramètre.objects.get(id=4)
 				path = f"/media/reçus/{receipt.file_name}"
-				subject = e.email_subject or ""
+				if e.email_subject:
+					subject = e.email_subject.replace("R_ID", str(receipt.id))
+				else:
+					subject = ""
 				body = e.body.replace("R_ID", str(receipt.id))
 				if receipt.contact.profile.email not in ("", None):
 					send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)

@@ -268,7 +268,7 @@ class Paramètre(models.Model):
 	host_password = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mot de passe")
 	cc = models.CharField(max_length=200, null=True, blank=True)
 	bcc = models.CharField(max_length=200, null=True, blank=True)
-	email_subject = models.CharField(max_length=200, null=True, blank=True, verbose_name="Sujet")
+	email_subject = models.CharField(max_length=200, null=True, blank=True, verbose_name="Sujet", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu")
 	body = models.TextField(max_length=200, null=True, blank=True, verbose_name="Message", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu")
 	smtp_domain = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Domaine")
 	smtp_port = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Port")
