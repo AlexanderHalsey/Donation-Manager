@@ -194,7 +194,11 @@
     if (lang == 'en') {
       $('#donationTable').DataTable({
         'order': [[0, "desc"]],
-        'pageLength': 25
+        serverSide: true,
+        scrollY: 200,
+        scroller: {
+          'loadingIndicator': true
+        }
       });
     } else if (lang == 'fr') {
       $('#donationTable').DataTable({
@@ -373,7 +377,7 @@
                     {% for condition in receipt_conditions %}
                     {% if donation.organisation_name == condition.0 and donation.donation_type_name == condition.1 %}
                     <div class="col-4">
-                      <button title="{{language.table.createReceiptHover}}" name="create_receipt" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em;" value="{{ donation.id }}"><img src="{% static 'icons/receipt.png' %}" class="img" width="21" height="21" alt="create_receipt" loading="lazy"></button>
+                      <button title="{{language.table.createReceiptHover}}" name="create_receipt" class="btn btn-info btn-sm btn-outline-primary py-0 px-0" type="submit" style="font-size: 0.8em;" value="{{ donation.id }}"><img src="{% static 'icons/receipt.png' %}" class="img" width="21" height="21" alt="create_receipt"></button>
                     </div>
                     {% endif %}
                     {% endfor %}
@@ -383,10 +387,10 @@
                     </div>
                     {% else %}
                     <div class="col-4">
-                      <button title="{{language.table.updateHover}}" name="update" class="btn btn-warning btn-sm btn-outline-success py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/write.png' %}" class="img" width="21" height="21" alt="update" loading="lazy"></button>
+                      <button title="{{language.table.updateHover}}" name="update" class="btn btn-warning btn-sm btn-outline-success py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/write.png' %}" class="img" width="21" height="21" alt="update"></button>
                     </div>
                     <div class="col-4">
-                      <button title="{{language.table.deleteHover}}" name="delete" class="btn btn-danger btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/delete.png' %}" class="img" width="21" height="21" alt="delete" loading="lazy"></button>
+                      <button title="{{language.table.deleteHover}}" name="delete" class="btn btn-danger btn-sm btn-outline-dark py-0 px-0" type="submit" style="font-size: 0.8em; " value="{{ donation.id }}"><img src="{% static 'icons/delete.png' %}" class="img" width="21" height="21" alt="delete"></button>
                     </div>
                     {% endif %}
                   </div>
