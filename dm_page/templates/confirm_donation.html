@@ -63,7 +63,7 @@
                 <label>{{ form_values.email_address }}</label>
                 <input class="form-check-input mx-2" type="checkbox" value="" id="send_email" name="email" checked>
               {% else %}
-                <label style=>{{ language.forms.emailNotFound }}</label>
+                <label style="color: red;">{{ language.forms.emailNotFound }}</label>
                 <input class="form-check-input mx-2" type="checkbox" value="" id="send_email" name="email" hidden>
               {% endif %}
             </div>

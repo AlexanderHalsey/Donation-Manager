@@ -255,7 +255,7 @@ def dashboard(request, lang, change=None):
 			form.fields["nature_du_don"].initial = request.POST["nature_du_don"]
 			form.fields["forme_du_don"].initial = request.POST["forme_du_don"]
 
-			scroll = int(request.POST["scroll"] or 0)
+			scroll = int(float(request.POST["scroll"] or 0))
 			collapse = request.POST["collapse"]
 			if collapse == "collapse_show":
 				collapse = "collapse show"
@@ -321,7 +321,7 @@ def dashboard(request, lang, change=None):
 						"email_address": donation.contact.profile.email,
 					}
 
-			scroll = int(request.GET["scroll"] or 0)
+			scroll = int(float(request.GET["scroll"] or 0))
 			collapse = request.GET["collapse"]
 			if collapse == "collapse_show":
 				collapse = "collapse show"
@@ -333,7 +333,7 @@ def dashboard(request, lang, change=None):
 				if key == "Submit":
 					continue
 				if key == "scroll":
-					scroll = int(value or 0)
+					scroll = int(float(value or 0))
 					continue
 				if key == "collapse":
 					collapse = value
@@ -385,7 +385,7 @@ def dashboard(request, lang, change=None):
 				if request.GET.get("Submit") == "export_csv":
 					return export_csv("Donations", data, file_name_extension)
 				
-			scroll = int(request.GET["scroll"] or 0)
+			scroll = int(float(request.GET["scroll"] or 0))
 			collapse = request.GET["collapse"]
 			if collapse == "collapse_show":
 				collapse = "collapse show"
@@ -528,7 +528,7 @@ def donators(request, lang, change=None):
 			if key == "Submit":
 				continue
 			if key == "scroll":
-				scroll = int(value or 0)
+				scroll = int(float(value or 0))
 				continue
 			if key == "collapse":
 				collapse = value
@@ -700,7 +700,7 @@ def pdf_receipts(request, lang, change=None):
 		except:
 			donation_types.append([donation_receipt.id, None])
 
-	scroll = int(request.GET.get("scroll") or 0)
+	scroll = int(float(request.GET.get("scroll") or 0))
 
 	# filter
 	if request.GET.get("contact") not in ("", None):

@@ -64,7 +64,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 			"contact": [c.profile.name or ""], 
 			"contact_address": address,
 			"date_donated": ["/".join(str(donation.date_donated).split("-")[::-1])],
-			"amount": [str(donation.amount) + " €"],
+			"amount": [",".join(str(donation.amount).split(".")) + " €"],
 			"other_donation_variables": [
 				num2words.num2words("%.2f"%float(donation.amount or 0), lang="fr").capitalize() + " euros", 
 				donation.payment_mode_name, 
@@ -188,7 +188,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 			"contact_address": address,
 			"date_start": ["/".join(date_range[0].split("-")[::-1])],
 			"date_end": ["/".join(date_range[1].split("-")[::-1])],
-			"total_amount": [str("%.2f"%sum([float(d.amount) for d in donations])) + " €"],
+			"total_amount": [",".join(str("%.2f"%sum([float(d.amount) for d in donations])).split(".")) + " €"],
 			"in_letters": [num2words.num2words("%.2f"%sum([float(d.amount) for d in donations]), lang="fr").capitalize() + " euros"], 
 				}
 		images = {
@@ -260,7 +260,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 			can.drawString(156, 234-(index*18), donation.payment_mode_name or "")
 			can.drawString(239, 234-(index*18), donation.forme_du_don_name)
 			can.drawString(377, 234-(index*18), donation.nature_du_don_name)
-			can.drawString(460, 234-(index*18), str(donation.amount) + " €")
+			can.drawString(460, 234-(index*18), ",".join(str(donation.amount).split(".")) + " €")
 		can.showPage()
 		can.save()
 		packet.seek(0)
@@ -276,7 +276,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 				can2.drawString(168, 767-(index*18), donation.payment_mode_name)
 				can2.drawString(239, 767-(index*18), donation.forme_du_don_name)
 				can2.drawString(377, 767-(index*18), donation.nature_du_don_name)
-				can2.drawString(450, 767-(index*18), str(donation.amount)) + " €" 
+				can2.drawString(450, 767-(index*18), ",".join(str(donation.amount).split(".")) + " €") 
 			additional = (len(donations[9:]))*18
 			if additional != 0:
 				additional += 50
@@ -391,8 +391,6 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 		message = MIMEMultipart()
 		message["From"] = f"{s.host_email_name} <{s.host_email}>"
 		message["To"] = "alex.halsey@icloud.com"
-		if bcc not in ("", None):
-			message["Bcc"] = bcc
 		if cc not in ("", None):
 			message["Cc"] = cc
 		message["Subject"] = subject
@@ -406,7 +404,7 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 		print(pdf_path.split('/reçus/')[1])
 		part.add_header(
 			"Content-Disposition",
-			f"attachment; filename={pdf_path.split('/reçus/')[1]}",
+			f"attachment; filename= {pdf_path.split('/reçus/')[1]}"
 		)
 		message.attach(part)
 		print("PDF file found.")

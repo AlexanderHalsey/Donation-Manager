@@ -34,8 +34,10 @@ class MyAdminSite(admin.AdminSite):
 class DonationReceiptForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		self.fields['cancel'].required = True
-		self.fields['cancel_description'].required = True
+		if self.fields.get('cancel'):
+			self.fields['cancel'].required = True
+		if self.fields.get('cancel_description'):
+			self.fields['cancel_description'].required = True
 
 class ModelAdminDonationReceipt(admin.ModelAdmin):
 	list_display = ('id','contact','file_name',)
@@ -46,7 +48,7 @@ class ModelAdminDonationReceipt(admin.ModelAdmin):
 	form = DonationReceiptForm
 	def get_readonly_fields(self, request, obj):
 		if obj.cancel:
-			return ('cancel',)
+			return ('cancel','cancel_description')
 		else:
 			return ()
 	def get_actions(self, request):
