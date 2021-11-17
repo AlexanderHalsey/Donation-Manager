@@ -191,7 +191,7 @@ def dashboard(request, lang, change=None):
 			receipt.contact = donation.contact
 			receipt.date_created = datetime.date.today()
 			receipt.receipt_type = ('I','Individual')
-			receipt.file_name = f"{receipt.id}_{donation.contact.profile.name}_{str(donation.date_donated)}_Individuel_{donation.id}.pdf"
+			receipt.file_name = f"{receipt.id}_{"_".join(str(donation.contact.profile.name).split(" "))}_{str(donation.date_donated)}_Individuel_{donation.id}.pdf"
 			receipt.donation_list = [donation.id]
 			receipt.cancel = False
 			receipt.save()
@@ -818,7 +818,7 @@ def confirm_annual(request, lang, change=None):
 				receipt.contact = Contact.objects.get(profile__seminar_desk_id=s_id)
 				receipt.date_created = datetime.date.today()
 				receipt.receipt_type = ('A','Annual')
-				receipt.file_name = f"{receipt.id}_{Contact.objects.get(profile__seminar_desk_id=s_id)}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
+				receipt.file_name = f"{receipt.id}_{"_".join(str(Contact.objects.get(profile__seminar_desk_id=s_id)).split(" "))}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
 				receipt.donation_list = [d.id for d in annual_donations]
 				receipt.cancel = False
 				receipt.save()
