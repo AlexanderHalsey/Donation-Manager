@@ -394,7 +394,9 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 		if cc not in ("", None):
 			message["Cc"] = cc
 		message["Subject"] = subject
-		message.attach(MIMEText('\033[1m'+body+'\033[1m'+"\n\n", "plain"))
+		body = body.replace("\n","<br>")
+		html_body = f'''<html><head></head><body><p>{body}</p><br><br></body></html>'''
+		message.attach(MIMEText(html_body, "html"))
 		dbx = dropbox.Dropbox(DROPBOX_OAUTH2_TOKEN)
 		meta, res = dbx.files_download(pdf_path)
 		part = MIMEBase("application", "octet-stream")
