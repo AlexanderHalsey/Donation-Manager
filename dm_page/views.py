@@ -203,6 +203,7 @@ def dashboard(request, lang, change=None):
 				body = e.body.replace("R_ID", str(receipt.id))
 				if e.email_subject:
 					subject = e.email_subject.replace("R_ID", str(receipt.id))
+					subject = subject.replace("AAAA", str(datetime.date.today().year))
 				else:
 					subject = ""
 				send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, 1, cc=e.cc, bcc=e.bcc)
@@ -347,7 +348,7 @@ def dashboard(request, lang, change=None):
 					continue
 				if value not in ("", None, initial_filter_values[key]):
 					initial_filter_values[key] = value
-					file_name_extension += f"_{value}"
+					file_name_extension += f"_{'_'.join('-'.join(value.split('/')[::-1]).split(' '))}"
 					if key == "contact":
 						donations = donations.filter(contact_name=value)
 					if key == "date_donated_gte":
@@ -383,10 +384,10 @@ def dashboard(request, lang, change=None):
 					for donation in donations]
 				# export_xls:
 				if request.GET.get("Submit") == "export_xls":
-					return export_xls("Donations", data, columns, file_name_extension)
+					return export_xls("Dons", data, columns, file_name_extension)
 				# export csv
 				if request.GET.get("Submit") == "export_csv":
-					return export_csv("Donations", data, file_name_extension)
+					return export_csv("Dons", data, file_name_extension)
 				
 			scroll = int(float(request.GET["scroll"] or 0))
 			collapse = request.GET["collapse"]
@@ -540,7 +541,7 @@ def donators(request, lang, change=None):
 				continue
 			if value not in ("", None, initial_filter_values[key]):
 				initial_filter_values[key] = value
-				file_name_extension += f"_{value}"
+				file_name_extension += f"_{'_'.join('-'.join(value.split('/')[::-1]).split(' '))}"
 				if key == "date_donated_gte":
 					date__gte = "-".join(value.split("/")[::-1])
 					donations = donations.filter(date_donated__gte=date__gte)
@@ -839,6 +840,7 @@ def confirm_annual(request, lang, change=None):
 				path = f"/media/reçus/{receipt.file_name}"
 				if e.email_subject:
 					subject = e.email_subject.replace("R_ID", str(receipt.id))
+					subject = subject.replace("AAAA", str(datetime.date.today().year))
 				else:
 					subject = ""
 				body = e.body.replace("R_ID", str(receipt.id))

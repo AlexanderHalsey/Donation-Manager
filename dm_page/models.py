@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from .colours import colours
+import datetime
 
 # Create your models here.
 class Tag(models.Model):
@@ -159,19 +160,20 @@ class Locked(models.Model):
 	# donation_list = models.CharField(max_length=200, null=True, blank=True)
 	def save(self, *args, **kwargs):	
 		super(Locked, self).save(*args, **kwargs)
+		print(type(self.date_start))
 		date_ranges = [(lock.date_start, lock.date_end) for lock in Locked.objects.all()]
 		donations = Donation.objects.all()
 		for don in donations:
 			if don.locked:
 				for s, e in date_ranges:
-					if s <= don.date_donated <= e:
+					if (s or datetime.date.fromordinal(1)) <= don.date_donated <= (e or datetime.date.fromordinal(10**6)):
 						break
 				else:
 					don.locked = False
 					don.save()
 			else:
 				for s, e in date_ranges:
-					if s <= don.date_donated <= e:
+					if (s or datetime.date.fromordinal(1)) <= don.date_donated <= (e or datetime.date.fromordinal(10**6)):
 						don.locked = True
 						don.save()
 						break
@@ -182,14 +184,14 @@ class Locked(models.Model):
 		for don in donations:
 			if don.locked:
 				for s, e in date_ranges:
-					if s <= don.date_donated <= e:
+					if (s or datetime.date.fromordinal(1)) <= don.date_donated <= (e or datetime.date.fromordinal(10**6)):
 						break
 				else:
 					don.locked = False
 					don.save()
 			else:
 				for s, e in date_ranges:
-					if s <= don.date_donated <= e:
+					if (s or datetime.date.fromordinal(1)) <= don.date_donated <= (e or datetime.date.fromordinal(10**6)):
 						don.locked = True
 						don.save()
 						break
@@ -268,8 +270,8 @@ class Paramètre(models.Model):
 	host_password = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mot de passe")
 	cc = models.CharField(max_length=200, null=True, blank=True)
 	bcc = models.CharField(max_length=200, null=True, blank=True)
-	email_subject = models.CharField(max_length=200, null=True, blank=True, verbose_name="Sujet", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu")
-	body = models.TextField(max_length=200, null=True, blank=True, verbose_name="Message", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu")
+	email_subject = models.CharField(max_length=200, null=True, blank=True, verbose_name="Sujet", help_text="Écrivez 'R_ID' dans le message pour rajouter l'identifiant actuel du reçu<br>Écrivez 'AAAA' dans le message pour rajouter l'année actuelle")
+	body = models.TextField(max_length=200, null=True, blank=True, verbose_name="Message", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu<br>Écrivez 'AAAA' dans le message pour rajouter l'année actuelle")
 	smtp_domain = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Domaine")
 	smtp_port = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Port")
 	email_notification = models.BooleanField(default=False)

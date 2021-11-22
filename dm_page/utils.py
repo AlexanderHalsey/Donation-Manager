@@ -38,7 +38,7 @@ def file_storage_check():
 def export_xls(view, data, columns, file_name_extension):
 	response = HttpResponse()
 	response['Content-Type'] = 'application/ms-excel'
-	response['Content-Disposition'] = f'attachment; filename="{view}_{datetime.date.today()}{file_name_extension}.xls"'
+	response['Content-Disposition'] = f'attachment; filename="{datetime.date.today()}_{view}{file_name_extension}.xls"'
 	wb = xlwt.Workbook(encoding='utf-8')
 	ws = wb.add_sheet(view)
 	row_num = 0
