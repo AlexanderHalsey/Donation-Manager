@@ -404,7 +404,7 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 		encoders.encode_base64(part)
 		part.add_header(
 			"Content-Disposition",
-			f"attachment; filename= {pdf_path.split('/reçus/')[1]}"
+			f"attachment; filename= {pdf_path.split('/reçus/')[1].replace('é','e')}"
 		)
 		message.attach(part)
 		print("PDF file found.")

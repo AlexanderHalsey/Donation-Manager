@@ -664,7 +664,7 @@ def pdf_receipts(request, lang, change=None):
 		email_content["true"] = True
 		email_content["id"] = unadulterated_receipts.get(id=request.GET.get("send_email")).id
 		email_content["email"] = unadulterated_receipts.get(id=request.GET.get("send_email")).contact.profile.email
-		email_content["subject"] = "" if Paramètre.objects.get(id=4).email_subject == None else  Paramètre.objects.get(id=4).email_subject
+		email_content["subject"] = ""
 		email_content["cc"] = "" if Paramètre.objects.get(id=4).cc == None else Paramètre.objects.get(id=4).cc
 		email_content["bcc"] = "" if Paramètre.objects.get(id=4).bcc == None else Paramètre.objects.get(id=4).bcc
 		email_content["file"] = unadulterated_receipts.get(id=request.GET.get("send_email")).file_name
