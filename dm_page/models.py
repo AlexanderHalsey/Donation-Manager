@@ -271,7 +271,7 @@ class Paramètre(models.Model):
 	cc = models.CharField(max_length=200, null=True, blank=True)
 	bcc = models.CharField(max_length=200, null=True, blank=True)
 	email_subject = models.CharField(max_length=200, null=True, blank=True, verbose_name="Sujet", help_text="Écrivez 'R_ID' dans le message pour rajouter l'identifiant actuel du reçu<br>Écrivez 'AAAA' dans le message pour rajouter l'année actuelle")
-	body = models.TextField(max_length=200, null=True, blank=True, verbose_name="Message", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu<br>Écrivez 'AAAA' dans le message pour rajouter l'année actuelle<br>Écrivez '<em></em>' autours d'une contexte en italique<br>Écrivez '<strong></strong>' autours d'une contexte en gras<br>Écrivez '<ul></ul>' autours un ou pulsieurs tirets<br>Écrivez '<li></li>' autours chaque tiret")
+	body = models.TextField(max_length=10000, null=True, blank=True, verbose_name="Message", help_text="Écrivez 'R_ID' dans le message pour remplacer l'identifiant actuel du reçu<br>Écrivez 'AAAA' dans le message pour rajouter l'année actuelle")
 	smtp_domain = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Domaine")
 	smtp_port = models.CharField(max_length=200, null=True, blank=True, verbose_name="SMTP Port")
 	email_notification = models.BooleanField(default=False)
