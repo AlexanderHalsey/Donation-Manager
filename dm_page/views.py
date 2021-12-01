@@ -23,6 +23,7 @@ import datetime
 import dropbox
 import os
 from itertools import chain
+from decimal import *
 from secrets import compare_digest
 # from pathlib import Path
 
@@ -131,10 +132,10 @@ def dashboard(request, lang, change=None):
 	# context 
 	tags = Tag.objects.all()
 	if request.GET.get("disabled") == 'true':
-		donations = Donation.objects.all().order_by("-id")
+		donations = Donation.objects.all()
 		initial_filter_values["disabled"] = True
 	else:
-		donations = Donation.objects.all().filter(disabled=False).order_by('-id')
+		donations = Donation.objects.all().filter(disabled=False)
 	unadulterated_donations = Donation.objects.filter(disabled=False)
 	donations_count = unadulterated_donations.count()
 	total_donated = sum([d.amount for d in unadulterated_donations])
@@ -330,69 +331,58 @@ def dashboard(request, lang, change=None):
 			if collapse == "collapse_show":
 				collapse = "collapse show"
 
-		if request.GET.get("Submit") != None:
-			file_name_extension = ""
-			# filter requests
-			for key, value in request.GET.items():
-				if key == "Submit":
-					continue
-				if key == "scroll":
-					scroll = int(float(value or 0))
-					continue
-				if key == "collapse":
-					collapse = value
-					if collapse == "collapse_show":
-						collapse = "collapse show" 
-					continue
-				if key == "disabled":
-					continue
-				if value not in ("", None, initial_filter_values[key]):
-					initial_filter_values[key] = value
-					file_name_extension += f"_{'_'.join('-'.join(value.split('/')[::-1]).split(' '))}"
-					if key == "contact":
-						donations = donations.filter(contact_name=value)
-					if key == "date_donated_gte":
-						date__gte = "-".join(value.split("/")[::-1])
-						donations = donations.filter(date_donated__gte=date__gte)
-					if key == "date_donated_lte":
-						date__lte = "-".join(value.split("/")[::-1])
-						donations = donations.filter(date_donated__lte=date__lte)
-					if key == "amount_gte":
-						try:
-							donations = donations.filter(amount__gte=float(value))
-						except:
-							form_values["errorlist"]["amount_gte"] = "is-invalid"
-					if key == "amount_lte":
-						try:
-							donations = donations.filter(amount__lte=float(value))
-						except:
-							form_values["errorlist"]["amount_lte"] = "is-invalid"
-					if key == "payment_mode":
-						donations = donations.filter(payment_mode_name=value)
-					if key == "donation_type":
-						donations = donations.filter(donation_type_name=value)
-					if key == "organisation":
-						donations = donations.filter(organisation_name=value)
+		file_name_extension = ""
+		# filter requests
+		for key, value in request.GET.items():
+			if key in initial_filter_values.keys() and value not in ("",None,"-----"):
+				initial_filter_values[key] = value
+				file_name_extension += f"_{'_'.join('-'.join(value.split('/')[::-1]).split(' '))}"
+				if key == "contact":
+					donations = donations.filter(contact_name=value)
+				if key == "date_donated_gte":
+					date__gte = "-".join(value.split("/")[::-1])
+					donations = donations.filter(date_donated__gte=date__gte)
+				if key == "date_donated_lte":
+					date__lte = "-".join(value.split("/")[::-1])
+					donations = donations.filter(date_donated__lte=date__lte)
+				if key == "amount_gte":
+					try:
+						donations = donations.filter(amount__gte=float(value))
+					except:
+						form_values["errorlist"]["amount_gte"] = "is-invalid"
+				if key == "amount_lte":
+					try:
+						donations = donations.filter(amount__lte=float(value))
+					except:
+						form_values["errorlist"]["amount_lte"] = "is-invalid"
+				if key == "payment_mode":
+					donations = donations.filter(payment_mode_name=value)
+				if key == "donation_type":
+					donations = donations.filter(donation_type_name=value)
+				if key == "organisation":
+					donations = donations.filter(organisation_name=value)
 
-			# if exporting
-			if request.GET.get("Submit") == "export_xls" or request.GET.get("Submit") == "export_csv":
-				columns = ["N°", "Nom", "Date du don", "Montant", "Mode de Paiement", "Type de don", "Organisation", "Forme du don", "Nature du Don"]
-				data = [[donation.id, donation.contact.profile.name, str(donation.date_donated), 
-					float(donation.amount), donation.payment_mode.payment_mode, 
-					donation.donation_type.name, donation.organisation.name, 
-					donation.forme_du_don_name, donation.nature_du_don_name] 
-					for donation in donations]
-				# export_xls:
-				if request.GET.get("Submit") == "export_xls":
-					return export_xls("Dons", data, columns, file_name_extension)
-				# export csv
-				if request.GET.get("Submit") == "export_csv":
-					return export_csv("Dons", data, file_name_extension)
-				
-			scroll = int(float(request.GET["scroll"] or 0))
-			collapse = request.GET["collapse"]
-			if collapse == "collapse_show":
-				collapse = "collapse show"
+		# if exporting
+		if request.GET.get("Submit") == "export_xls" or request.GET.get("Submit") == "export_csv":
+			columns = ["N°", "Nom", "Date du don", "Montant", "Mode de Paiement", "Type de don", "Organisation", "Forme du don", "Nature du Don"]
+			data = [[donation.id, donation.contact.profile.name, str(donation.date_donated), 
+				float(donation.amount), donation.payment_mode.payment_mode, 
+				donation.donation_type.name, donation.organisation.name, 
+				donation.forme_du_don_name, donation.nature_du_don_name] 
+				for donation in donations]
+			# export_xls:
+			if request.GET.get("Submit") == "export_xls":
+				return export_xls("Dons", data, columns, file_name_extension)
+			# export csv
+			if request.GET.get("Submit") == "export_csv":
+				return export_csv("Dons", data, file_name_extension)
+			
+		scroll = int(float(request.GET.get("scroll") or 0))
+		collapse = request.GET.get("collapse")
+		if collapse == "collapse_show":
+			collapse = "collapse show"
+		else:
+			collapse = "collapse"
 
 				
 	# context after filter
@@ -407,6 +397,39 @@ def dashboard(request, lang, change=None):
 	else:
 		email_notification_list = ""
 
+	# load partial donations for quicker load time
+	if request.GET.get("order_by_form") == "true":
+		if request.GET.get("page_number"):
+			server_page = int(request.GET.get("page_number"))
+		else:
+			server_page = 1
+		if len(list(filter(lambda x: request.GET.get(f'order_by_{x}'),["id","contact","date","amount","mode","type","org"]))) == 1:
+			order_by = list(filter(lambda x: request.GET.get(f'order_by_{x}'),["id","contact","date","amount","mode","type","org"]))[0]
+		else:
+			order_by = "id"
+		direction = request.GET.get(f'order_by_{order_by}').replace("asc","").replace("desc","-") or ""
+		order_by_new = order_by.replace('contact','contact_name').replace('date','date_donated').replace('mode','payment_mode_name').replace('org','organisation_name').replace('type','donation_type_name')
+		order_for_table = json.dumps(dict({order_by: request.GET.get(f'order_by_{order_by}')}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
+		total_donations_for_table = donations.count()
+		if server_page >= int(total_donations_for_table/20):
+			donations = donations.order_by(f'{direction}{order_by_new}')[total_donations_for_table-100:]
+		elif server_page == 5:
+			donations = donations.order_by(f'{direction}{order_by_new}')[:100]
+		else:
+			donations = donations.order_by(f'{direction}{order_by_new}')[((server_page-1)*20):((server_page-1)*20)+100]
+		scroll = int(float(request.GET["scroll"] or 0))
+		collapse = request.GET["collapse"]
+		if collapse == "collapse_show":
+			collapse = "collapse show"
+	else:
+		server_page = 1
+		total_donations_for_table = donations.count()
+		donations = donations.order_by(f'-id')[:100]
+		order_for_table = json.dumps(dict({"id": "desc"}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
+		scroll = 0
+		collapse = "collapse show"
+
+
 	context = {
 		'show_modal_pdf': show_modal_pdf,
 		'pdf_path': pdf_path,
@@ -415,6 +438,9 @@ def dashboard(request, lang, change=None):
 		'scroll': scroll,
 		'tags': tags,
 		'donations': donations,
+		'order_for_table': order_for_table,
+		'total_donations_for_table': total_donations_for_table,
+		'server_page': server_page,
 		'donations_count': donations_count,
 		'total_donated': total_donated,
 		'donation_count_filter': donation_count_filter,
@@ -452,7 +478,7 @@ def contact(request, pk, lang, change=None):
 	address = contact.profile.primary_address
 	address = list(filter(lambda x: x, [address["careOf"], address["streetAddress"], address["streetAddress2"], address["city"], address["zipCode"], address["province"], address["countryCode"]]))
 	tags = contact.tags.all()
-	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id).filter(disabled=False)
+	donations = Donation.objects.filter(contact__profile__seminar_desk_id=contact.profile.seminar_desk_id).filter(disabled=False).order_by('-id')
 	donations_count = donations.count()
 	total_donated = sum([d.amount for d in donations])
 	receipt_trigger_notification = Paramètre.objects.get(id=2).release_notification
@@ -526,38 +552,37 @@ def donators(request, lang, change=None):
 		pdf_path = list(filter(lambda x: x.split(".pdf")[0][-len(i):] == i, listdir))[0]'''
 
 	# filter requests
-	if request.GET.get("Submit") != None:
-		file_name_extension = ""
-		for key, value in request.GET.items():
-			if key == "Submit":
-				continue
-			if key == "scroll":
-				scroll = int(float(value or 0))
-				continue
-			if key == "collapse":
-				collapse = value
-				if collapse == "collapse_show":
-					collapse = "collapse show" 
-				continue
-			if value not in ("", None, initial_filter_values[key]):
-				initial_filter_values[key] = value
-				file_name_extension += f"_{'_'.join('-'.join(value.split('/')[::-1]).split(' '))}"
-				if key == "date_donated_gte":
-					date__gte = "-".join(value.split("/")[::-1])
-					donations = donations.filter(date_donated__gte=date__gte)
-				if key == "date_donated_lte":
-					date__lte = "-".join(value.split("/")[::-1])
-					donations = donations.filter(date_donated__lte=date__lte)
-				if key == "amount_gte":
-					try:
-						donations = donations.filter(amount__gte=float(value))
-					except:
-						is_invalid["amount_gte"] = "is-invalid"
-				if key == "amount_lte":
-					try:
-						donations = donations.filter(amount__lte=float(value))
-					except:
-						is_invalid["amount_lte"] = "is-invalid"
+	file_name_extension = ""
+	for key, value in request.GET.items():
+		if key == "Submit":
+			continue
+		if key == "scroll":
+			scroll = int(float(value or 0))
+			continue
+		if key == "collapse":
+			collapse = value
+			if collapse == "collapse_show":
+				collapse = "collapse show" 
+			continue
+		if key in initial_filter_values.keys() and value not in ("", None):
+			initial_filter_values[key] = value
+			file_name_extension += f"_{'_'.join('-'.join(value.split('/')[::-1]).split(' '))}"
+			if key == "date_donated_gte":
+				date__gte = "-".join(value.split("/")[::-1])
+				donations = donations.filter(date_donated__gte=date__gte)
+			if key == "date_donated_lte":
+				date__lte = "-".join(value.split("/")[::-1])
+				donations = donations.filter(date_donated__lte=date__lte)
+			if key == "amount_gte":
+				try:
+					donations = donations.filter(amount__gte=float(value))
+				except:
+					is_invalid["amount_gte"] = "is-invalid"
+			if key == "amount_lte":
+				try:
+					donations = donations.filter(amount__lte=float(value))
+				except:
+					is_invalid["amount_lte"] = "is-invalid"
 
 	# contacts to be used for iteration on the table - this is created after filter
 	contacts = list()
@@ -607,11 +632,50 @@ def donators(request, lang, change=None):
 	else:
 		email_notification_list = ""
 
+	# load partial contacts for quicker load time
+	if request.GET.get("order_by_form") == "true":
+		if request.GET.get("page_number"):
+			server_page = int(request.GET.get("page_number"))
+		else:
+			server_page = 1
+		if len(list(filter(lambda x: request.GET.get(f'order_by_{x}'),["id","contact","total_amount","total_number"]))) == 1:
+			order_by = list(filter(lambda x: request.GET.get(f'order_by_{x}'),["id","contact","total_amount","total_number"]))[0]
+		else:
+			order_by = "id"
+		direction = request.GET.get(f'order_by_{order_by}').replace("asc","False").replace("desc","True") or "False"
+		order_by_new = order_by.replace('contact','name').replace("total_amount","total_donated").replace("total_number","total_donations")
+		order_for_table = json.dumps(dict({order_by: request.GET.get(f'order_by_{order_by}')}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
+		total_contacts_for_table = len(contacts)
+		if server_page == int(total_contacts_for_table/20):
+			contacts.sort(reverse=eval(direction), key=lambda x: x[order_by_new])
+			contacts = contacts[total_contacts_for_table-100:]
+		elif server_page == 5:
+			contacts.sort(reverse=eval(direction), key=lambda x: x[order_by_new])
+			contacts = contacts[:100]
+		else:
+			contacts.sort(reverse=eval(direction), key=lambda x: x[order_by_new])
+			contacts = contacts[((server_page-1)*20):((server_page-1)*20)+100]
+		scroll = int(float(request.GET["scroll"] or 0))
+		collapse = request.GET["collapse"]
+		if collapse == "collapse_show":
+			collapse = "collapse show"
+	else:
+		server_page = 1
+		total_contacts_for_table = Contact.objects.all().count()
+		contacts.sort(reverse=True, key=lambda x: x["id"])
+		contacts = contacts[:100]
+		order_for_table = json.dumps(dict({"id": "desc"}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
+		scroll = 0
+		collapse = "collapse show"
+
 	context = {
 		'pdf_path': pdf_path,
 		'initial_filter_values': initial_filter_values,
 		'collapse': collapse,
 		'contacts': contacts,
+		'order_for_table': order_for_table,
+		'total_contacts_for_table': total_contacts_for_table,
+		'server_page': server_page,
 		'scroll': scroll,
 		'is_invalid': is_invalid,
 		'tags': tags,
@@ -759,6 +823,39 @@ def pdf_receipts(request, lang, change=None):
 	else:
 		email_notification_list = ""
 
+	# load partial receipts for quicker load time
+	if request.GET.get("order_by_form") == "true":
+		if request.GET.get("page_number"):
+			server_page = int(request.GET.get("page_number"))
+		else:
+			server_page = 1
+		if len(list(filter(lambda x: request.GET.get(f'order_by_{x}'),["id","contact","date","type","name"]))) == 1:
+			order_by = list(filter(lambda x: request.GET.get(f'order_by_{x}'),["id","contact","date","type","name"]))[0]
+		else:
+			order_by = "id"
+		direction = request.GET.get(f'order_by_{order_by}').replace("asc","").replace("desc","-") or ""
+		order_by_new = order_by.replace('contact','contact_name').replace('date','date_created').replace('type','receipt_type').replace("name","file_name")
+		order_for_table = json.dumps(dict({order_by: request.GET.get(f'order_by_{order_by}')}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
+		total_receipts_for_table = donation_receipts.count()
+		if server_page == int(total_donations_for_table/20):
+			donation_receipts = donation_receipts.order_by(f'{direction}{order_by_new}')[total_donations_for_table-100:]
+		elif server_page == 5:
+			donation_receipts = donation_receipts.order_by(f'{direction}{order_by_new}')[:100]
+		else:
+			donation_receipts = donation_receipts.order_by(f'{direction}{order_by_new}')[((server_page-1)*20):((server_page-1)*20)+100]
+		scroll = int(float(request.GET["scroll"] or 0))
+		collapse = request.GET["collapse"]
+		if collapse == "collapse_show":
+			collapse = "collapse show"
+	else:
+		server_page = 1
+		total_receipts_for_table = donation_receipts.count()
+		donation_receipts = donation_receipts.order_by(f'-id')[:100]
+		order_for_table = json.dumps({"id": "desc"})
+		order_for_table = json.dumps(dict({"id": "desc"}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
+		scroll = 0
+		collapse = "collapse show"
+
 	context = {
 		'tags': tags,
 		'donations': donations,
@@ -768,6 +865,9 @@ def pdf_receipts(request, lang, change=None):
 		'donation_count_filter': donation_count_filter,
 		'initial_filter_values': initial_filter_values,
 		'donation_receipts': donation_receipts,
+		'order_for_table': order_for_table,
+		'total_receipts_for_table': total_receipts_for_table,
+		'server_page': server_page,
 		'donation_types': donation_types,
 		'show_modal_pdf': show_modal_pdf,
 		'scroll': scroll,

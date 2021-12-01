@@ -61,6 +61,8 @@ class Contact(models.Model):
 	is_facilitator = models.CharField(max_length= 200, default="", null=True, blank=True)
 	def __str__(self):
 		return self.first_name + " " + self.last_name
+	class Meta:
+		order_with_respect_to = 'profile'
 
 class PaymentMode(models.Model):
 	payment_mode = models.CharField(max_length=200, null=True, blank=True, verbose_name="Nom")
