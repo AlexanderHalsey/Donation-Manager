@@ -19,6 +19,7 @@ from .receive_webhook import process_webhook_payload
 from .forms import DonationForm
 
 import json
+import math
 import datetime
 import dropbox
 import os
@@ -411,7 +412,7 @@ def dashboard(request, lang, change=None):
 		order_by_new = order_by.replace('contact','contact_name').replace('date','date_donated').replace('mode','payment_mode_name').replace('org','organisation_name').replace('type','donation_type_name')
 		order_for_table = json.dumps(dict({order_by: request.GET.get(f'order_by_{order_by}')}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
 		total_donations_for_table = donations.count()
-		if server_page >= int(total_donations_for_table/20):
+		if server_page == math.ceil(total_donations_for_table/20):
 			donations = donations.order_by(f'{direction}{order_by_new}')[total_donations_for_table-100:]
 		elif server_page == 5:
 			donations = donations.order_by(f'{direction}{order_by_new}')[:100]
@@ -586,18 +587,14 @@ def donators(request, lang, change=None):
 
 	# contacts to be used for iteration on the table - this is created after filter
 	contacts = list()
-	for donation in donations:
-		for obj in contacts:
-			if obj["id"] == donation.contact.profile.seminar_desk_id:
-				obj["total_donations"] += 1
-				obj["total_donated"] += donation.amount
-				break
-		else:
+	for contact in Contact.objects.all():
+		contact_dons = contact.donation_set.all()
+		if len(contact_dons) > 0:
 			contacts.append({
-				"id": donation.contact.profile.seminar_desk_id,
-				"name": donation.contact.profile.name,
-				"total_donations": 1,
-				"total_donated": donation.amount
+				"id": contact.profile.seminar_desk_id,
+				"name": contact.profile.name,
+				"total_donations": len(contact_dons),
+				"total_donated": sum([d.amount for d in contact_dons])
 			})
 	contacts = sorted(contacts, key=lambda x: x["id"])
 
@@ -646,7 +643,7 @@ def donators(request, lang, change=None):
 		order_by_new = order_by.replace('contact','name').replace("total_amount","total_donated").replace("total_number","total_donations")
 		order_for_table = json.dumps(dict({order_by: request.GET.get(f'order_by_{order_by}')}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
 		total_contacts_for_table = len(contacts)
-		if server_page == int(total_contacts_for_table/20):
+		if server_page == math.ceil(total_contacts_for_table/20):
 			contacts.sort(reverse=eval(direction), key=lambda x: x[order_by_new])
 			contacts = contacts[total_contacts_for_table-100:]
 		elif server_page == 5:
@@ -834,11 +831,11 @@ def pdf_receipts(request, lang, change=None):
 		else:
 			order_by = "id"
 		direction = request.GET.get(f'order_by_{order_by}').replace("asc","").replace("desc","-") or ""
-		order_by_new = order_by.replace('contact','contact_name').replace('date','date_created').replace('type','receipt_type').replace("name","file_name")
+		order_by_new = order_by.replace("name","file_name").replace('contact','contact_name').replace('date','date_created').replace('type','receipt_type')
 		order_for_table = json.dumps(dict({order_by: request.GET.get(f'order_by_{order_by}')}, **dict(filter(lambda y: y[1][0] and y[1][0] != "-----" and y[0] not in ("Submit","scroll","collapse"), list(dict(request.GET).items())))))
 		total_receipts_for_table = donation_receipts.count()
-		if server_page == int(total_donations_for_table/20):
-			donation_receipts = donation_receipts.order_by(f'{direction}{order_by_new}')[total_donations_for_table-100:]
+		if server_page == math.ceil(total_receipts_for_table/20):
+			donation_receipts = donation_receipts.order_by(f'{direction}{order_by_new}')[total_receipts_for_table-100:]
 		elif server_page == 5:
 			donation_receipts = donation_receipts.order_by(f'{direction}{order_by_new}')[:100]
 		else:
@@ -960,3 +957,10 @@ def confirm_annual(request, lang, change=None):
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'confirm_annual_donations.html', context)
+
+def test(request):
+	from django.db.models import Count
+	contacts = Contact.objects.all()
+	contacts = contacts[:100].annotate(total_donations=Count("donation"))
+	print([(contact.total_donations, sum([d.amount for d in contact.donation_set.all()])) for contact in contacts])
+	return HttpResponse("ok")
