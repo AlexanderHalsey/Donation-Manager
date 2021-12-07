@@ -970,8 +970,8 @@ def confirm_annual(request, lang, change=None):
 			} for d in p.contact_set.all()[0].donation_set.filter(date_donated__range=date_range).filter(eligible=True).filter(pdf=False).filter(organisation__id=org["id"])],
 		} for p in Profile.objects.filter(seminar_desk_id__in=org["contacts"])]
 	} for org in prof_for_orgs]
-	orgs_json = json.dumps(orgs)
-	print(str(orgs_json).encode())
+	orgs_json = json.dumps(orgs.replace("'","\'"))
+	print(orgs_json)
 	context = {
 		'date_range': date_range,
 		'orgs': orgs,
