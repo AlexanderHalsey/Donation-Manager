@@ -971,6 +971,7 @@ def confirm_annual(request, lang, change=None):
 		} for p in Profile.objects.filter(seminar_desk_id__in=org["contacts"])]
 	} for org in prof_for_orgs]
 	orgs_json = json.dumps(orgs)
+	print(orgs_json)
 	context = {
 		'date_range': date_range,
 		'orgs': orgs,
