@@ -970,7 +970,7 @@ def confirm_annual(request, lang, change=None):
 			} for d in p.contact_set.all()[0].donation_set.filter(date_donated__range=date_range).filter(eligible=True).filter(pdf=False).filter(organisation=org)],
 		} for p in Profile.objects.all()]))
 	} for org in Organisation.objects.all()]
-
+	print("what is taking so long")
 	orgs_json = json.dumps(orgs)
 	context = {
 		'date_range': date_range,
