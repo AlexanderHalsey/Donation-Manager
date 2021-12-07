@@ -949,6 +949,7 @@ def confirm_annual(request, lang, change=None):
 						email_statuses.append((receipt.contact.id, receipt.id))
 			email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
 			return redirect(f"/{lang}/")
+
 	prof_for_orgs = [{"id": o.id,"name": o.name, "contacts": list(set([d.contact.profile.seminar_desk_id for d in donations.filter(organisation=o)]))} for o in Organisation.objects.all()]
 	orgs = [{
 		"id": org["id"],
@@ -970,11 +971,15 @@ def confirm_annual(request, lang, change=None):
 			} for d in p.contact_set.all()[0].donation_set.filter(date_donated__range=date_range).filter(eligible=True).filter(pdf=False).filter(organisation__id=org["id"])],
 		} for p in Profile.objects.filter(seminar_desk_id__in=org["contacts"])]
 	} for org in prof_for_orgs]
+
+	orgs_repr_json = json.dumps([{"id": o.id, "name": o.name} for o in Organisation.objects.all()])
 	orgs_json = json.dumps(orgs)
+
 	context = {
 		'date_range': date_range,
 		'orgs': orgs,
 		'orgs_json': orgs_json,
+		'orgs_repr_json': orgs_repr_json,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'confirm_annual_donations.html', context)

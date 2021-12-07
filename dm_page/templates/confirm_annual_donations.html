@@ -59,18 +59,14 @@
 					valueProperty: "id",
 					visibleProperties: ["name"],
 					searchIn: "name",
-					data: orgs_data,
 				});
 				$('.flexdatalist').flexdatalist({
 					minLength: 1,
 					valueProperty: "id",
 					visibleProperties: ["name"],
 					searchIn: "name",
-					data: contacts,
 				});
-				console.log(orgs, orgs_data);
 				add_orgs.on("change", function () {
-					console.log("this should happen");
 					for (let i in contacts) {
 						$(`[name=${contacts[i]["id"]}]`).hide();
 					};
@@ -92,7 +88,6 @@
 					});
 					contacts = Array.from(objectsMap, ([id, name]) => ({ id, name }));
 					$('.datacontacts').flexdatalist("data", contacts);
-
 					select.prop("checked", false);
 					submit.hide();
 					add.val("");
@@ -212,7 +207,7 @@
 					  <label><strong>{{language.confirmAnnualDonations.selectOrgs}}</strong><br></label>
 					</div>
 					<div class="col-8 my-3">
-					  <input id="addOrgs" type='text' class='form-control flexdatalist' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{orgs_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleOrganisationPlaceholder}}" name='orgs'>
+					  <input id="addOrgs" type='text' class='form-control flexdatalist' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-data='{{orgs_repr_json|safe}}' data-search-in="name" multiple="multiple" placeholder="{{language.forms.multipleOrganisationPlaceholder}}" name='orgs'>
 					  <br>
 				    </div>
 				  </div>
@@ -225,9 +220,9 @@
 					  <label>{{language.confirmAnnualDonations.selectAllLabel}}</label>
 					</div>
 					<div class="col-6 my-3">
-					  <input id="addContacts" type='text' class='form-control flexdatalist datacontacts' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
+					  <input id="addContacts" type='text' class='form-control flexdatalist datacontacts' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='' multiple="multiple" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
 				      <br>
-				      <input id="removeContacts" type='text' class='form-control flexdatalist datacontacts' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
+				      <input id="removeContacts" type='text' class='form-control flexdatalist datacontacts' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='' multiple="multiple" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
 				    </div>
 				  </div>
 				  <div id="receipt_tables" class="scrol">
