@@ -2,6 +2,7 @@
 <html lang="en">
 
 	<head>
+		<title>Donation Management System</title>
 		<!-- Required meta tags -->
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -42,82 +43,126 @@
 		<script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js" integrity="sha384-h9Hm5g3bPPTf1ge+R8GamzLHN6biulBpX9gRAw9anvbZ/VozYeDgvJpcBY8V3+aH" crossorigin="anonymous"></script>
 
 		<script>
-			var cs = eval('{{contacts_json|safe}}');
-			$('.flexdatalist').flexdatalist({
-				minLength: 1,
-				valueProperty: "id",
-				visibleProperties: ["name"],
-				searchIn: "name",
-				data: cs
-			});
 			window.addEventListener('load', function() {
-				var contacts = eval('{{contacts_json|safe}}'), add = document.getElementById('addContacts'), remove = document.getElementById('removeContacts'), select = document.getElementById('selectAllContacts'), submit = document.getElementById('confirm_annual_receipts');
-				select.onclick = function () {
-					if (select.checked == true) {
-						$(add).flexdatalist('reset');
-						$(add).flexdatalist('disabled', true);
-						$(remove).flexdatalist('disabled', false);
+
+				var orgs = eval('{{orgs_json|safe}}'), contacts = [], add = $('#addContacts'), remove = $('#removeContacts'), select = $('#selectAllContacts'), submit = $('#confirm_annual_receipts'), add_orgs = $('#addOrgs');
+
+				$('#addOrgs').flexdatalist({
+					minLength: 1,
+					valueProperty: "id",
+					visibleProperties: ["name"],
+					searchIn: "name",
+					data: orgs,
+				});
+				$('.flexdatalist').flexdatalist({
+					minLength: 1,
+					valueProperty: "id",
+					visibleProperties: ["name"],
+					searchIn: "name",
+					data: contacts,
+				});
+
+				add_orgs.on("change", function () {
+					for (let i in contacts) {
+						$(`[name=${contacts[i]["id"]}]`).hide();
+					};
+					contacts = [];
+					var values = add_orgs.val().split(",");
+					for (let index in values) {
+						var fil_orgs = orgs.filter(function (e) {
+							return e["id"] == parseInt(values[index]);
+						});
+						for (let o in fil_orgs) {
+							for (let c in fil_orgs[o]["contacts"]) {
+								contacts.push({"id": fil_orgs[o]["contacts"][c]["id"], "name": fil_orgs[o]["contacts"][c]["name"]});
+							};
+						};
+					};
+					const objectsMap = new Map();
+					contacts.forEach((object) => {
+						objectsMap.set(object.id, object.name);
+					});
+					contacts = Array.from(objectsMap, ([id, name]) => ({ id, name }));
+					$('.datacontacts').flexdatalist("data", contacts);
+
+					select.prop("checked", false);
+					submit.hide();
+					add.val("");
+					remove.val("");
+
+					for (let i in orgs) {
+						$(`[name=org_${orgs[i]["id"]}]`).hide();
+					};
+					var values = add_orgs.val().split(",");
+					for (let i in values) {
+						$(`[name=org_${values[i]}]`).show();
+					};
+				});
+
+				select.on("click", function () {
+					console.log("one triggered the other");
+					if (select.is(":checked") == true) {
+						add.flexdatalist();
+						add.flexdatalist('disabled', true);
+						remove.flexdatalist("data", contacts);
+						remove.flexdatalist('disabled', false);
 						for (let i=0; i < contacts.length; i++) {
-							var elements = document.getElementsByName(contacts[i]["id"]);
-							console.log(elements);
-							for (let i=0; i < elements.length; i++) {
-								elements[i].hidden = false;
-							}
-						}
-						submit.hidden = false;
+							$(`[name=${contacts[i]["id"]}]`).show();
+						};
+						submit.show();
 					} else {
-						$(remove).flexdatalist('reset');
-						$(remove).flexdatalist('disabled', true);
-						$(add).flexdatalist('disabled', false);
+						remove.flexdatalist();
+						remove.flexdatalist('disabled', true);
+						add.flexdatalist("data", contacts);
+						add.flexdatalist('disabled', false);
 						for (let i=0; i < contacts.length; i++) {
-							var elements = document.getElementsByName(contacts[i]["id"]);
-							for (let i=0; i < elements.length; i++) {
-								elements[i].hidden = true;
-							}
-						}
-						submit.hidden = true;
-					}
-				};
-				add.change = function () {
-					var values = add.value.split(",");
+							$(`[name=${contacts[i]["id"]}]`).hide();
+
+						};
+						submit.hide();
+					};
+				});
+
+				add.on("change", function () {
+					console.log("this stops working after a while");
+					var values = add.val().split(",");
 					if (values[0].length == 0) {
-						submit.hidden = true;
+						submit.hide();
 					} else {
-						submit.hidden = false;
+						submit.show();
 					}
 					for (let i=0; i < contacts.length; i++) {
-						var elements = document.getElementsByName(contacts[i]["id"]);
+						var elements = $(`[name=${contacts[i]["id"]}]`);
 						if (values.includes(contacts[i]["id"])) {
-							for (let i=0; i < elements.length; i++) {
-								elements[i].hidden = false;
-							}
+							elements.show();
 						} else {
-							for (let i=0; i < elements.length; i++) {
-								elements[i].hidden = true;
-							}
-						}
-					}
-				};
-				remove.change = function () {
-					var values = remove.value.split(",");
+							elements.hide();
+						};
+					};
+				});
+
+				remove.on("change", function () {
+					var values = remove.val().split(",");
 					if (values[0].length == 0) {
-						submit.hidden = true;
+						submit.hide();
 					} else {
-						submit.hidden = false;
+						submit.show();
 					}
 					for (let i=0; i < contacts.length; i++) {
-						var elements = document.getElementsByName(contacts[i]["id"]);
+						var elements = $(`[name=${contacts[i]["id"]}]`);
 						if (values.includes(contacts[i]["id"])) {
-							for (let i=0; i < elements.length; i++) {
-								elements[i].hidden = true;
-							}
+							elements.hide();
 						} else {
-							for (let i=0; i < elements.length; i++) {
-								elements[i].hidden = false;
-							}
-						}
-					}
-				};
+							elements.show();
+						};
+					};
+				});
+
+				submit.on("submit", function() {
+					if (select.is(":checked")) {
+						select.val("checked"); 
+					} 
+				});
 			})
 		</script>
 
@@ -132,8 +177,6 @@
 		    	margin-right: 20px;
 		  	}
 		</style>
-
-		<title>Donation Management System</title>
 
 	</head>
 
@@ -155,79 +198,90 @@
 		<div class="row mx-3">
 		  <div class="col-12">
 			<div class="card">
+				<br>
 				<form method="POST">
 				  {% csrf_token %}
+				  <div class="row">
+				  	<div class="col-3 mx-5 my-2">
+					  <label><strong>{{language.confirmAnnualDonations.selectOrgs}}</strong><br></label>
+					</div>
+					<div class="col-8 my-3">
+					  <input id="addOrgs" type='text' class='form-control flexdatalist' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{orgs_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleOrganisationPlaceholder}}" name='orgs'>
+					  <br>
+				    </div>
+				  </div>
 				  <div class="row">
 				  	<div class="col-3 mx-5 my-2">
 					  <label><strong>{{language.confirmAnnualDonations.selectContacts}}</strong><br>{{language.confirmAnnualDonations.selectContactsAdditional}}</label>
 					</div>
 					<div class="col-2 my-4 text-end">
-					  <input type="checkbox" name="checked" value="checked" id="selectAllContacts">
+					  <input type="checkbox" name="contacts_checked" id="selectAllContacts">
 					  <label>{{language.confirmAnnualDonations.selectAllLabel}}</label>
 					</div>
 					<div class="col-6 my-3">
-					  <input id="addContacts" type='text' class='form-control flexdatalist' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
+					  <input id="addContacts" type='text' class='form-control flexdatalist datacontacts' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactPlaceholder}}" name='contacts'>
 				      <br>
-				      <input id="removeContacts" type='text' class='form-control flexdatalist' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
+				      <input id="removeContacts" type='text' class='form-control flexdatalist datacontacts' data-min-length="1" data-value-property="id" data-visible-properties='["name"]' data-search-in="name" data-data='{{contacts_json|safe}}' multiple="multiple" placeholder="{{language.forms.multipleContactRemovePlaceholder}}" name='contacts' disabled>
 				    </div>
 				  </div>
-				  <hr>
-				  <div id="receipt_tables" class="row mx-2 scrol">
-				      {% for dict in contacts %}
-				      	{% if dict.email %}
-				  	    <label name="{{dict.id}}" class="my-1" hidden><strong>{{dict.name}}</strong>&nbsp;-&nbsp;{{dict.email}}</label>
-				  	    {% else %}
-				  	    <label style="color: red;" name="{{dict.id}}" class="my-1" hidden><strong style="color: black;">{{dict.name}}</strong>&nbsp;-&nbsp;{{language.confirmAnnualDonations.noEmail}}</label>
-				  	    {% endif %}
-				  	    <br>
-				  	    <br>
-				  	    <div class="col-2">
-					  	  {% for line in dict.address %}
-					  	  <p name="{{dict.id}}" style="margin: 0;" hidden>{{line}}</p>
+				  <div id="receipt_tables" class="scrol">
+				  	{% for o in orgs %}
+				  	<div class="row mx-2 justify-content-center" name="org_{{o.id}}" style="display: none;">
+				  	  <h3 name="org_{{o.id}}">{{o.name}}</h3>
+				  	  <hr>
+				      {% for dict in o.contacts %}
+				      {% if dict.email %}
+				  	  <label name="{{dict.id}}" class="my-1" style="display: none;"><strong>{{dict.name}}</strong>&nbsp;-&nbsp;{{dict.email}}</label>
+				  	  {% else %}
+				  	  <label style="color: red;" name="{{dict.id}}" class="my-1" style="display: none;"><strong style="color: black;">{{dict.name}}</strong>&nbsp;-&nbsp;{{language.confirmAnnualDonations.noEmail}}</label>
+				  	  {% endif %}
+				  	  <div class="col-2">
+					  	{% for line in dict.address %}
+					  	<p name="{{dict.id}}" style="margin: 0; display: none;">{{line}}</p>
+					  	{% endfor %}
+					  </div>
+					  <div class="col-9">
+					  	<table name="{{dict.id}}" class="table table-sm table-bordered table-striped" style="display: none;">
+					  	  <thead class="table-primary">
+					  	    <tr>
+					  	      <th>{{language.confirmAnnualDonations.tables.id}}</th>
+					  	      <th>{{language.confirmAnnualDonations.tables.dateDonated}}</th>
+					  	      <th>{{language.confirmAnnualDonations.tables.amount}}</th>
+					  	      <th>{{language.confirmAnnualDonations.tables.organisation}}</th>
+					  	      <th>{{language.confirmAnnualDonations.tables.donationType}}</th>
+					  	      <th>{{language.confirmAnnualDonations.tables.paymentMode}}</th>
+					  	      <th>{{language.confirmAnnualDonations.tables.formOfDonation}}</th>
+					  	      <th>{{language.confirmAnnualDonations.tables.natureOfDonation}}</th>
+					  	    </tr>
+					  	  </thead>
+					  	  <tbody>
+					  	  {% for donation in dict.donations %}
+					  	    <tr>
+					  	      <td>{{donation.id}}</td>
+					  	      <td>{{donation.date_donated}}</td>
+					  	      <td>{{donation.amount}}</td>
+					  	      <td>{{donation.organisation}}</td>
+					  	      <td>{{donation.donation_type_name}}</td>
+					  	      <td>{{donation.payment_mode}}</td>
+					  	      <td>{{donation.forme_du_don_name}}</td>
+					  	      <td>{{donation.nature_du_don_name}}</td>
+					  	    </tr>
 					  	  {% endfor %}
-					  	</div>
-					  	<div class="col-10">
-					  	  <table name="{{dict.id}}" class="table table-sm table-bordered table-striped" hidden>
-					  	    <thead class="table-primary">
-					  	      <tr>
-					  	        <th>{{language.confirmAnnualDonations.tables.id}}</th>
-					  	        <th>{{language.confirmAnnualDonations.tables.dateDonated}}</th>
-					  	        <th>{{language.confirmAnnualDonations.tables.amount}}</th>
-					  	        <th>{{language.confirmAnnualDonations.tables.organisation}}</th>
-					  	        <th>{{language.confirmAnnualDonations.tables.donationType}}</th>
-					  	        <th>{{language.confirmAnnualDonations.tables.paymentMode}}</th>
-					  	        <th>{{language.confirmAnnualDonations.tables.formOfDonation}}</th>
-					  	        <th>{{language.confirmAnnualDonations.tables.natureOfDonation}}</th>
-					  	      </tr>
-					  	    </thead>
-					  	    <tbody>
-					  	     {% for donation in dict.donations %}
-					  	     <tr>
-					  	      	<td>{{donation.id}}</td>
-					  	        <td>{{donation.date_donated}}</td>
-					  	        <td>{{donation.amount}}</td>
-					  	        <td>{{donation.organisation}}</td>
-					  	        <td>{{donation.donation_type_name}}</td>
-					  	        <td>{{donation.payment_mode}}</td>
-					  	        <td>{{donation.forme_du_don_name}}</td>
-					  	        <td>{{donation.nature_du_don_name}}</td>
-					  	     </tr>
-					  	     {% endfor %}
-					  	    </tbody>
-					  	  </table>
-					  	</div>
-				  	    <br name="{{dict.id}}" hidden>
-				  	    <hr name="{{dict.id}}" hidden>
+					  	  </tbody>
+					  	</table>
+					  </div>
+				  	  <br name="{{dict.id}}" style="display: none;">
+				  	  <hr name="{{dict.id}}" style="display: none;">
 				  	  {% endfor %}
-				  	  <br>
-				  	  <div class="row justify-content-end">
-				  	  	<div class="col-2">
-				  	  		<button id="confirm_annual_receipts" type="submit" name="Submit" class="btn btn-success ms-5" hidden>{{language.buttons.confirm}}</button>
-				  	  	</div>
+				  	</div>
+				  	{% endfor %}
+				  	<div class="row justify-content-end">
+				  	  <div class="col-2">
+				  	  	<button id="confirm_annual_receipts" type="submit" name="Submit" class="btn btn-success ms-5" style="display: none;">{{language.buttons.confirm}}</button>
 				  	  </div>
+				  	</div>
 				  </div>
-				  <br>
-				</form>
+			    </form>
 			</div>
 		  </div>
 		</div>

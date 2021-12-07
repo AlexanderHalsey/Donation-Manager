@@ -96,17 +96,9 @@ class Organisation(models.Model):
 	president = models.CharField(max_length=200, null=True, blank=True, verbose_name="Signataire")
 	president_position = models.CharField(max_length=200, null=True, blank=True, verbose_name="Fonction du signataire")
 	president_signature = models.FileField(upload_to=path_to_president_signature, null=True, blank=True, verbose_name="Signature", help_text="Cette image doit être dans le format .png", validators=[validate_image])
-	used_for_receipt = models.BooleanField(default=False, verbose_name="Utiliser cette organisation pour les reçus fiscaux")
 
 	def __str__(self):
 		return self.name
-
-	def save(self, *args, **kwargs):
-		if self.used_for_receipt == True:
-			for past_instance in Organisation.objects.all():
-				past_instance.used_for_receipt = False
-				super(Organisation, past_instance).save(*args, **kwargs)
-		super(Organisation, self).save(*args, **kwargs)
 
 	class Meta:
 		verbose_name = "Organisation"

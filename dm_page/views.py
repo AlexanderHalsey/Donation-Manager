@@ -890,14 +890,15 @@ def confirm_annual(request, lang, change=None):
 	donations = Donation.objects.filter(disabled=False)\
 		.filter(pdf=False)\
 		.filter(eligible=True)\
-		.filter(date_donated__gte=date_range[0])\
-		.filter(date_donated__lte=date_range[1])
-
-	seminar_desk_ids = list(set([donation.contact.profile.seminar_desk_id for donation in donations]))
+		.filter(date_donated__range=date_range)
 
 	if request.method == "POST":
+		if request.POST.get("orgs") not in ("", None):
+			orgs = [int(i) for i in request.POST.get("orgs").split(",")]
+		else:
+			return redirect(f'/{lang}/reçusannuels/')
 		# getting contacts and donations to be processed
-		if request.POST.get("checked") == "checked":
+		if request.POST.get("contacts_checked") == "on":
 			dtbp = donations
 			if request.POST.get("contacts") not in ("", None):
 				sdbp = [int(i) for i in request.POST.get("contacts").split(",")]
@@ -911,56 +912,70 @@ def confirm_annual(request, lang, change=None):
 
 		# creating receipts and sending emails
 		email_statuses = []
-		for t, s_id in enumerate(seminar_desk_ids):
-			annual_donations = dtbp.filter(contact__profile__seminar_desk_id=s_id)
-			if len(annual_donations) > 0:
-				receipt = ReçusFiscaux()
-				receipt.save()
-				receipt.contact = Contact.objects.get(profile__seminar_desk_id=s_id)
-				receipt.date_created = datetime.date.today()
-				receipt.receipt_type = ('A','Annual')
-				receipt.file_name = f"{receipt.id}_{'_'.join(str(Contact.objects.get(profile__seminar_desk_id=s_id)).split(' '))}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
-				receipt.donation_list = [d.id for d in annual_donations]
-				receipt.cancel = False
-				receipt.save()
-				create_annual_receipt.delay(
-					receipt.id, 
-					receipt.contact.id, 
-					receipt.donation_list, 
-					[str(date) for date in date_range], 
-					receipt.file_name,
-				)
-				for donation in annual_donations:
-					donation.pdf = True
-					donation.save()
-				e = Paramètre.objects.get(id=4)
-				path = f"/media/reçus/{receipt.file_name}"
-				if e.email_subject:
-					subject = e.email_subject.replace("R_ID", str(receipt.id))
-					subject = subject.replace("AAAA", str(datetime.date.today().year))
-				else:
-					subject = ""
-				body = e.body.replace("R_ID", str(receipt.id))
-				if receipt.contact.profile.email not in ("", None):
-					send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
-					email_statuses.append((receipt.contact.id, receipt.id))
-		email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
-		return redirect(f"/{lang}/")
+		seminar_desk_ids = list(set([d.contact.profile.seminar_desk_id for d in dtbp]))
+		for o in orgs:
+			for t, s_id in enumerate(seminar_desk_ids):
+				annual_donations = dtbp.filter(contact__profile__seminar_desk_id=s_id).filter(organisation__id=o)
+				if len(annual_donations) > 0:
+					receipt = ReçusFiscaux()
+					receipt.save()
+					receipt.contact = Contact.objects.get(profile__seminar_desk_id=s_id)
+					receipt.date_created = datetime.date.today()
+					receipt.receipt_type = ('A','Annual')
+					receipt.file_name = f"{receipt.id}_{'_'.join(str(Contact.objects.get(profile__seminar_desk_id=s_id)).split(' '))}_{str(date_range[0])}_{str(date_range[1])}_Annuel.pdf"
+					receipt.donation_list = [d.id for d in annual_donations]
+					receipt.cancel = False
+					receipt.save()
+					create_annual_receipt.delay(
+						receipt.id, 
+						receipt.contact.id, 
+						receipt.donation_list, 
+						[str(date) for date in date_range], 
+						receipt.file_name,
+					)
+					for donation in annual_donations:
+						donation.pdf = True
+						donation.save()
+					e = Paramètre.objects.get(id=4)
+					path = f"/media/reçus/{receipt.file_name}"
+					if e.email_subject:
+						subject = e.email_subject.replace("R_ID", str(receipt.id))
+						subject = subject.replace("AAAA", str(datetime.date.today().year))
+					else:
+						subject = ""
+					body = e.body.replace("R_ID", str(receipt.id))
+					if receipt.contact.profile.email not in ("", None):
+						send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
+						email_statuses.append((receipt.contact.id, receipt.id))
+			email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
+			return redirect(f"/{lang}/")
 
-	contacts = [{"id": str(i), "name": Profile.objects.get(seminar_desk_id=i).name, "email": Profile.objects.get(seminar_desk_id=i).email or "", "address": format_address(Profile.objects.get(seminar_desk_id=i).primary_address), "donations": donations.filter(contact__profile__seminar_desk_id=i)} for i in seminar_desk_ids]
-	contacts_json = json.dumps([{'id': str(i), 'name': Profile.objects.get(seminar_desk_id=i).name} for i in seminar_desk_ids])
+	orgs = [{
+		"id": org.id,
+		"name": org.name,
+		"contacts": list(filter(lambda x: len(x["donations"]) > 0, [{
+			"id": str(p.seminar_desk_id), 
+			"name": p.name, 
+			"email": p.email or "", 
+			"address": format_address(p.primary_address), 
+			"donations": [{
+				"id": str(d.id),
+				"date_donated": str(d.date_donated), 
+				"amount": str(d.amount),
+				"organisation": d.organisation_name,
+				"donation_type_name": d.donation_type_name,
+				"payment_mode": d.payment_mode_name,
+				"forme_du_don_name": d.forme_du_don_name,
+				"nature_du_don_name": d.nature_du_don_name,
+			} for d in p.contact_set.all()[0].donation_set.filter(date_donated__range=date_range).filter(eligible=True).filter(pdf=False).filter(organisation=org)],
+		} for p in Profile.objects.all()]))
+	} for org in Organisation.objects.all()]
 
+	orgs_json = json.dumps(orgs)
 	context = {
 		'date_range': date_range,
-		'contacts': contacts,
-		'contacts_json': contacts_json,
+		'orgs': orgs,
+		'orgs_json': orgs_json,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'confirm_annual_donations.html', context)
-
-def test(request):
-	from django.db.models import Count
-	contacts = Contact.objects.all()
-	contacts = contacts[:100].annotate(total_donations=Count("donation"))
-	print([(contact.total_donations, sum([d.amount for d in contact.donation_set.all()])) for contact in contacts])
-	return HttpResponse("ok")

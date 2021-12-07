@@ -115,17 +115,18 @@
 
   // loading specified receipts
   $(document).ready( function() {
-    var order_for_table = eval(`x = ` + `{{order_for_table|safe}}`), table_elements = ["id","contact","date","type","name"], k_val=Object.keys(order_for_table)[0];
+    var order_for_table = eval(`x = ` + `{{order_for_table|safe}}`), table_elements = ["id","contact","date","type"], k_val=Object.keys(order_for_table)[0];
     for (let i=1; i < Object.keys(order_for_table).length; i++) {
       $(`#${Object.keys(order_for_table)[i]}_filter`).attr("value", order_for_table[Object.keys(order_for_table)[i]][0]);
     };
     // Give columns arrows indicating order - 1.0
     document.getElementById(`order_by_${k_val}_form`).value = order_for_table[k_val];
-    $('#pdfTable thead tr th ').append('<span style="display: grid; float: right; font-size: 8px; color: rgba(40, 40, 48, 0.18)"><span style="grid-column: 2; grid-row: 1;">&#x25B2;</span><span style="grid-column: 2; grid-row: 2;">&#x25BC;</span></span>');
+    $('.orderable').append('<span style="display: grid; float: right; font-size: 8px; color: rgba(40, 40, 48, 0.18)"><span style="grid-column: 2; grid-row: 1;">&#x25B2;</span><span style="grid-column: 2; grid-row: 2;">&#x25BC;</span></span>');
     // fill in current order in black 
-    $('#pdfTable thead tr th ').filter(`:nth-child(${table_elements.indexOf(k_val)+1})`).children("span").children("span").filter(`:nth-child(${parseInt(order_for_table[k_val].replace("asc","0").replace("desc","1"))+1})`).css("color","rgba(0,0,0,1)");
+    $('.orderable').filter(`:nth-child(${table_elements.indexOf(k_val)+1})`).children("span").children("span").filter(`:nth-child(${parseInt(order_for_table[k_val].replace("asc","0").replace("desc","1"))+1})`).css("color","rgba(0,0,0,1)");
     //
-    $('#pdfTable thead tr th').css("cursor","pointer");
+    console.log($('.orderable'))
+    $('.orderable').css("cursor","pointer");
     // Resort by columns for receipts - 1.1
     document.getElementById("pdfTable").onmouseover = function () {
       table_elements.forEach(orderTable);
@@ -467,10 +468,10 @@
         <table id="pdfTable" class="table table-striped table-bordered">
           <thead class="table-primary">
             <tr>
-              <th id="order_table_id">{{language.table.id}}</th>
-              <th id="order_table_contact">{{language.table.contact}}</th>
-              <th id="order_table_date">{{language.table.dateCreated}}</th>
-              <th id="order_table_type">{{language.table.receiptType}}</th>
+              <th class="orderable" id="order_table_id">{{language.table.id}}</th>
+              <th class="orderable" id="order_table_contact">{{language.table.contact}}</th>
+              <th class="orderable" id="order_table_date">{{language.table.dateCreated}}</th>
+              <th class="orderable" id="order_table_type">{{language.table.receiptType}}</th>
               <th id="order_table_name">{{language.table.fileName}}</th>
               <th>{{language.table.email}}</th>
               <th>{{language.table.viewDownload}}</th>
