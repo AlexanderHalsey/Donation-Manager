@@ -45,7 +45,7 @@
 		<script>
 			window.addEventListener('load', function() {
 
-				var orgs = eval(`{{orgs_json|safe}}`), contacts = [], add = $('#addContacts'), remove = $('#removeContacts'), select = $('#selectAllContacts'), submit = $('#confirm_annual_receipts'), add_orgs = $('#addOrgs');
+				var orgs = JSON.parse(`{{orgs_json|safe}}`), contacts = [], add = $('#addContacts'), remove = $('#removeContacts'), select = $('#selectAllContacts'), submit = $('#confirm_annual_receipts'), add_orgs = $('#addOrgs');
 
 				$('#addOrgs').flexdatalist({
 					minLength: 1,
@@ -61,6 +61,7 @@
 					searchIn: "name",
 					data: contacts,
 				});
+				console.log(orgs);
 
 				add_orgs.on("change", function () {
 					for (let i in contacts) {
