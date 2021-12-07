@@ -949,7 +949,7 @@ def confirm_annual(request, lang, change=None):
 						email_statuses.append((receipt.contact.id, receipt.id))
 			email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
 			return redirect(f"/{lang}/")
-
+	print("this is the chunk that takes too long to compile")
 	orgs = [{
 		"id": org.id,
 		"name": org.name,
