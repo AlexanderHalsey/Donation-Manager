@@ -68,7 +68,7 @@ def create_individual_receipt(receipt_id, donation_id, file_name):
 			], 
 			"institut_village": [f"A {receipt_settings.institut_town or '                 '} le : {'/'.join(str(datetime.date.today()).split('-')[::-1])}"],
 			"president": [receipt_settings.president or ""],
-			"president_position": [receipt_settings.president_position],
+			"president_position": [receipt_settings.president_position or ""],
 		}
 		images = {
 			"institution": receipt_settings.institut_image or "",
@@ -284,7 +284,7 @@ def create_annual_receipt(receipt_id, contact_id, donation_lst, date_range, file
 		can2.setFont(fonts[0], sizes[0])
 		can2.drawString(305, 693-additional, (receipt_settings.president or ""))
 		can2.setFont(fonts[1], sizes[0])
-		can2.drawString(305, 678-additional, receipt_settings.president_position)
+		can2.drawString(305, 678-additional, (receipt_settings.president_position or ""))
 		can2.drawString(52, 734-additional, f"A {receipt_settings.institut_town or '                 '} le : {'/'.join(str(datetime.date.today()).split('-')[::-1])}")
 
 		downloaded_file = dbx.files_download(str(images["president_signature"]))
