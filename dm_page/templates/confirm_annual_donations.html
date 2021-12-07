@@ -100,7 +100,6 @@
 				});
 
 				select.on("click", function () {
-					console.log("one triggered the other");
 					if (select.is(":checked") == true) {
 						add.flexdatalist();
 						add.flexdatalist('disabled', true);
@@ -124,7 +123,6 @@
 				});
 
 				add.on("change", function () {
-					console.log("this stops working after a while");
 					var values = add.val().split(",");
 					if (values[0].length == 0) {
 						submit.hide();

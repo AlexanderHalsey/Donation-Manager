@@ -949,11 +949,11 @@ def confirm_annual(request, lang, change=None):
 						email_statuses.append((receipt.contact.id, receipt.id))
 			email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
 			return redirect(f"/{lang}/")
-	print("this is the chunk that takes too long to compile")
+	prof_for_orgs = [{"id": o.id,"name": o.name, "contacts": list(set([d.contact.profile.seminar_desk_id for d in donations.filter(organisation=o)]))} for o in Organisation.objects.all()]
 	orgs = [{
-		"id": org.id,
-		"name": org.name,
-		"contacts": list(filter(lambda x: len(x["donations"]) > 0, [{
+		"id": org["id"],
+		"name": org["name"],
+		"contacts": [{
 			"id": str(p.seminar_desk_id), 
 			"name": p.name, 
 			"email": p.email or "", 
@@ -967,10 +967,9 @@ def confirm_annual(request, lang, change=None):
 				"payment_mode": d.payment_mode_name,
 				"forme_du_don_name": d.forme_du_don_name,
 				"nature_du_don_name": d.nature_du_don_name,
-			} for d in p.contact_set.all()[0].donation_set.filter(date_donated__range=date_range).filter(eligible=True).filter(pdf=False).filter(organisation=org)],
-		} for p in Profile.objects.all()]))
-	} for org in Organisation.objects.all()]
-	print("what is taking so long")
+			} for d in p.contact_set.all()[0].donation_set.filter(date_donated__range=date_range).filter(eligible=True).filter(pdf=False).filter(organisation__id=org["id"])],
+		} for p in Profile.objects.filter(seminar_desk_id__in=org["contacts"])]
+	} for org in prof_for_orgs]
 	orgs_json = json.dumps(orgs)
 	context = {
 		'date_range': date_range,
