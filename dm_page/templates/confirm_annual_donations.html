@@ -70,6 +70,7 @@
 				});
 				console.log(orgs, orgs_data);
 				add_orgs.on("change", function () {
+					console.log("this should happen");
 					for (let i in contacts) {
 						$(`[name=${contacts[i]["id"]}]`).hide();
 					};
