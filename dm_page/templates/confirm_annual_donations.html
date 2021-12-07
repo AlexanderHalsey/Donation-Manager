@@ -45,14 +45,21 @@
 		<script>
 			window.addEventListener('load', function() {
 
-				var orgs = JSON.parse(`{{orgs_json|safe}}`), contacts = [], add = $('#addContacts'), remove = $('#removeContacts'), select = $('#selectAllContacts'), submit = $('#confirm_annual_receipts'), add_orgs = $('#addOrgs');
+				var orgs = JSON.parse(`{{orgs_json|safe}}`), orgs_data = [], contacts = [], add = $('#addContacts'), remove = $('#removeContacts'), select = $('#selectAllContacts'), submit = $('#confirm_annual_receipts'), add_orgs = $('#addOrgs');
+
+				for (let i in orgs) {
+					orgs_data.push({
+						"id": orgs[i]["id"],
+						"name": orgs[i]["name"]
+					});
+				};
 
 				$('#addOrgs').flexdatalist({
 					minLength: 1,
 					valueProperty: "id",
 					visibleProperties: ["name"],
 					searchIn: "name",
-					data: orgs,
+					data: orgs_data,
 				});
 				$('.flexdatalist').flexdatalist({
 					minLength: 1,
