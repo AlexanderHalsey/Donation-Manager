@@ -218,7 +218,7 @@ def dashboard(request, lang, change=None):
 				donation.payment_mode_name = form.cleaned_data["payment_mode"]
 				donation.organisation = Organisation.objects.get(name = form.cleaned_data["organisation"])
 				donation.organisation_name = form.cleaned_data["organisation"]
-				donation.donation_type = DonationType.objects.filter(name = form.cleaned_data["donation_type"].split(" - ")[0])[0]
+				donation.donation_type = DonationType.objects.filter(name = form.cleaned_data["donation_type"].split(" - ")[0], organisation=donation.organisation)[0]
 				donation.donation_type_name = form.cleaned_data["donation_type"].split(" - ")[0]
 				donation.nature_du_don = NatureDuDon.objects.get(name = form.cleaned_data["nature_du_don"])
 				donation.nature_du_don_name = form.cleaned_data["nature_du_don"]
