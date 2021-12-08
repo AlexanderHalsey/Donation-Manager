@@ -370,7 +370,7 @@ def cancel_pdf_receipt(path, receipt_id):
 def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=None):
 	try:
 		sleep(t*15)
-		s = Paramètre.objects.get(id=4)
+		s = Paramètre.objects.get(id=3)
 		smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
 		print("SMTP domain and SMTP port accepted.")
 		smtp_object.ehlo()
@@ -418,7 +418,7 @@ def send_email(receipt_id, pdf_path, send_to, subject, body, t, cc=None, bcc=Non
 def email_confirmation(t, lst):
 	try:
 		sleep(t*15+10)
-		notification = Paramètre.objects.get(id=4)
+		notification = Paramètre.objects.get(id=3)
 		l = []
 		for contact_id, receipt_id in lst:
 			receipt = ReçusFiscaux.objects.get(id=receipt_id)
@@ -429,7 +429,7 @@ def email_confirmation(t, lst):
 		notification.email_notification = True
 		notification.email_notification_list = l
 		notification.save()
-		s = Paramètre.objects.get(id=4)
+		s = Paramètre.objects.get(id=3)
 		smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
 		print("SMTP domain and SMTP port accepted.")
 		smtp_object.ehlo()
@@ -682,7 +682,7 @@ def annual_receipt_reminder():
 @shared_task
 def send_task_error(task_name, traceback):
 	sleep(10)
-	s = Paramètre.objects.get(id=4)
+	s = Paramètre.objects.get(id=3)
 	smtp_object = smtplib.SMTP(s.smtp_domain,int(s.smtp_port))
 	print("SMTP domain and SMTP port accepted.")
 	smtp_object.ehlo()

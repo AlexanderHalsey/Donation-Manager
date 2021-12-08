@@ -61,6 +61,23 @@ class ModelAdminDonationReceipt(admin.ModelAdmin):
 	def has_add_permission(self, request, obj=None):
 		return False
 
+class EligibilityForm(forms.ModelForm):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.fields['organisation'].required = True
+		self.fields['donation_type'].required = True
+
+class ModelAdminEligibility(admin.ModelAdmin):
+	ordering = ("id",)
+	list_display = ('id','organisation',"donation_type",)
+	list_display_links = ('id',)
+	form = EligibilityForm
+	def get_actions(self, request):
+		actions = super().get_actions(request)
+		if 'delete_selected' in actions:
+			del actions['delete_selected']
+		return actions
+
 class SettingsForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -197,7 +214,7 @@ class LockedForm(forms.ModelForm):
 		fields = '__all__'
 
 class ModelAdminLocked(admin.ModelAdmin):
-	fields = ('name','date_start', 'date_end',)#'contacts','organisations','donation_types')
+	fields = ('name','date_start', 'date_end',) #'contacts','organisations','donation_types')
 	list_display = ('id','name','date_start','date_end',)
 	list_display_links = ('name',)
 	form = LockedForm
@@ -214,6 +231,7 @@ mysite.site_site_header = "DMS Admin"
 mysite.register(User)
 mysite.register(ReçusFiscaux, ModelAdminDonationReceipt)
 mysite.register(Paramètre, ModelAdminSettings)
+mysite.register(Eligibility, ModelAdminEligibility)
 mysite.register(Locked, ModelAdminLocked)
 mysite.register(Organisation, ModelAdminOrganisation)
 mysite.register(DonationType, ModelAdminDonationType)

@@ -154,7 +154,6 @@ class Locked(models.Model):
 	# donation_list = models.CharField(max_length=200, null=True, blank=True)
 	def save(self, *args, **kwargs):	
 		super(Locked, self).save(*args, **kwargs)
-		print(type(self.date_start))
 		date_ranges = [(lock.date_start, lock.date_end) for lock in Locked.objects.all()]
 		donations = Donation.objects.all()
 		for don in donations:
@@ -232,6 +231,34 @@ class ReçusFiscaux(models.Model):
 		verbose_name = "Reçus fiscaux"
 		verbose_name_plural = "Reçus fiscaux"
 
+
+def check_new_eligibility():
+	eligibility_list = [(e.organisation, e.donation_type) for e in Eligibility.objects.all()]
+	for donation in Donation.objects.filter(disabled=False ):
+		if (donation.organisation, donation.donation_type) in eligibility_list:
+			if not donation.eligible:
+				donation.eligible = True
+				donation.save()
+		else:
+			if donation.eligible:
+				donation.eligible = False
+				donation.save()
+
+class Eligibility(models.Model):
+	organisation = models.ForeignKey('Organisation', on_delete=models.CASCADE, null=True, blank=True, verbose_name="Organisation", related_name="organisation")
+	donation_type = models.ForeignKey('DonationType', on_delete=models.CASCADE, null=True, blank=True, verbose_name="Type de don", related_name="donation_type")
+
+	def save(self, *args, **kwargs):
+		super(Eligibility, self).save(*args, **kwargs)
+		check_new_eligibility()
+	def delete(self, *args, **kwargs):
+		super(Eligibility, self).delete(*args, **kwargs)
+		check_new_eligibility()
+
+	class Meta:
+		verbose_name = "Eligibilité"
+		verbose_name_plural = "Eligibilité"
+
 class Paramètre(models.Model):
 	date_range_start = models.DateField(null=True, blank=True, verbose_name="Date de début")
 	date_range_end = models.DateField(null=True, blank=True, verbose_name="Date de fin")
@@ -239,26 +266,6 @@ class Paramètre(models.Model):
 	release_notification = models.BooleanField(default=False)
 	annual_process_button = models.BooleanField(default=False)
 	manual = models.URLField(max_length=200, null=True, blank=True, verbose_name="Lien")
-	organisation_1 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation1")
-	donation_type_1 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type1")
-	organisation_2 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation2")
-	donation_type_2 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type2")
-	organisation_3 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation3")
-	donation_type_3 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type3")
-	organisation_4 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation4")
-	donation_type_4 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type4")
-	organisation_5 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation5")
-	donation_type_5 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type5")
-	organisation_6 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation6")
-	donation_type_6 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type6")
-	organisation_7 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation7")
-	donation_type_7 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type7")
-	organisation_8 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation8")
-	donation_type_8 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type8")
-	organisation_9 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation9")
-	donation_type_9 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type9")
-	organisation_10 = models.ForeignKey('Organisation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Organisation", related_name="organisation10")
-	donation_type_10 = models.ForeignKey('DonationType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Type de don", related_name="donation_type10")
 	host_email = models.CharField(max_length=200, null=True, blank=True, verbose_name="Adresse de l'expéditeur")
 	host_email_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Nom de l'expéditeur")
 	host_password = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mot de passe")
@@ -276,8 +283,6 @@ class Paramètre(models.Model):
 		if self.id == 2:
 			return "Date d'ouverture des reçus annuels"
 		if self.id == 3:
-			return "Conditions d'éligibilité pour les reçus"
-		if self.id == 4:
 			return "Configuration des emails"
 
 	class Meta:
