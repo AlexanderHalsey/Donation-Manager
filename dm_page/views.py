@@ -203,7 +203,6 @@ def dashboard(request, lang, change=None):
 			return redirect("/")
 
 		form = DonationForm(request.POST)
-
 		if form.is_valid():
 			# create new donation
 			donation = Donation()
@@ -225,13 +224,16 @@ def dashboard(request, lang, change=None):
 				donation.nature_du_don_name = form.cleaned_data["nature_du_don"]
 				donation.forme_du_don = FormeDuDon.objects.get(name = form.cleaned_data["forme_du_don"])
 				donation.forme_du_don_name = form.cleaned_data["forme_du_don"]
+				print([(e.organisation, e.donation_type) for e in Eligibility.objects.all()])
+				print((donation.organisation, donation.donation_type))
+				print((donation.organisation, donation.donation_type) in [(e.organisation, e.donation_type) for e in Eligibility.objects.all()])
 				donation.eligible = (donation.organisation, donation.donation_type) in [(e.organisation, e.donation_type) for e in Eligibility.objects.all()]
 				donation.save()
 
 			if request.POST["Submit"] == "update":
 				disable_donation = Donation.objects.get(id=int(request.POST["id"]))
 				disable_donation.disabled = True
-				disabled_donation.eligible = False
+				disable_donation.eligible = False
 				disable_donation.save()
 
 			return redirect(f"/{lang}/")
