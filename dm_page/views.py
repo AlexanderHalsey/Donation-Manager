@@ -224,9 +224,6 @@ def dashboard(request, lang, change=None):
 				donation.nature_du_don_name = form.cleaned_data["nature_du_don"]
 				donation.forme_du_don = FormeDuDon.objects.get(name = form.cleaned_data["forme_du_don"])
 				donation.forme_du_don_name = form.cleaned_data["forme_du_don"]
-				print([(e.organisation, e.donation_type) for e in Eligibility.objects.all()])
-				print((donation.organisation, donation.donation_type))
-				print((donation.organisation, donation.donation_type) in [(e.organisation, e.donation_type) for e in Eligibility.objects.all()])
 				donation.eligible = (donation.organisation, donation.donation_type) in [(e.organisation, e.donation_type) for e in Eligibility.objects.all()]
 				donation.save()
 
@@ -888,6 +885,7 @@ def confirm_annual(request, lang, change=None):
 	if request.method == "POST":
 		if request.POST.get("orgs") not in ("", None):
 			orgs = [int(i) for i in request.POST.get("orgs").split(",")]
+			print(orgs)
 		else:
 			return redirect(f'/{lang}/reçusannuels/')
 		# getting contacts and donations to be processed
@@ -904,9 +902,11 @@ def confirm_annual(request, lang, change=None):
 				return redirect(f'/{lang}/recusannuels/')
 
 		# creating receipts and sending emails
-		email_statuses = []
 		seminar_desk_ids = list(set([d.contact.profile.seminar_desk_id for d in dtbp]))
+		print(seminar_desk_ids, orgs)
 		for o in orgs:
+			print(o)
+			email_statuses = []
 			for t, s_id in enumerate(seminar_desk_ids):
 				annual_donations = dtbp.filter(contact__profile__seminar_desk_id=s_id).filter(organisation__id=o)
 				if len(annual_donations) > 0:
@@ -940,7 +940,7 @@ def confirm_annual(request, lang, change=None):
 					if receipt.contact.profile.email not in ("", None):
 						send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
 						email_statuses.append((receipt.contact.id, receipt.id))
-			email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
+			# email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
 			return redirect(f"/{lang}/")
 
 	prof_for_orgs = [{"id": o.id,"name": o.name, "contacts": list(set([d.contact.profile.seminar_desk_id for d in donations.filter(organisation=o)]))} for o in Organisation.objects.all()]
