@@ -903,9 +903,13 @@ def confirm_annual(request, lang, change=None):
 		# creating receipts and sending emails
 		seminar_desk_ids = list(set([d.contact.profile.seminar_desk_id for d in dtbp]))
 		for o in orgs:
+			print(o)
 			email_statuses = []
 			for t, s_id in enumerate(seminar_desk_ids):
+				print(dtbp)
+				print([d.organisation for d in dtbp])
 				annual_donations = dtbp.filter(contact__profile__seminar_desk_id=s_id).filter(organisation__id=o)
+				print(annual_donations)
 				if len(annual_donations) > 0:
 					receipt = ReçusFiscaux()
 					receipt.save()
@@ -937,7 +941,7 @@ def confirm_annual(request, lang, change=None):
 					if receipt.contact.profile.email not in ("", None):
 						send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
 						email_statuses.append((receipt.contact.id, receipt.id))
-			email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
+			# email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
 		return redirect(f"/{lang}/")
 
 	prof_for_orgs = [{"id": o.id,"name": o.name, "contacts": list(set([d.contact.profile.seminar_desk_id for d in donations.filter(organisation=o)]))} for o in Organisation.objects.all()]
