@@ -1,12 +1,12 @@
 # Donation Management System
 
 
-## Overview
+## 1. Overview
 
 This application was created for a charitable organisation to store and modify donations being made to the institution. The intention behind this application was to have control over donations and all their related models apart from the contacts themselves, which are retrieved from an existing external database (SeminarDesk) on creation / modification / deletion. The challenge to this program was defining this distinction, and has involved the use of background tasks and webhooks to fully integrate this program to the institut's existing platform.
 
 
-## Functionality
+## 2. Functionality
 
 - Create / Modify / Delete donations by filling in all their related fields
 - Create receipts for eligible donations, either individual receipts for unique donations or annual receipts for a fiscal year
@@ -25,7 +25,7 @@ In this admin
 
 
 
-## Installation 
+## 3. Installation 
 
 1. Create a directory where you want to build your environment
 
@@ -39,11 +39,11 @@ In this admin
 
 
 
-## Configurations
+## 4. Configurations
 
 There are lots of parameters that you can add to increase the functionality of the application.
 
-### Environment file Configurations
+### 4.a. Environment file Configurations
 
 Create a `.env` file and include these variables:
 
@@ -105,7 +105,7 @@ ______________________________
 > Url to access external database for contacts (This is a particular case where the contact's id suffixes the url address to land you on the contact's page on the external application. This link is used on the individual contacts's page)
 
 
-### Django Admin Configurations
+### 4.b. Django Admin Configurations
 
 **Admin --> Paramètres généraux (General Settings)**
 - Change Fiscal Receipt Date range: *Plage de dates pour l'année fiscale*
@@ -122,7 +122,7 @@ ______________________________
 
 
 
-## MIT License
+## 5. MIT License
 
 Copyright (c) 2021 Donation Management System
 
