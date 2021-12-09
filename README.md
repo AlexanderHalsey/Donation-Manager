@@ -1,18 +1,18 @@
-Donation Management System
+# Donation Management System
 
 
-Overview
+## Overview
 
 This application was created for a charitable organisation to store and modify donations being made to the institution. The intention behind this application was to have control over donations and all their related models apart from the contacts themselves, which are retrieved from an existing external database (SeminarDesk) on creation / modification / deletion. The challenge to this program was defining this distinction, and has involved the use of background tasks and webhooks to fully integrate this program to the institut's existing platform.
 
 
-Functionality
+## Functionality
 
 - Create / Modify / Delete donations by filling in all their related fields
 - Create receipts for eligible donations, either individual receipts for unique donations or annual receipts for a fiscal year
 - Filter donations / donators / receipts base on their fields
 - Export filtered / non-filtered data of donations and donators to Excel and CSV files
-- Retrieve contact information from an external database through the use of webhooks - (the process_webhook_payload function in dm_page/tasks.py should be modified to fit the JSON files received or the JSON files should correspond to the existing configuration)
+- Retrieve contact information from an external database through the use of webhooks - (the process_webhook_payload function in `dm_page/tasks.py` should be modified to fit the JSON files received or the JSON files should correspond to the existing configuration)
 - View contact profile pages with their information and a link to view/modify that contact in the external platform
 - Send automatic and manual emails to contacts with regards to their receipts for tax.
 In this admin 
@@ -24,24 +24,24 @@ In this admin
 - Change email parameters such as host, port, subject, body, etc
 
 
-Installation 
+## Installation 
 
 Create a directory where you want to build your environment
 
 Clone this project into your directory:
-git clone https://github.com/AlexanderHalsey/Donation-Manager
+`git clone https://github.com/AlexanderHalsey/Donation-Manager`
 
 Create a virtual environment within it, activate it, then install dependencies. I personally use venv:
-python3 -m venv venv | source venv/bin/activate | pip install -r requirements.txt
+`python3 -m venv venv | source venv/bin/activate | pip install -r requirements.txt`
 
 Add a database of your choosing such as a db.sqlite3 (change the DATABASE default in donation/settings.py if needed) then create random fixtures and load them onto your database:
-python3 dataset/random_dataset_generator.py | python3 manage.py loaddata dataset/fixtures/*.json
+`python3 dataset/random_dataset_generator.py | python3 manage.py loaddata dataset/fixtures/*.json`
 
 Finally give youself a superuser account to log in and you're all set:
-python3 manage.py createsuperuser
+`python3 manage.py createsuperuser`
 
 
-Usage
+## Usage
 
 Set your language to French or English on the Navbar. 
 Add donations with the button next to the filter
@@ -53,15 +53,15 @@ Export data to Excel / CSV files
 Create Annual Receipts for eligible donations clicking on the "Process Annual Receipts" button on the Fiscal Receipts page. Make sure there are eligible donations in the fiscal date range setting (see below) otherwise this button won't be visible.
 
 
-Configurations
+## Configurations
 
 There are lots of parameters that you can add to increase the functionality of the application.
 
-Environment file Configurations
+### Environment file Configurations
 
 Create a .env file and include these variables:
 
-# Secret key of the application (put secret key within the string)
+Secret key of the application (put secret key within the string)
 SECRET_KEY=''  
 
 # Development / Production (put boolean value within the string)
