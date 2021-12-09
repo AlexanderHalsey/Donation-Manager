@@ -43,57 +43,66 @@ In this admin
 
 There are lots of parameters that you can add to increase the functionality of the application.
 
-#### Environment file Configurations
+### Environment file Configurations
 
 Create a `.env` file and include these variables:
-
-> Secret key of the application (put secret key within the string)
+______________________________
 
 `SECRET_KEY=''` 
 
-> Development / Production (put boolean value within the string)
+> Secret key of the application (put secret key within the string)
+______________________________
 
 `DEBUG_VALUE = ''`
 
-> These email configurations are used in the eventual case where the pages or background tasks give errors
+> Development / Production (put boolean value within the string)
+______________________________
 
 `EMAIL_ADDRESS = `
 `PASSWORD = `
 `SMTP_DOMAIN = `
 `SMTP_PORT = `
 
-> Recipient receiving the errors
+> These email configurations are used in the eventual case where the pages or background tasks give errors
+______________________________
 
 `ADMIN_NAME = `
 `ADMIN_EMAIL = `
 
-> Inject an error in dashboard.html to ensure traceback emails are getting sent (put boolean value within the string))
+> Recipient receiving the errors
+______________________________
 
 `errortoggle = ''`
 
-> If you wish to use the webhooks to connect with an external database you can set the username and password on both ends for a secure connection
->You can find the url of the webhook view function in the `dm_page/urls.py` file
+> Inject an error in dashboard.html to ensure traceback emails are getting sent (put boolean value within the string))
+______________________________
 
 `DMS_WEBHOOK_USERNAME = `
 `DMS_WEBHOOK_PASSWORD = `
 
-> Use an external redis broker to get the Celery module functioning correctly for background tasks in the dm_page/tasks.py file
-> **IMPORTANT**: These tasks include creating receipts, receiving webhook payloads, sending receipt confirmations and traceback emails. **Without this broker connection you will not be able to use these functions**
+> If you wish to use the webhooks to connect with an external database you can set the username and password on both ends for a secure connection
+>You can find the url of the webhook view function in the `dm_page/urls.py` file
+______________________________
 
 `REDIS_TLS_URL =` 
 
-> Create a dropbox account and create an authentication token to link application to the dropbox file storage system
-> Follow the instructions on this link to set up your dropbox account: https://www.dropbox.com/developers/documentation/python#tutorial
+> Use an external redis broker to get the Celery module functioning correctly for background tasks in the dm_page/tasks.py file
+> **IMPORTANT**: These tasks include creating receipts, receiving webhook payloads, sending receipt confirmations and traceback emails. **Without this broker connection you will not be able to use these functions**
+______________________________
 
 `DROPBOX_OAUTH2_TOKEN = `
 
-> Url to access external database for contacts (This is a particular case where the contact's id suffixes the url address to land you on the contact's page on the external application. This link is used on the individual contacts's page)
+> Create a dropbox account and create an authentication token to link application to the dropbox file storage system
+> Follow the instructions on this link to set up your dropbox account: https://www.dropbox.com/developers/documentation/python#tutorial
+______________________________
 
 `SDID_ACCESS = ` 
 
+> Url to access external database for contacts (This is a particular case where the contact's id suffixes the url address to land you on the contact's page on the external application. This link is used on the individual contacts's page)
+______________________________
 
 
-#### Django Admin Configurations
+### Django Admin Configurations
 
 **Admin --> Paramètres généraux**
 - Change Fiscal Receipt Date range: *Plage de dates pour l'année fiscale*
@@ -107,9 +116,9 @@ Create a `.env` file and include these variables:
 ** **IMPORTANT**: Make sure you fill all the fields for Organisations that are to be amongst the eligibility conditions in the Eligibility model. This is to ensure no errors occur when trying to create a pdf receipt containing this particular organisation's model.
 
 
+___
 
-
-##### MIT License
+### MIT License
 
 Copyright (c) 2021 Donation Management System
 
