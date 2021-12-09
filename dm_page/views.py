@@ -489,6 +489,7 @@ def contact(request, pk, lang, change=None):
 		"receipt_trigger_notification": receipt_trigger_notification,
 		'email_notification': email_notification,
 		'email_notification_list': email_notification_list,
+		'sdid': SDID,
 		'language': language_text(lang=lang),
 	}
 	return render(request, 'contact.html', context)
