@@ -58,14 +58,18 @@ ______________________________
 ______________________________
 
 `EMAIL_ADDRESS = `
+
 `PASSWORD = `
+
 `SMTP_DOMAIN = `
+
 `SMTP_PORT = `
 
 > These email configurations are used in the eventual case where the pages or background tasks give errors
 ______________________________
 
 `ADMIN_NAME = `
+
 `ADMIN_EMAIL = `
 
 > Recipient receiving the errors
@@ -77,6 +81,7 @@ ______________________________
 ______________________________
 
 `DMS_WEBHOOK_USERNAME = `
+
 `DMS_WEBHOOK_PASSWORD = `
 
 > If you wish to use the webhooks to connect with an external database you can set the username and password on both ends for a secure connection
@@ -102,10 +107,12 @@ ______________________________
 
 ### Django Admin Configurations
 
-**Admin --> Paramètres généraux**
+**Admin --> Paramètres généraux (General Settings)**
 - Change Fiscal Receipt Date range: *Plage de dates pour l'année fiscale*
 - Change Fiscal Receipt release date notification: *Date d'ouverture des reçus annuels*
 - Change email settings for sending receipt confirmations: *Configuration des emails*
+
+**Other Settings**
 - Cancel receipts that have mistakes on them: *Reçus Fiscaux*
 - Change eligibility conditions for donations that have the right to a receipt: *Eligibilité*
 - Add / Modify / Delete related donation models: *Forme des dons (form of donations), Mode paiement (Payment Mode), Nature des dons (nature of donations), Types de dons (donation types), Organisations (organisations)* **
