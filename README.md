@@ -26,19 +26,15 @@ In this admin
 
 ## Installation 
 
-Create a directory where you want to build your environment
+1. Create a directory where you want to build your environment
 
-Clone this project into your directory:
-`git clone https://github.com/AlexanderHalsey/Donation-Manager`
+2. Clone this project into your directory: `git clone https://github.com/AlexanderHalsey/Donation-Manager`
 
-Create a virtual environment within it, activate it, then install dependencies. I personally use venv:
-`python3 -m venv venv | source venv/bin/activate | pip install -r requirements.txt`
+3. Create a virtual environment within it, activate it, then install dependencies. I personally use venv: `python3 -m venv venv | source venv/bin/activate | pip install -r requirements.txt`
 
-Add a database of your choosing such as a db.sqlite3 (change the DATABASE default in donation/settings.py if needed) then create random fixtures and load them onto your database:
-`python3 dataset/random_dataset_generator.py | python3 manage.py loaddata dataset/fixtures/*.json`
+4. Add a database of your choosing such as a db.sqlite3 (change the DATABASE default in donation/settings.py if needed) then create random fixtures and load them onto your database: `python3 dataset/random_dataset_generator.py | python3 manage.py loaddata dataset/fixtures/*.json`
 
-Finally give youself a superuser account to log in and you're all set:
-`python3 manage.py createsuperuser`
+5. Finally give youself a superuser account to log in and you're all set: `python3 manage.py createsuperuser`
 
 
 ## Usage
@@ -59,61 +55,57 @@ There are lots of parameters that you can add to increase the functionality of t
 
 ### Environment file Configurations
 
-Create a .env file and include these variables:
+Create a `.env` file and include these variables:
 
-Secret key of the application (put secret key within the string)
+> Secret key of the application (put secret key within the string)
 SECRET_KEY=''  
 
-# Development / Production (put boolean value within the string)
+> Development / Production (put boolean value within the string)
 DEBUG_VALUE = ''
 
-# These email configurations are used in the eventual case where the pages or background tasks give errors
+> These email configurations are used in the eventual case where the pages or background tasks give errors
 EMAIL_ADDRESS =
 PASSWORD = 
 SMTP_DOMAIN = 
 SMTP_PORT = 
 
-# Recipient receiving the errors
+> Recipient receiving the errors
 ADMIN_NAME = 
 ADMIN_EMAIL = 
 
-# Inject an error in dashboard.html to ensure traceback emails are getting sent (put boolean value within the string))
+> Inject an error in dashboard.html to ensure traceback emails are getting sent (put boolean value within the string))
 errortoggle = ''
 
-# If you wish to use the webhooks to connect with an external database you can set the username and password on both ends for a secure connection
-# You can find the url of the webhook view function in the dm_page/urls.py file
+> If you wish to use the webhooks to connect with an external database you can set the username and password on both ends for a secure connection
+>You can find the url of the webhook view function in the `dm_page/urls.py` file
 DMS_WEBHOOK_USERNAME = 
 DMS_WEBHOOK_PASSWORD = 
 
-# Use an external redis broker to get the Celery module functioning correctly for background tasks in the dm_page/tasks.py file
-# IMPORTANT: These tasks include creating receipts, receiving webhook payloads, sending receipt confirmations and traceback emails. Without this broker connection you will not be able to use these functions
+> Use an external redis broker to get the Celery module functioning correctly for background tasks in the dm_page/tasks.py file
+> **IMPORTANT**: These tasks include creating receipts, receiving webhook payloads, sending receipt confirmations and traceback emails. **Without this broker connection you will not be able to use these functions**
 REDIS_TLS_URL = 
 
-# Create a dropbox account and create an authentication token to link application to the dropbox file storage system
-# Follow the instructions on this link to set up your dropbox account: https://www.dropbox.com/developers/documentation/python#tutorial
+> Create a dropbox account and create an authentication token to link application to the dropbox file storage system
+> Follow the instructions on this link to set up your dropbox account: https://www.dropbox.com/developers/documentation/python#tutorial
 DROPBOX_OAUTH2_TOKEN = 
 
-# Url to access external database for contacts (This is a particular case where the contact's id suffixes the url address to land you on the contact's page on the external application. This link is used on the individual contacts's page)
+> Url to access external database for contacts (This is a particular case where the contact's id suffixes the url address to land you on the contact's page on the external application. This link is used on the individual contacts's page)
 SDID_ACCESS = 
 
 
 
 Django Admin Configurations
 
-Admin --> Paramètres généraux
-Change Fiscal Receipt Date range: Plage de dates pour l'année fiscale
-Change Fiscal Receipt release date notification: Date d'ouverture des reçus annuels
-Change email settings for sending receipt confirmations: Configuration des emails
+**Admin --> Paramètres généraux**
+- Change Fiscal Receipt Date range: *Plage de dates pour l'année fiscale*
+- Change Fiscal Receipt release date notification: *Date d'ouverture des reçus annuels*
+- Change email settings for sending receipt confirmations: *Configuration des emails*
+- Cancel receipts that have mistakes on them: *Reçus Fiscaux*
+- Change eligibility conditions for donations that have the right to a receipt: *Eligibilité*
+- Add / Modify / Delete related donation models: *Forme des dons (form of donations), Mode paiement (Payment Mode), Nature des dons (nature of donations), Types de dons (donation types), Organisations (organisations)* **
+- Add locks with date ranges for certain donations to prevent them being modified: Verrouillage
 
-Cancel receipts that have mistakes on them: Reçus Fiscaux
-
-Change eligibility conditions for donations that have the right to a receipt: Eligibilité
-
-Add / Modify / Delete related donation models: Forme des dons (form of donations), Mode paiement (Payment Mode), Nature des dons (nature of donations), Types de dons (donation types), Organisations (organisations)**
-
-**IMPORTANT: Make sure you fill all the fields for Organisations that are to be amongst the eligibility conditions in the Eligibility model. This is to ensure no errors occur when trying to create a pdf receipt containing this particular organisation's model.
-
-Add locks with date ranges for certain donations to prevent them being modified: Verrouillage
+** **IMPORTANT**: Make sure you fill all the fields for Organisations that are to be amongst the eligibility conditions in the Eligibility model. This is to ensure no errors occur when trying to create a pdf receipt containing this particular organisation's model.
 
 
 
