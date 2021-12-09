@@ -12,7 +12,7 @@ This application was created for a charitable organisation to store and modify d
 - Create receipts for eligible donations, either individual receipts for unique donations or annual receipts for a fiscal year
 - Filter donations / donators / receipts base on their fields
 - Export filtered / non-filtered data of donations and donators to Excel and CSV files
-- Retrieve contact information from an external database through the use of webhooks - (the process_webhook_payload function in `dm_page/tasks.py` should be modified to fit the JSON files received or the JSON files should correspond to the existing configuration)
+- Retrieve contact information from an external database through the use of webhooks - (the process_webhook_payload function in **dm_page/tasks.py** should be modified to fit the JSON files received or the JSON files should correspond to the existing configuration)
 - View contact profile pages with their information and a link to view/modify that contact in the external platform
 - Send automatic and manual emails to contacts with regards to their receipts for tax.
 In this admin 
@@ -33,7 +33,7 @@ In this admin
 
 3. Create a virtual environment within it, activate it, then install dependencies. I personally use venv: `python3 -m venv venv | source venv/bin/activate | pip install -r requirements.txt`
 
-4. Add a database of your choosing such as a db.sqlite3 (change the DATABASE default in donation/settings.py if needed) then create random fixtures and load them onto your database: `python3 dataset/random_dataset_generator.py | python3 manage.py loaddata dataset/fixtures/*.json`
+4. Add a database of your choosing such as a db.sqlite3 (change the DATABASE default in **donation/settings.py** if needed) then create random fixtures and load them onto your database: `python3 dataset/random_dataset_generator.py | python3 manage.py loaddata dataset/fixtures/*.json`
 
 5. Finally give youself a superuser account to log in and you're all set: `python3 manage.py createsuperuser`
 
@@ -46,7 +46,6 @@ There are lots of parameters that you can add to increase the functionality of t
 ### Environment file Configurations
 
 Create a `.env` file and include these variables:
-______________________________
 
 `SECRET_KEY=''` 
 
@@ -99,7 +98,6 @@ ______________________________
 `SDID_ACCESS = ` 
 
 > Url to access external database for contacts (This is a particular case where the contact's id suffixes the url address to land you on the contact's page on the external application. This link is used on the individual contacts's page)
-______________________________
 
 
 ### Django Admin Configurations
@@ -116,9 +114,8 @@ ______________________________
 ** **IMPORTANT**: Make sure you fill all the fields for Organisations that are to be amongst the eligibility conditions in the Eligibility model. This is to ensure no errors occur when trying to create a pdf receipt containing this particular organisation's model.
 
 
-___
 
-### MIT License
+## MIT License
 
 Copyright (c) 2021 Donation Management System
 
