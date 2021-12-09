@@ -24,6 +24,7 @@ In this admin
 - Change email parameters such as host, port, subject, body, etc
 
 
+
 ## Installation 
 
 1. Create a directory where you want to build your environment
@@ -37,64 +38,62 @@ In this admin
 5. Finally give youself a superuser account to log in and you're all set: `python3 manage.py createsuperuser`
 
 
-## Usage
-
-Set your language to French or English on the Navbar. 
-Add donations with the button next to the filter
-Update / Delete donations in the table
-Create Individual Receipts for eligible donations (make sure configurations are set up correctly)
-Explore the different views for donations, donators, and fiscal receipts
-Filter for values in the tables
-Export data to Excel / CSV files
-Create Annual Receipts for eligible donations clicking on the "Process Annual Receipts" button on the Fiscal Receipts page. Make sure there are eligible donations in the fiscal date range setting (see below) otherwise this button won't be visible.
-
 
 ## Configurations
 
 There are lots of parameters that you can add to increase the functionality of the application.
 
-### Environment file Configurations
+#### Environment file Configurations
 
 Create a `.env` file and include these variables:
 
 > Secret key of the application (put secret key within the string)
-SECRET_KEY=''  
+
+`SECRET_KEY=''` 
 
 > Development / Production (put boolean value within the string)
-DEBUG_VALUE = ''
+
+`DEBUG_VALUE = ''`
 
 > These email configurations are used in the eventual case where the pages or background tasks give errors
-EMAIL_ADDRESS =
-PASSWORD = 
-SMTP_DOMAIN = 
-SMTP_PORT = 
+
+`EMAIL_ADDRESS = `
+`PASSWORD = `
+`SMTP_DOMAIN = `
+`SMTP_PORT = `
 
 > Recipient receiving the errors
-ADMIN_NAME = 
-ADMIN_EMAIL = 
+
+`ADMIN_NAME = `
+`ADMIN_EMAIL = `
 
 > Inject an error in dashboard.html to ensure traceback emails are getting sent (put boolean value within the string))
-errortoggle = ''
+
+`errortoggle = ''`
 
 > If you wish to use the webhooks to connect with an external database you can set the username and password on both ends for a secure connection
 >You can find the url of the webhook view function in the `dm_page/urls.py` file
-DMS_WEBHOOK_USERNAME = 
-DMS_WEBHOOK_PASSWORD = 
+
+`DMS_WEBHOOK_USERNAME = `
+`DMS_WEBHOOK_PASSWORD = `
 
 > Use an external redis broker to get the Celery module functioning correctly for background tasks in the dm_page/tasks.py file
 > **IMPORTANT**: These tasks include creating receipts, receiving webhook payloads, sending receipt confirmations and traceback emails. **Without this broker connection you will not be able to use these functions**
-REDIS_TLS_URL = 
+
+`REDIS_TLS_URL =` 
 
 > Create a dropbox account and create an authentication token to link application to the dropbox file storage system
 > Follow the instructions on this link to set up your dropbox account: https://www.dropbox.com/developers/documentation/python#tutorial
-DROPBOX_OAUTH2_TOKEN = 
+
+`DROPBOX_OAUTH2_TOKEN = `
 
 > Url to access external database for contacts (This is a particular case where the contact's id suffixes the url address to land you on the contact's page on the external application. This link is used on the individual contacts's page)
-SDID_ACCESS = 
+
+`SDID_ACCESS = ` 
 
 
 
-Django Admin Configurations
+#### Django Admin Configurations
 
 **Admin --> Paramètres généraux**
 - Change Fiscal Receipt Date range: *Plage de dates pour l'année fiscale*
@@ -110,7 +109,7 @@ Django Admin Configurations
 
 
 
-MIT License
+##### MIT License
 
 Copyright (c) 2021 Donation Management System
 
