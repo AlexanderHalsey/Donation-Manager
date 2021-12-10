@@ -936,9 +936,9 @@ def confirm_annual(request, lang, change=None):
 						subject = ""
 					body = e.body.replace("R_ID", str(receipt.id))
 					if receipt.contact.profile.email not in ("", None):
-						send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
+						#send_email.delay(receipt.id, path, receipt.contact.profile.email, subject, body, t+1, cc=e.cc, bcc=e.bcc)
 						email_statuses.append((receipt.contact.id, receipt.id))
-			email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
+			#email_confirmation.delay(len(seminar_desk_ids)+1, email_statuses)
 		return redirect(f"/{lang}/")
 
 	prof_for_orgs = [{"id": o.id,"name": o.name, "contacts": list(set([d.contact.profile.seminar_desk_id for d in donations.filter(organisation=o)]))} for o in Organisation.objects.all()]
