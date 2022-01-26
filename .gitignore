@@ -4,3 +4,6 @@ __pycache__
 **/.DS_Store
 db.sqlite3
 /static/
+/dataset/institut_fixtures/
+/dataset/random_dataset_generator_institut.py
+/dataset/random_dataset_generator_institut_contact_donations.py
