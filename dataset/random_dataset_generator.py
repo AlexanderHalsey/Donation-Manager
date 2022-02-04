@@ -221,7 +221,7 @@ for i in range(1,4):
         "fields": {}
     }
     eligibility = {
-        "model": "dm_page.ligibility",
+        "model": "dm_page.eligibility",
         "pk": i,
         "fields": {}
     }
@@ -243,14 +243,6 @@ for i in range(1,4):
             "donation_type": 4
         }   
     if i == 3:
-        setting["fields"] = {
-            "organisation_1": 1,
-            "donation_type_1": 3,
-            "organisation_2": 1,
-            "donation_type_2": 4,
-            "organisation_3": 1,
-            "donation_type_3": 5,
-        }
         eligibility["fields"] = {
             "organisation": 1,
             "donation_type": 5

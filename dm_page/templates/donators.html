@@ -174,7 +174,8 @@
       $(`#table_pages li:nth-child(4)`).addClass('active');
     };
     // New button pressed - finds new values or if they are out of range sends a signal to server
-    $('#table_pages li a').bind('click', function() {
+    $('#table_pages li a').bind('click', function( event ) {
+      event.preventDefault();
       var previousPage = $('#table_pages li').filter('[class="page-item active"]').children("a").attr("rel");
       // determining current page clicked
       $('#table_pages li').removeClass('active');

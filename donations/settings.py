@@ -22,13 +22,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "kdjhgiosgholhf")
 
 DMS_WEBHOOK_USERNAME = os.getenv('DMS_WEBHOOK_USERNAME')
 DMS_WEBHOOK_PASSWORD = os.getenv('DMS_WEBHOOK_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.getenv('DEBUG_VALUE') == 'True')
+DEBUG = ((os.getenv('DEBUG_VALUE') or "True") == 'True')
 
 ALLOWED_HOSTS = ['dmsivy.herokuapp.com', '127.0.0.1', 'localhost'] 
 
@@ -181,7 +181,7 @@ ADMINS = [(os.getenv('ADMIN_NAME'), os.getenv('ADMIN_EMAIL')),]
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 SERVER_EMAIL = os.getenv('EMAIL_ADDRESS')
 EMAIL_HOST = os.getenv('SMTP_DOMAIN')
-EMAIL_PORT = int(os.getenv('SMTP_PORT'))
+EMAIL_PORT = int(os.getenv('SMTP_PORT') or 0)
 EMAIL_HOST_USER = os.getenv('EMAIL_ADDRESS')
 EMAIL_HOST_PASSWORD = os.getenv('PASSWORD')
 EMAIL_USE_TLS = True

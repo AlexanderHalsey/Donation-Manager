@@ -33,9 +33,11 @@ In this admin
 
 3. Create a virtual environment within it, activate it, then install dependencies. I personally use venv: `python3 -m venv venv | source venv/bin/activate | pip install -r requirements.txt`
 
-4. Add a database of your choosing such as a db.sqlite3 (change the DATABASE default in **donation/settings.py** if needed) then create random fixtures and load them onto your database: `python3 dataset/random_dataset_generator.py | python3 manage.py loaddata dataset/fixtures/*.json`
+4. Add a database of your choosing such as a db.sqlite3 (change the DATABASE default in **donation/settings.py** if needed) then create random fixtures: `python3 dataset/random_dataset_generator.py`
 
-5. Finally give youself a superuser account to log in and you're all set: `python3 manage.py createsuperuser`
+5. Once you've created the fixtures load them int the database: `python3 manage.py loaddata dataset/fixtures/*.json`
+
+6. Finally give youself a superuser account to log in and you're all set: `python3 manage.py createsuperuser`
 
 
 

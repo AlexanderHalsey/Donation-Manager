@@ -262,7 +262,6 @@
     // displayed values and active value on load - 2.2
     $('#donationTable tbody tr').hide();
     if (serverPage == numPagesTotal | serverPage == numPages) {
-      console.log(displayedRows, rowsShown);
       $('#donationTable tbody tr').slice(displayedRows-rowsShown, displayedRows).show();
     } else {
       $('#donationTable tbody tr').slice(0, rowsShown).show();
@@ -283,7 +282,8 @@
       $(`#table_pages li:nth-child(4)`).addClass('active');
     };
     // New button pressed - finds new values or if they are out of range sends a signal to server
-    $('#table_pages li a').bind('click', function() {
+    $('#table_pages li a').bind('click', function( event ) {
+      event.preventDefault();
       var previousPage = $('#table_pages li').filter('[class="page-item active"]').children("a").attr("rel");
       // determining current page clicked
       $('#table_pages li').removeClass('active');
@@ -334,10 +334,6 @@
         var endItem = startItem + rowsShown;
       }
       $('#donationTable tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display','table-row').animate({opacity:1}, 300);
-    });
-    // responsive scroll 
-    $(".page-link").on("click", function () {
-      $('html, body').animate({scrollTop: window.scrollY},10);
     });
   });
 

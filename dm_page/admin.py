@@ -126,19 +126,6 @@ class ModelAdminSettings(admin.ModelAdmin):
 			return ('release_date', 'manual')
 		if i == 3:
 			return (
-				('organisation_1', 'donation_type_1'),
-				('organisation_2', 'donation_type_2'),
-				('organisation_3', 'donation_type_3'),
-				('organisation_4', 'donation_type_4'),
-				('organisation_5', 'donation_type_5'),
-				('organisation_6', 'donation_type_6'),
-				('organisation_7', 'donation_type_7'),
-				('organisation_8', 'donation_type_8'),
-				('organisation_9', 'donation_type_9'),
-				('organisation_10', 'donation_type_10'),
-			)
-		if i == 4:
-			return (
 				'host_email',
 				'host_email_name',
 				'host_password',
